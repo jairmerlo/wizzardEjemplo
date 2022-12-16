@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react'
+import { Provider } from 'react-redux'
 import { ErrorHandler, Fallback } from './components'
+import store from './app/store'
 
 const { VITE_APP_COMPONENT } = import.meta.env
 
@@ -13,15 +15,19 @@ const Component = () => {
       return <LazyCustomers />
 
     default:
-      return <ErrorHandler />
+      return (
+        <ErrorHandler description='You have not imported any components.' />
+      )
   }
 }
 
 const App = () => {
   return (
-    <Suspense fallback={<Fallback />}>
-      <Component />
-    </Suspense>
+    <Provider store={store}>
+      <Suspense fallback={<Fallback />}>
+        <Component />
+      </Suspense>
+    </Provider>
   )
 }
 export default App

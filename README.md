@@ -20,9 +20,19 @@ yarn build
 
 ## Env Variables and Modes
 
-https://vitejs.dev/guide/env-and-mode.html
+_https://vitejs.dev/guide/env-and-mode.html_
 
 ## Plugins
 
-- Prettier
-- Eslint
+- _Prettier_
+- _Eslint_
+
+## API Billing
+
+### Host
+
+_https://api-billing.idxboost.dev|com/api_
+
+### Endpoints
+
+- [_/list-customers-v2_](https://docs.google.com/document/d/1wurpzMqiLl5DBNZA82RzfPVlBlGmGJvSvn8kMQ3v534/edit)

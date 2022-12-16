@@ -1,0 +1,9 @@
+@host = https://api-billing.idxboost.dev/api
+
+# POST CUSTOMERS
+POST {{host}}/list-customers-v2
+Content-Type: application/json
+
+{
+    "page": 1
+}

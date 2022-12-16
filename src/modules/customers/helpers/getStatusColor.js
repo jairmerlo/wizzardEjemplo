@@ -1,11 +1,10 @@
 export const getStatusColor = status => {
   switch (status) {
-    case 'active':
+    case 'Active':
       return 'green'
-
-    case 'unactive':
+    case 'Unactive':
       return 'volcano'
-    case 'pending':
+    case 'Pending':
       return 'gold'
     default:
       return 'geekblue'

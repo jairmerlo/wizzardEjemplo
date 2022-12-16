@@ -4,15 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 4000",
+    "dev": "vite --port 3000",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@reduxjs/toolkit": "^1.9.1",
     "antd": "^5.0.6",
+    "currency.js": "^2.0.4",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-highlight-words": "^0.18.0",
+    "react-modal": "^3.16.1",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.4.5",
+    "sort-by": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
