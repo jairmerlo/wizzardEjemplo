@@ -46,11 +46,10 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 
 export const CustomersTableV1 = () => {
   const [pageSize, setPageSize] = useState(10)
-  const { data, isLoading } = useGetAllCustomersQuery('1')
-  const total = data?.length
-  console.log({ data })
+  const [totalCurrentItems, setTotalCurrentItems] = useState()
+  const { data, isLoading } = useGetAllCustomersQuery()
+  const totalData = data?.length
   let [searchParams, setSearchParams] = useSearchParams()
-
   const customerId = searchParams.get('id')
   const screen = searchParams.get('screen')
 
@@ -73,7 +72,6 @@ export const CustomersTableV1 = () => {
     reducer,
     SEARCHED_COLUMN_INITIAL_STATE,
   )
-  console.log({ searchText, searchedColumn })
   const searchInput = useRef(null)
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -90,6 +88,7 @@ export const CustomersTableV1 = () => {
     setTableKey(tableKey => tableKey + 1)
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
+    setTotalCurrentItems(totalData)
   }
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -258,8 +257,8 @@ export const CustomersTableV1 = () => {
     },
     {
       title: 'Monthly Amount',
-      dataIndex: 'monthlyamount',
-      key: 'monthlyamount',
+      dataIndex: 'monthly_amount',
+      key: 'monthly_amount',
       render: monthlyAmount =>
         monthlyAmount ? USD(monthlyAmount) : <NoDataCell />,
     },
@@ -319,7 +318,7 @@ export const CustomersTableV1 = () => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Customer List ({total})
+          Customer List ({totalData})
         </Typography.Title>
         <Button
           type='primary'
@@ -348,13 +347,16 @@ export const CustomersTableV1 = () => {
         dataSource={data}
         bordered
         loading={isLoading}
+        onChange={(pagination, filters, sorter, { currentDataSource }) =>
+          setTotalCurrentItems(currentDataSource?.length)
+        }
         pagination={{
-          total,
+          total: totalCurrentItems || totalData,
           pageSize,
-          onChange: (page, pageSize) => setPageSize(pageSize),
           showQuickJumper: true,
-          showTotal,
           showSizeChanger: true,
+          onChange: (page, pageSize) => setPageSize(pageSize),
+          showTotal,
         }}
       />
       {customerId && screen === 'details' && (

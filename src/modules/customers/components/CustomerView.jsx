@@ -12,7 +12,7 @@ import Modal from 'react-modal'
 import { useSearchParams } from 'react-router-dom'
 import { useGetCustomerQuery } from '../../../app/api/billing'
 import { ErrorHandler } from '../../../components'
-import { stringAvatar } from '../../../helpers'
+import { stringAvatar, stringFallback } from '../../../helpers'
 import { MembershipTable } from './MembershipTable'
 
 export const CustomerView = ({ open, onClose }) => {
@@ -38,6 +38,8 @@ export const CustomerView = ({ open, onClose }) => {
     padding: 0,
     paddingLeft: 12,
     borderRadius: 0,
+    display: 'flex',
+    alignItems: 'center',
   }
   return (
     <Modal
@@ -99,11 +101,15 @@ export const CustomerView = ({ open, onClose }) => {
           <div style={{ display: 'flex', width: '100%' }}>
             <Avatar {...stringAvatar(fullName)} size={200} shape='square' />
             <Card style={{ borderRadius: 0, display: 'flex' }}>
-              <Card.Grid style={gridStyle}>{fullName}</Card.Grid>
-              <Card.Grid style={gridStyle}>{phone}</Card.Grid>
-              <Card.Grid style={gridStyle}>{email_contact}</Card.Grid>
-              <Card.Grid style={gridStyle}>{street1}</Card.Grid>
-              <Card.Grid style={gridStyle}>{state}</Card.Grid>
+              <Card.Grid style={gridStyle}>
+                {stringFallback(fullName)}
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>{stringFallback(phone)}</Card.Grid>
+              <Card.Grid style={gridStyle}>
+                {stringFallback(email_contact)}
+              </Card.Grid>
+              <Card.Grid style={gridStyle}>{stringFallback(street1)}</Card.Grid>
+              <Card.Grid style={gridStyle}>{stringFallback(state)}</Card.Grid>
               <Card.Grid style={gridStyle}>{`Since ${created_on}`}</Card.Grid>
             </Card>
           </div>

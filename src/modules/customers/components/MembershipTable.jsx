@@ -1,5 +1,5 @@
 import { Table, Tag } from 'antd'
-import { showTotal } from '../../../helpers'
+import { getColumnProps, showTotal } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
 export const MembershipTable = ({ memberships }) => {
@@ -20,9 +20,7 @@ export const MembershipTable = ({ memberships }) => {
       ),
     },
     {
-      title: 'Product/Service',
-      dataIndex: 'product',
-      key: 'product',
+      ...getColumnProps({ title: 'Product/Service', dataIndex: 'product' }),
     },
     {
       title: 'Created Date',
@@ -42,9 +40,7 @@ export const MembershipTable = ({ memberships }) => {
       //     }).format(),
     },
     {
-      title: 'Periods',
-      dataIndex: 'periods',
-      key: 'periods',
+      ...getColumnProps({ title: 'Periods', dataIndex: 'periods' }),
     },
     {
       title: 'Amount',
