@@ -1,5 +1,4 @@
 export const stringFallback = text => {
-  console.log(text)
   switch (text) {
     case '':
     case undefined:

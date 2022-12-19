@@ -1,5 +1,6 @@
-import { Table, Tag } from 'antd'
-import { getColumnProps, showTotal } from '../../../helpers'
+import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
+import { Space, Table, Tag, Tooltip } from 'antd'
+import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
 export const MembershipTable = ({ memberships }) => {
@@ -20,24 +21,16 @@ export const MembershipTable = ({ memberships }) => {
       ),
     },
     {
-      ...getColumnProps({ title: 'Product/Service', dataIndex: 'product' }),
+      ...getColumnProps({
+        title: 'Product/Service',
+        dataIndex: 'accounting_class_name',
+      }),
     },
     {
-      title: 'Created Date',
-      key: 'created_date',
-      dataIndex: 'created_date',
-      //   render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      ...getColumnProps({ title: 'Created Date', dataIndex: 'created_at' }),
     },
     {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-      //   render: monthlyAmount =>
-      //     currency(monthlyAmount, {
-      //       decimal: '.',
-      //       separator: ',',
-      //       precision: 0,
-      //     }).format(),
+      ...getColumnProps({ title: 'Price', dataIndex: 'price' }),
     },
     {
       ...getColumnProps({ title: 'Periods', dataIndex: 'periods' }),
@@ -58,6 +51,32 @@ export const MembershipTable = ({ memberships }) => {
       dataIndex: 'status',
       key: 'status',
       render: status => <Tag color={getStatusColor(status)}>{status}</Tag>,
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      render: (text, { id }) => (
+        <Space size='middle'>
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
+          <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
+            <a>
+              <EyeTwoTone style={{ fontSize: '18px' }} />
+            </a>
+          </Tooltip>
+          <Tooltip title='Edit' overlayStyle={{ zIndex: 10000 }}>
+            <a>
+              <EditTwoTone style={{ fontSize: '18px' }} />
+            </a>
+          </Tooltip>
+          <Tooltip title='Delete' overlayStyle={{ zIndex: 10000 }}>
+            <a>
+              <DeleteTwoTone style={{ fontSize: '18px' }} />
+            </a>
+          </Tooltip>
+          {/* eslint-enable jsx-a11y/anchor-is-valid */}
+        </Space>
+      ),
     },
   ]
   return (
