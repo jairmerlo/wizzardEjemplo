@@ -1,6 +1,6 @@
 import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
-import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
+import { getColumnProps, showTotal } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
 export const MembershipTable = ({ memberships }) => {

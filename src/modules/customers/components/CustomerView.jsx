@@ -9,15 +9,16 @@ import {
 } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import Modal from 'react-modal'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useGetCustomerQuery } from '../../../app/api/billing'
 import { ErrorHandler } from '../../../components'
 import { stringAvatar, stringFallback } from '../../../helpers'
 import { MembershipTable } from './MembershipTable'
 
-export const CustomerView = ({ open, onClose }) => {
-  const [searchParams] = useSearchParams()
-  const { data = {}, isLoading } = useGetCustomerQuery(searchParams.get('id'))
+export const CustomerView = () => {
+  const { customerId } = useParams()
+  const navigate = useNavigate()
+  const { data = {}, isLoading } = useGetCustomerQuery(customerId)
   console.log({ data })
   const {
     name,
@@ -30,7 +31,7 @@ export const CustomerView = ({ open, onClose }) => {
     memberships,
   } = data
   const fullName = name + ' ' + last_name
-  const isError = Array.isArray(data)
+  const isError = Array.isArray(data) || Object.keys(data).length === 0
   Modal.setAppElement('body')
   const gridStyle = {
     width: '100%',
@@ -43,8 +44,8 @@ export const CustomerView = ({ open, onClose }) => {
   }
   return (
     <Modal
-      isOpen={open || false}
-      onRequestClose={onClose}
+      isOpen={true}
+      onRequestClose={() => navigate('/')}
       shouldCloseOnEsc={true}
       style={{
         content: {
@@ -76,9 +77,11 @@ export const CustomerView = ({ open, onClose }) => {
         <Typography.Title level={5} style={{ margin: 0 }}>
           Customer View
         </Typography.Title>
-        <Button size='small' danger onClick={onClose}>
-          Back
-        </Button>
+        <Link to='/'>
+          <Button size='small' danger>
+            Back
+          </Button>
+        </Link>
       </div>
       <Divider />
       {isLoading ? (

@@ -19,9 +19,8 @@ import {
 import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
 import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
-import { CustomerView } from '.'
-import { useSearchParams } from 'react-router-dom'
 import { NoDataCell } from '../../../components'
+import { Link } from 'react-router-dom'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -30,7 +29,7 @@ const SEARCH_TEXT_INITIAL_STATE = {
   email_contact: null,
   phone: null,
   memberships: null,
-  monthlyamount: null,
+  monthly_amount: null,
   created_on: null,
 }
 
@@ -40,7 +39,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   email_contact: null,
   phone: null,
   memberships: null,
-  monthlyamount: null,
+  monthly_amount: null,
   created_on: null,
 }
 
@@ -49,20 +48,7 @@ export const CustomersTableV1 = () => {
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data, isLoading } = useGetAllCustomersQuery()
   const totalData = data?.length
-  let [searchParams, setSearchParams] = useSearchParams()
-  const customerId = searchParams.get('id')
-  const screen = searchParams.get('screen')
 
-  const onOpen = ({ id, screen }) => {
-    setSearchParams({
-      id,
-      screen,
-    })
-  }
-
-  const onClose = () => {
-    setSearchParams({})
-  }
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
     reducer,
@@ -90,6 +76,12 @@ export const CustomersTableV1 = () => {
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     setTotalCurrentItems(totalData)
   }
+
+  const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
+    // console.log('Various parameters', pagination, filters, sorter)
+    setTotalCurrentItems(currentDataSource?.length)
+  }
+
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -213,12 +205,29 @@ export const CustomersTableV1 = () => {
         highlightedText: searchText[dataIndex],
       }),
   })
+
+  const getColumnSortProps = dataIndex => {
+    return {
+      sorter: (a, b) => {
+        return a[dataIndex].localeCompare(b[dataIndex])
+      },
+      ellipsis: true,
+    }
+  }
+
+  const getCustomColumnSortProps = ({ sorter }) => {
+    return {
+      sorter,
+      ellipsis: true,
+    }
+  }
   const columns = [
     {
       title: 'Customer ID',
       dataIndex: 'uuid',
       key: 'uuid',
       ...getColumnSearchProps('uuid'),
+      ...getColumnSortProps('uuid'),
     },
     {
       title: 'Client Name',
@@ -236,31 +245,64 @@ export const CustomersTableV1 = () => {
           .toString()
           .toLowerCase()
           .includes(value.toLowerCase()),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return `${a.name} ${a.last_name}`.localeCompare(
+            `${b.name} ${b.last_name}`,
+          )
+        },
+      }),
     },
     {
       title: 'Email',
       dataIndex: 'email_contact',
       key: 'email_contact',
       ...getColumnSearchProps('email_contact'),
+      ...getColumnSortProps('email_contact'),
     },
     {
       title: 'Phone',
       key: 'phone',
       dataIndex: 'phone',
       ...getColumnSearchProps('phone'),
+      ...getColumnSortProps('phone'),
     },
     {
       title: 'Membership',
       dataIndex: 'memberships',
       key: 'memberships',
       ...getColumnSearchProps('memberships'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return parseFloat(a.memberships) - parseFloat(b.memberships)
+        },
+      }),
     },
     {
       title: 'Monthly Amount',
       dataIndex: 'monthly_amount',
       key: 'monthly_amount',
+      ...getColumnSearchProps('monthly_amount'),
       render: monthlyAmount =>
-        monthlyAmount ? USD(monthlyAmount) : <NoDataCell />,
+        monthlyAmount ? (
+          renderTextHighlighter({
+            text: USD(monthlyAmount),
+            isHighlighted: searchedColumn['monthly_amount'],
+            highlightedText: searchText['monthly_amount'],
+          })
+        ) : (
+          <NoDataCell />
+        ),
+      onFilter: (value, record) =>
+        USD(record['monthly_amount'])
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
+        },
+      }),
     },
     {
       title: 'Since',
@@ -268,6 +310,13 @@ export const CustomersTableV1 = () => {
       key: 'created_on',
       ...getDateColumnSearchProps('created_on'),
       render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(moment(a.created_on, 'MM-DD-YYYY')).diff(
+            moment(b.created_on, 'MM-DD-YYYY'),
+          )
+        },
+      }),
     },
     {
       title: 'Actions',
@@ -282,9 +331,9 @@ export const CustomersTableV1 = () => {
             </a>
           </Tooltip>
           <Tooltip title='Details'>
-            <a onClick={() => onOpen({ id, screen: 'details' })}>
+            <Link to={`/customer-view/${id}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
-            </a>
+            </Link>
           </Tooltip>
           <Tooltip title='Edit'>
             <a>
@@ -342,14 +391,12 @@ export const CustomersTableV1 = () => {
       </Button>
       <Table
         key={tableKey}
-        rowKey='uuid'
+        rowKey='id'
         columns={columns}
         dataSource={data}
         bordered
         loading={isLoading}
-        onChange={(pagination, filters, sorter, { currentDataSource }) =>
-          setTotalCurrentItems(currentDataSource?.length)
-        }
+        onChange={handleChange}
         pagination={{
           total: totalCurrentItems || totalData,
           pageSize,
@@ -359,12 +406,6 @@ export const CustomersTableV1 = () => {
           showTotal,
         }}
       />
-      {customerId && screen === 'details' && (
-        <CustomerView
-          open={customerId && screen === 'details'}
-          onClose={onClose}
-        />
-      )}
     </div>
   )
 }
