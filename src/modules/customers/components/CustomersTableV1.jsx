@@ -369,17 +369,19 @@ export const CustomersTableV1 = () => {
         <Typography.Title level={4} style={{ margin: 0 }}>
           Customer List ({totalData})
         </Typography.Title>
-        <Button
-          type='primary'
-          shape='round'
-          icon={<UserAddOutlined />}
-          size='middle'
-          style={{
-            alignSelf: 'flex-end',
-          }}
-        >
-          Add New Customer
-        </Button>
+        <Link to='/new-quote'>
+          <Button
+            type='primary'
+            shape='round'
+            icon={<UserAddOutlined />}
+            size='middle'
+            style={{
+              alignSelf: 'flex-end',
+            }}
+          >
+            Add New Customer
+          </Button>
+        </Link>
       </div>
       <Divider dashed />
       <Button

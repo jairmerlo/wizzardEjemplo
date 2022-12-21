@@ -13,6 +13,8 @@
     "@reduxjs/toolkit": "^1.9.1",
     "antd": "^5.0.6",
     "currency.js": "^2.0.4",
+    "formik": "^2.2.9",
+    "formik-antd": "^2.0.4",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "moment": "^2.29.4",
@@ -22,7 +24,9 @@
     "react-modal": "^3.16.1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.5",
-    "sort-by": "^1.2.0"
+    "react-use": "^17.4.0",
+    "sort-by": "^1.2.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",

@@ -6,7 +6,7 @@ import {
   Route,
 } from 'react-router-dom'
 import App from '../../../App'
-import { CustomerView } from '../components'
+import { CustomerView, NewQuote } from '../components'
 
 const Customers = lazy(() => import(/* webpackChunkName: "customers" */ '..'))
 
@@ -15,6 +15,7 @@ const customersRouter = createBrowserRouter(
     <Route path='/' element={<App />}>
       <Route index element={<Customers />} />
       <Route path='customer-view/:customerId' element={<CustomerView />} />
+      <Route path='new-quote' element={<NewQuote />} />
       <Route path='*' element={<Navigate to='/' replace={true} />} />
     </Route>,
   ),
