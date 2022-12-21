@@ -1,13 +1,17 @@
-import { Button, Divider, Typography } from 'antd'
+import { Button, Divider, Modal, Typography } from 'antd'
 import { ErrorMessage, Formik } from 'formik'
 import { Select, Input, Form } from 'formik-antd'
 import { Fragment } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useCss } from 'react-use'
 import * as Yup from 'yup'
 
 export const NewQuote = () => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  let [searchParams, setSearchParams] = useSearchParams()
+  const customerId = searchParams.get('customerId')
+  const hasProspect = !customerId
+  const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
+  console.log({ openModal, customerId })
   const form = useCss({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -16,9 +20,134 @@ export const NewQuote = () => {
     '& > .ant-form-item': {
       margin: '0px',
     },
+    '@media only screen and (max-width: 745px)': {
+      gridTemplateColumns: '1fr',
+    },
   })
+  const handleAddProspect = () => {
+    setSearchParams({
+      add: 'new-prospect',
+    })
+  }
+
+  const handleCloseProspect = () => {
+    setSearchParams({})
+  }
+
+  const handleSaveProspect = () => {
+    setSearchParams({})
+  }
   return (
     <div style={{ maxWidth: '800px', margin: 'auto' }}>
+      {openModal && (
+        <Modal
+          title='New Prospect'
+          open={openModal}
+          onOk={handleSaveProspect}
+          onCancel={handleCloseProspect}
+        >
+          <Formik
+            initialValues={{
+              name: '',
+              lastName: '',
+              email: '',
+              phone: '',
+              address: '',
+              address2: '',
+              city: '',
+              zipCode: '',
+              state: '',
+            }}
+            enableReinitialize
+            onSubmit={values => {
+              console.log({ values })
+            }}
+            validationSchema={Yup.object({
+              name: Yup.string().required('This field is required.'),
+              lastName: Yup.string().required('This field is required.'),
+              email: Yup.string()
+                .email('Must be a valid email.')
+                .required('This field is required.'),
+              phone: Yup.number().required('This field is required.'),
+              state: Yup.string(),
+            })}
+          >
+            {({ handleSubmit, errors, touched }) => (
+              <Fragment>
+                <Form
+                  className={form}
+                  style={{ gap: '16px' }}
+                  layout='vertical'
+                  autoComplete='off'
+                >
+                  <Form.Item
+                    label='Name'
+                    required
+                    validateStatus={errors.name && touched.name && 'error'}
+                    help={<ErrorMessage name='name' />}
+                  >
+                    <Input name='name' placeholder='Name' />
+                  </Form.Item>
+                  <Form.Item
+                    label='Last Name'
+                    required
+                    validateStatus={
+                      errors.lastName && touched.lastName && 'error'
+                    }
+                    help={<ErrorMessage name='lastName' />}
+                  >
+                    <Input name='lastName' placeholder='Last Name' />
+                  </Form.Item>
+                  <Form.Item
+                    label='Email'
+                    required
+                    validateStatus={errors.email && touched.email && 'error'}
+                    help={<ErrorMessage name='email' />}
+                  >
+                    <Input name='email' placeholder='Email' />
+                  </Form.Item>
+                  <Form.Item
+                    label='Phone'
+                    required
+                    validateStatus={errors.phone && touched.phone && 'error'}
+                    help={<ErrorMessage name='phone' />}
+                  >
+                    <Input name='phone' placeholder='Phone' />
+                  </Form.Item>
+                  <Form.Item
+                    label='State'
+                    validateStatus={errors.state && touched.state && 'error'}
+                    help={<ErrorMessage name='state' />}
+                  >
+                    <Select
+                      name='state'
+                      options={[
+                        {
+                          value: 'jack',
+                          label: 'Jack',
+                        },
+                        {
+                          value: 'lucy',
+                          label: 'Lucy',
+                        },
+                        {
+                          value: 'disabled',
+                          disabled: true,
+                          label: 'Disabled',
+                        },
+                        {
+                          value: 'Yiminghe',
+                          label: 'yiminghe',
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                </Form>
+              </Fragment>
+            )}
+          </Formik>
+        </Modal>
+      )}
       <Typography.Title level={4}>New Quotes</Typography.Title>
       <Divider dashed />
       <Formik
@@ -51,44 +180,55 @@ export const NewQuote = () => {
               >
                 <Input name='quoteId' placeholder='Quote ID' disabled />
               </Form.Item>
-              <Form.Item
-                label='Prospect'
-                required
-                validateStatus={errors.prospect && touched.prospect && 'error'}
-                help={<ErrorMessage name='prospect' />}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: 8,
-                  }}
-                >
-                  <Select
-                    name='prospect'
-                    options={[
-                      {
-                        value: 'jack',
-                        label: 'Jack',
-                      },
-                      {
-                        value: 'lucy',
-                        label: 'Lucy',
-                      },
-                      {
-                        value: 'disabled',
-                        disabled: true,
-                        label: 'Disabled',
-                      },
-                      {
-                        value: 'Yiminghe',
-                        label: 'yiminghe',
-                      },
-                    ]}
-                  />
-                  <Button>Add</Button>
+              {customerId ? (
+                <div>
+                  <Typography style={{ paddingBottom: '8px' }}>
+                    Customer
+                  </Typography>
+                  <Input value='Sofia Torres' placeholder='Customer' disabled />
                 </div>
-              </Form.Item>
-              {/* //? Brokerage filtra el program */}
+              ) : (
+                <Form.Item
+                  label='Prospect'
+                  required
+                  validateStatus={
+                    errors.prospect && touched.prospect && 'error'
+                  }
+                  help={<ErrorMessage name='prospect' />}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 8,
+                    }}
+                  >
+                    <Select
+                      name='prospect'
+                      options={[
+                        {
+                          value: 'jack',
+                          label: 'Jack',
+                        },
+                        {
+                          value: 'lucy',
+                          label: 'Lucy',
+                        },
+                        {
+                          value: 'disabled',
+                          disabled: true,
+                          label: 'Disabled',
+                        },
+                        {
+                          value: 'Yiminghe',
+                          label: 'yiminghe',
+                        },
+                      ]}
+                    />
+                    <Button onClick={handleAddProspect}>Add</Button>
+                  </div>
+                </Form.Item>
+              )}
+              {/* //? Brokerage filtra el Program */}
               <Form.Item
                 label='Brokerage'
                 required
@@ -250,7 +390,9 @@ export const NewQuote = () => {
                 paddingTop: 30,
               }}
             >
-              <Button>Cancel</Button>
+              <Link to='/'>
+                <Button>Cancel</Button>
+              </Link>
               <Button type='primary' onClick={handleSubmit}>
                 Save
               </Button>
