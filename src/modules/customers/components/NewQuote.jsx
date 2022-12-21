@@ -5,8 +5,13 @@ import { Fragment } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useCss } from 'react-use'
 import * as Yup from 'yup'
+import { useGetNewQuotesOptionsQuery } from '../../../app/api/billing'
 
 export const NewQuote = () => {
+  const { data = {} } = useGetNewQuotesOptionsQuery()
+  console.log({ data })
+  const { quoteId = '', brokerages = [] } = data
+
   let [searchParams, setSearchParams] = useSearchParams()
   const customerId = searchParams.get('customerId')
   const hasProspect = !customerId
@@ -152,7 +157,7 @@ export const NewQuote = () => {
       <Divider dashed />
       <Formik
         initialValues={{
-          quoteId: 'QTE0001',
+          quoteId,
           brokerage: '',
           program: 'jack',
           board: 'jack',
@@ -237,28 +242,7 @@ export const NewQuote = () => {
                 }
                 help={<ErrorMessage name='brokerage' />}
               >
-                <Select
-                  name='brokerage'
-                  options={[
-                    {
-                      value: 'jack',
-                      label: 'Jack',
-                    },
-                    {
-                      value: 'lucy',
-                      label: 'Lucy',
-                    },
-                    {
-                      value: 'disabled',
-                      disabled: true,
-                      label: 'Disabled',
-                    },
-                    {
-                      value: 'Yiminghe',
-                      label: 'yiminghe',
-                    },
-                  ]}
-                />
+                <Select name='brokerage' options={brokerages} />
               </Form.Item>
               <Form.Item
                 label='Program'

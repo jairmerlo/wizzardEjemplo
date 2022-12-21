@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const { VITE_APP_API_BILLING_HOST } = import.meta.env
+const { VITE_APP_API_BILLING_HOST, VITE_APP_API_PACKAGE_BUILDER } = import.meta
+  .env
 
 export const billing = createApi({
   reducerPath: 'billing',
@@ -38,6 +39,34 @@ export const billing = createApi({
     getCustomer: builder.query({
       query: id => `/get-customer/${id}`,
     }),
+    getNewQuotesOptions: builder.query({
+      async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
+        try {
+          const [{ data: quoteId }, { data: brokerages }] = await Promise.all([
+            fetchWithBQ({ url: '/get-next-quote', method: 'POST' }),
+            fetch(`${VITE_APP_API_PACKAGE_BUILDER}/company-list`)
+              .then(res => res.json())
+              .then(data => ({
+                data: data.map(({ name, slug }) => ({
+                  label: name,
+                  value: slug,
+                })),
+              })),
+          ])
+          return {
+            data: {
+              quoteId,
+              brokerages,
+            },
+          }
+        } catch (error) {
+          console.log(error)
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -49,4 +78,5 @@ export const {
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
+  useGetNewQuotesOptionsQuery,
 } = billing
