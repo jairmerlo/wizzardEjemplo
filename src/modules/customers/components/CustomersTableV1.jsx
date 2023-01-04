@@ -326,9 +326,9 @@ export const CustomersTableV1 = () => {
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Add Membership'>
-            <a>
+            <Link to={`/new-quote?customerId=${id}`}>
               <UserAddOutlined style={{ fontSize: '18px' }} />
-            </a>
+            </Link>
           </Tooltip>
           <Tooltip title='Details'>
             <Link to={`/customer-view/${id}`}>

@@ -7,3 +7,6 @@ Content-Type: application/json
 {
     "page": 1
 }
+
+### GET BOARDS
+POST https://backoffice.idxboost.dev/tgapi/api/getBoards
