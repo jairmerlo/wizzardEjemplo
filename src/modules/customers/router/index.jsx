@@ -1,16 +1,17 @@
-import { lazy } from 'react'
 import {
-  createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Navigate,
   Route,
 } from 'react-router-dom'
+import Customers from '..'
 import App from '../../../App'
 import { CustomerView, NewQuote } from '../components'
 
-const Customers = lazy(() => import(/* webpackChunkName: "customers" */ '..'))
+//* In lazy load mode
+// const Customers = lazy(() => import(/* webpackChunkName: "customers" */ '..'))
 
-const customersRouter = createBrowserRouter(
+const customersRouter = createHashRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route index element={<Customers />} />

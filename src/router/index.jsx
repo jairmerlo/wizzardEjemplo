@@ -1,5 +1,5 @@
 import {
-  createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Navigate,
   Route,
@@ -15,7 +15,7 @@ const router = (() => {
     case 'customers':
       return customersRouter
     default:
-      return createBrowserRouter(
+      return createHashRouter(
         createRoutesFromElements(
           <Route path='/' element={<App />}>
             <Route
