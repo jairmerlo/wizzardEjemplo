@@ -11,7 +11,8 @@ import {
   useGetCustomerQuery,
   useGetNewQuotesOptionsQuery,
 } from '../../../app/api/billing'
-import { capitalize, toTitleCase } from '../../../helpers'
+import { ErrorHandler } from '../../../components'
+import { capitalize, getConfig, toTitleCase } from '../../../helpers'
 
 function formatUSNumber(entry = '') {
   const match = entry
@@ -66,9 +67,12 @@ export const NewQuote = () => {
   const customerId = searchParams.get('customerId')
   const hasProspect = !customerId
   const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
-  const { data: customer } = useGetCustomerQuery(customerId, {
-    skip: hasProspect,
-  })
+  const { data: customer, isError: isErrorGetCustomer } = useGetCustomerQuery(
+    customerId,
+    {
+      skip: hasProspect,
+    },
+  )
   const [hasIdx, setHasIdx] = useState()
   console.log({ openModal, customerId })
   const form = useCss({
@@ -96,7 +100,8 @@ export const NewQuote = () => {
   const handleCloseProspect = () => {
     setSearchParams({})
   }
-
+  if (isErrorGetCustomer)
+    return <ErrorHandler description='The customer does not exist.' />
   return (
     <div style={{ maxWidth: '800px', margin: 'auto' }}>
       {openModal && (
@@ -340,7 +345,7 @@ export const NewQuote = () => {
             quote_name: values.quoteId,
             prospect_id: values.prospect,
             plan_id: values.program,
-            user_id: 6,
+            user_id: getConfig().userId,
             //* optionals
             payment_method:
               values.paymentMethod.length === 0
@@ -349,17 +354,33 @@ export const NewQuote = () => {
             coupon_id: values.coupon || undefined,
             send_email: 0,
           }
-          createQuote(data)
-            .then(({ data }) => {
-              notification.success({
-                message: `Success`,
-                description: data[1],
-                placement: 'bottomRight',
+          if (hasProspect) {
+            createQuote(data)
+              .then(({ data }) => {
+                notification.success({
+                  message: `Success`,
+                  description: data[1],
+                  placement: 'bottomRight',
+                })
+                //TODO: Redirección a /
+                navigate('/')
               })
-              //TODO: Redirección a /
-              navigate('/')
-            })
-            .catch(console.log)
+              .catch(console.log)
+          } else {
+            delete data.prospect_id
+            data.customer_id = customerId
+            createQuote(data)
+              .then(({ data }) => {
+                notification.success({
+                  message: `Success`,
+                  description: data[1],
+                  placement: 'bottomRight',
+                })
+                //TODO: Redirección a /
+                navigate('/')
+              })
+              .catch(console.log)
+          }
         }}
         validationSchema={Yup.object({
           quoteId: Yup.string().required('This field is required.'),
@@ -370,7 +391,7 @@ export const NewQuote = () => {
               item => item.value === program,
             )?.has_idx
             setHasIdx(hasIdx)
-            return program ? field.required('This field is required.') : program
+            return hasIdx ? field.required('This field is required.') : field
           }),
         })}
       >

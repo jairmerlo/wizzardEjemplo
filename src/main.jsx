@@ -5,7 +5,7 @@ import router from './router'
 import 'antd/dist/reset.css'
 import './index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('react_backoffice')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>,
