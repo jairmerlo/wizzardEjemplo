@@ -72,6 +72,7 @@ export const billing = createApi({
               method: 'POST',
               body: JSON.stringify({
                 company: args?.company,
+                has_trial: args?.has_trial,
               }),
             }).then(({ data }) =>
               data.map(({ name, id, has_idx }) => ({

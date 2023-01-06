@@ -1,10 +1,9 @@
 import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
-import { Link } from 'react-router-dom'
 import { getColumnProps, showTotal } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
-export const MembershipTable = ({ memberships }) => {
+export const BillingHistoryTable = ({ dataSource }) => {
   const columns = [
     {
       title: 'Membership ID',
@@ -13,45 +12,34 @@ export const MembershipTable = ({ memberships }) => {
     },
     {
       title: 'URL',
-      dataIndex: 'wordpress_install_url',
-      key: 'wordpress_install_url',
+      dataIndex: 'url',
+      key: 'url',
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
           {url}
         </a>
       ),
+      ellipsis: true,
     },
     {
       ...getColumnProps({
-        title: 'Product/Service',
-        dataIndex: 'accounting_class_name',
+        title: 'Invoice #',
+        dataIndex: 'name',
       }),
     },
     {
-      ...getColumnProps({ title: 'Created Date', dataIndex: 'created_at' }),
-    },
-    {
-      ...getColumnProps({ title: 'Price', dataIndex: 'price' }),
-    },
-    {
-      ...getColumnProps({ title: 'Periods', dataIndex: 'periods' }),
+      ...getColumnProps({ title: 'Date', dataIndex: 'created_at' }),
     },
     {
       title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
+      dataIndex: 'total',
+      key: 'total',
       //   render: monthlyAmount =>
       //     currency(monthlyAmount, {
       //       decimal: '.',
       //       separator: ',',
       //       precision: 0,
       //     }).format(),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: status => <Tag color={getStatusColor(status)}>{status}</Tag>,
     },
     {
       title: 'Actions',
@@ -61,18 +49,8 @@ export const MembershipTable = ({ memberships }) => {
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-            <Link to={`membership-details/${id}`}>
+            <a>
               <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
-          <Tooltip title='Edit' overlayStyle={{ zIndex: 10000 }}>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete' overlayStyle={{ zIndex: 10000 }}>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
             </a>
           </Tooltip>
           {/* eslint-enable jsx-a11y/anchor-is-valid */}
@@ -85,7 +63,7 @@ export const MembershipTable = ({ memberships }) => {
       rowKey='id'
       size='small'
       columns={columns}
-      dataSource={memberships}
+      dataSource={dataSource}
       bordered
       pagination={{
         showTotal,

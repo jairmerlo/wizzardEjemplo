@@ -1,4 +1,11 @@
-import { Button, Divider, Modal, notification, Typography } from 'antd'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Modal,
+  notification,
+  Typography,
+} from 'antd'
 import { ErrorMessage, Formik } from 'formik'
 import { Select, Input, Form } from 'formik-antd'
 import { Fragment, useEffect, useState } from 'react'
@@ -27,6 +34,10 @@ function formatUSNumber(entry = '') {
 
 export const NewQuote = () => {
   const navigate = useNavigate()
+  let [searchParams, setSearchParams] = useSearchParams()
+  const customerId = searchParams.get('customerId')
+  const hasProspect = !customerId
+  const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
 
   const openNotification = () => {
     notification.error({
@@ -38,6 +49,7 @@ export const NewQuote = () => {
   const [company, setCompany] = useState()
   const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
     company,
+    has_trial: hasProspect ? 1 : 0,
   })
 
   const [
@@ -63,10 +75,6 @@ export const NewQuote = () => {
     states = [],
   } = data
 
-  let [searchParams, setSearchParams] = useSearchParams()
-  const customerId = searchParams.get('customerId')
-  const hasProspect = !customerId
-  const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
   const { data: customer, isError: isErrorGetCustomer } = useGetCustomerQuery(
     customerId,
     {
@@ -337,6 +345,7 @@ export const NewQuote = () => {
           board: '',
           paymentMethod: [],
           coupon: '',
+          send_email: false,
         }}
         enableReinitialize
         onSubmit={values => {
@@ -352,7 +361,7 @@ export const NewQuote = () => {
                 ? undefined
                 : values.paymentMethod,
             coupon_id: values.coupon || undefined,
-            send_email: 0,
+            send_email: values.send_email ? 1 : 0,
           }
           if (hasProspect) {
             createQuote(data)
@@ -505,6 +514,15 @@ export const NewQuote = () => {
                 paddingTop: 30,
               }}
             >
+              <Checkbox
+                onChange={e => setFieldValue('send_email', e.target.checked)}
+                value={values.send_email}
+                style={{
+                  marginRight: 'auto',
+                }}
+              >
+                Send
+              </Checkbox>
               <Link to='/'>
                 <Button>Cancel</Button>
               </Link>
