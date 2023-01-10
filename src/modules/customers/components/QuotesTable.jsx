@@ -1,4 +1,4 @@
-import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
+import { EyeTwoTone, EditTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
 import { getColumnProps, showTotal } from '../../../helpers'
 import { getStatusColor } from '../helpers'
@@ -7,24 +7,23 @@ export const QuotesTable = ({ dataSource }) => {
   const columns = [
     {
       title: 'Quote ID',
-      dataIndex: 'quote_id',
-      key: 'quote_id',
+      dataIndex: 'quote_name',
+      key: 'quote_name',
     },
     {
       ...getColumnProps({
         title: 'Program',
-        dataIndex: '',
+        dataIndex: 'name',
       }),
     },
     {
       ...getColumnProps({
         title: 'Product/Service',
-        dataIndex: '',
+        dataIndex: 'accounting_class_name',
       }),
     },
     {
-      //TODO: Formatear fecha
-      ...getColumnProps({ title: 'Created Date', dataIndex: 'create_at' }),
+      ...getColumnProps({ title: 'Created Date', dataIndex: 'created_on' }),
     },
     {
       ...getColumnProps({ title: 'Price', dataIndex: '' }),

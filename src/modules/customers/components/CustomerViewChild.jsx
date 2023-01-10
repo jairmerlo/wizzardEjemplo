@@ -1,6 +1,6 @@
-import { Avatar, Card, Segmented, Spin } from 'antd'
+import { Avatar, Button, Card, Segmented, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useGetCustomerQuery } from '../../../app/api/billing'
 import { ErrorHandler } from '../../../components'
 import { stringAvatar, stringFallback } from '../../../helpers'
@@ -69,14 +69,19 @@ export const CustomerViewChild = () => {
               <Card.Grid style={gridStyle}>{`Since ${created_on}`}</Card.Grid>
             </Card>
           </div>
-          <Segmented
-            options={['Membership', 'Billing', 'Quotes']}
-            style={{
-              alignSelf: 'flex-start',
-            }}
-            value={table}
-            onChange={setTable}
-          />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Segmented
+              options={['Membership', 'Billing', 'Quotes']}
+              style={{
+                alignSelf: 'flex-start',
+              }}
+              value={table}
+              onChange={setTable}
+            />
+            <Link to={`/new-quote?customerId=${customerId}`}>
+              <Button type='primary'>Add Quote</Button>
+            </Link>
+          </div>
           {table === 'Membership' && (
             <MembershipTable memberships={memberships} />
           )}

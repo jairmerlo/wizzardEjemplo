@@ -1,15 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const {
-  VITE_APP_API_BILLING_HOST,
-  VITE_APP_API_PACKAGE_BUILDER,
-  VITE_APP_API_BACKOFFICE,
-} = import.meta.env
+import { API } from '../../api'
 
 export const billing = createApi({
   reducerPath: 'billing',
   baseQuery: fetchBaseQuery({
-    baseUrl: VITE_APP_API_BILLING_HOST,
+    baseUrl: API._BILLING_HOST,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -100,7 +95,7 @@ export const billing = createApi({
                 ),
             ),
             //* el campo de brokerage no se envia al endpoint de crear quota, es solo filtro
-            fetch(`${VITE_APP_API_PACKAGE_BUILDER}/company-list`)
+            fetch(`${API._PACKAGE_BUILDER}/company-list`)
               .then(res => res.json())
               .then(data =>
                 data.map(({ name, slug }) => ({
@@ -117,7 +112,7 @@ export const billing = createApi({
                 value: slug,
               })),
             ),
-            fetch(`${VITE_APP_API_BACKOFFICE}/getBoards`, {
+            fetch(`${API._BACKOFFICE}/getBoards`, {
               method: 'POST',
             })
               .then(res => res.json())

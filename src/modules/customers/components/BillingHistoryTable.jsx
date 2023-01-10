@@ -12,8 +12,8 @@ export const BillingHistoryTable = ({ dataSource }) => {
     },
     {
       title: 'URL',
-      dataIndex: 'url',
-      key: 'url',
+      dataIndex: 'wordpress_install_url',
+      key: 'wordpress_install_url',
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
           {url}

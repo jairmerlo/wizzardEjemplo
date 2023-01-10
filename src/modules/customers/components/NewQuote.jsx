@@ -371,7 +371,6 @@ export const NewQuote = () => {
                   description: data[1],
                   placement: 'bottomRight',
                 })
-                //TODO: Redirección a /
                 navigate('/')
               })
               .catch(console.log)
@@ -385,7 +384,6 @@ export const NewQuote = () => {
                   description: data[1],
                   placement: 'bottomRight',
                 })
-                //TODO: Redirección a /
                 navigate('/')
               })
               .catch(console.log)
@@ -475,7 +473,6 @@ export const NewQuote = () => {
               </Form.Item>
               <Form.Item
                 label='Board'
-                //TODO: es requerido cuando posee hasIdx
                 required={hasIdx}
                 validateStatus={errors.board && touched.board && 'error'}
                 help={<ErrorMessage name='board' />}

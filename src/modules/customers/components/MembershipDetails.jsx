@@ -1,6 +1,7 @@
 import { Descriptions, Segmented } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { AuthorizationForms } from '.'
 
 export const MembershipDetails = () => {
   const { membershipId } = useParams()
@@ -43,7 +44,9 @@ export const MembershipDetails = () => {
         />
         {section === 'Billing Information' && <div>Billing Information</div>}
         {section === 'Billing History' && <div>Billing History</div>}
-        {section === 'Authorization Forms' && <div>Authorization Forms</div>}
+        {section === 'Authorization Forms' && (
+          <AuthorizationForms dataSource={[]} />
+        )}
       </div>
     </div>
   )

@@ -43,11 +43,9 @@ export const CustomerView = () => {
           {membershipId && '/ Membership Details'}
         </Typography.Title>
         <div style={{ flexGrow: 1 }} />
-        <Link to='/'>
-          <Button size='small' danger>
-            Back
-          </Button>
-        </Link>
+        <Button size='small' danger onClick={() => navigate(-1)}>
+          Back
+        </Button>
       </div>
       <Divider />
       <Outlet />
