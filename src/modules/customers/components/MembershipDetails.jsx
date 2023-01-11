@@ -2,9 +2,38 @@ import { Descriptions, Segmented } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
+import {
+  useGetAuthorizationFormsQuery,
+  useGetCustomerQuery,
+} from '../../../app/api/billing'
+import { getConfig } from '../../../helpers'
 
 export const MembershipDetails = () => {
-  const { membershipId } = useParams()
+  const { membershipId, customerId } = useParams()
+  const { data: customer = {}, isLoading } = useGetCustomerQuery(customerId)
+  const { memberships = [] } = customer
+  const membership = memberships.find(item => item.id === membershipId)
+  const { data: authorizationFormsACH = [] } = useGetAuthorizationFormsQuery(
+    {
+      registration_key: membership?.registration_key,
+      authorization_form_type: 'ACH',
+      order: 'id desc',
+    },
+    {
+      skip: !membership,
+    },
+  )
+  const { data: authorizationFormsCard = [] } = useGetAuthorizationFormsQuery(
+    {
+      registration_key: membership?.registration_key,
+      authorization_form_type: 'Card',
+      order: 'id desc',
+    },
+    {
+      skip: !membership,
+    },
+  )
+  console.log({ membership })
   const [section, setSection] = useState('Billing Information')
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -45,7 +74,12 @@ export const MembershipDetails = () => {
         {section === 'Billing Information' && <div>Billing Information</div>}
         {section === 'Billing History' && <div>Billing History</div>}
         {section === 'Authorization Forms' && (
-          <AuthorizationForms dataSource={[]} />
+          <AuthorizationForms
+            cardData={authorizationFormsCard}
+            achData={authorizationFormsACH}
+            userId={getConfig().userId}
+            registrationKey={membership?.registration_key}
+          />
         )}
       </div>
     </div>

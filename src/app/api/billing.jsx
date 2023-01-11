@@ -223,6 +223,51 @@ export const billing = createApi({
         },
       }),
     }),
+    getAuthorizationForms: builder.query({
+      query: ({ id, registration_key, authorization_form_type, order }) => ({
+        url: '/list-authorization-form',
+        method: 'POST',
+        body: {
+          authorization_form_type,
+          order,
+          registration_key,
+          id,
+        },
+      }),
+    }),
+    sendAuthorizationForm: builder.mutation({
+      query: ({ authorization_form_type, registration_key, user_id }) => ({
+        url: '/authorization-form-send',
+        method: 'POST',
+        body: {
+          authorization_form_type,
+          registration_key,
+          user_id,
+        },
+      }),
+    }),
+    resendAuthorizationForm: builder.mutation({
+      query: ({ authorization_form_type, registration_key, user_id }) => ({
+        url: '/authorization-form-re-send',
+        method: 'POST',
+        body: {
+          authorization_form_type,
+          registration_key,
+          user_id,
+        },
+      }),
+    }),
+    replaceAuthorizationForm: builder.mutation({
+      query: ({ authorization_form_type, registration_key, user_id }) => ({
+        url: '/authorization-form-replace',
+        method: 'POST',
+        body: {
+          authorization_form_type,
+          registration_key,
+          user_id,
+        },
+      }),
+    }),
   }),
 })
 
@@ -237,4 +282,8 @@ export const {
   useGetNewQuotesOptionsQuery,
   useCreateProspectMutation,
   useCreateQuoteMutation,
+  useGetAuthorizationFormsQuery,
+  useSendAuthorizationFormMutation,
+  useResendAuthorizationFormMutation,
+  useReplaceAuthorizationFormMutation,
 } = billing
