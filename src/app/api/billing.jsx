@@ -117,10 +117,12 @@ export const billing = createApi({
             })
               .then(res => res.json())
               .then(data =>
-                data.map(({ name, id }) => ({
-                  label: name,
-                  value: id,
-                })),
+                [{ label: 'None', value: '' }].slice().concat(
+                  data.map(({ name, id }) => ({
+                    label: name,
+                    value: id,
+                  })),
+                ),
               ),
           ])
           return {

@@ -22,12 +22,14 @@ export const AuthorizationForms = ({
   const rows = [
     achData.length === 0
       ? {
+          id: '-1',
           authorization_form_type: 'ACH',
           status: '',
         }
       : achData[0],
     cardData.length === 0
       ? {
+          id: '-2',
           authorization_form_type: 'Card',
           status: '',
         }
