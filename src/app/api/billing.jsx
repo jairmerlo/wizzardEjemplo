@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API } from '../../api'
+import { sorterAlphabetically } from '../../helpers'
 
 export const billing = createApi({
   reducerPath: 'billing',
@@ -25,12 +26,13 @@ export const billing = createApi({
       }),
     }),
     getAllCustomers: builder.query({
-      query: user_id => ({
+      query: ({ filter, user_id }) => ({
         url: '/list-customers',
         method: 'POST',
         body: {
           user_id,
           status: 'Active',
+          filter,
         },
       }),
     }),
@@ -56,10 +58,13 @@ export const billing = createApi({
             //* el campo prospecto, se muestra name, se envia el id, como prospect_id
             fetchWithBQ({ url: '/list-prospects', method: 'POST' }).then(
               ({ data }) =>
-                data.map(({ name, id }) => ({
-                  label: name,
-                  value: id,
-                })),
+                sorterAlphabetically(
+                  data.map(({ name, id, email }) => ({
+                    label: `${name} (${email})`,
+                    value: id,
+                  })),
+                  'label',
+                ),
             ),
             //* el campo de Program, se muestra el name y se envia el id, como plan_id
             fetchWithBQ({
@@ -70,38 +75,51 @@ export const billing = createApi({
                 has_trial: args?.has_trial,
               }),
             }).then(({ data }) =>
-              data.map(({ name, id, has_idx }) => ({
-                label: name,
-                value: id,
-                has_idx,
-              })),
+              sorterAlphabetically(
+                data.map(({ name, id, has_idx }) => ({
+                  label: name,
+                  value: id,
+                  has_idx,
+                })),
+                'label',
+              ),
             ),
             //* el campo payment_method se muestra el name, se envia un array de id, como payment_method
             fetchWithBQ({ url: '/list-payment_method', method: 'POST' }).then(
               ({ data }) =>
-                data.map(({ name, slug }) => ({
-                  label: name,
-                  value: slug,
-                })),
+                sorterAlphabetically(
+                  data.map(({ name, slug }) => ({
+                    label: name,
+                    value: slug,
+                  })),
+                  'label',
+                ),
             ),
             //* el campo coupon, se muestra el name, se envia el id, como coupon_id
             fetchWithBQ({ url: '/list-coupons', method: 'POST' }).then(
               ({ data }) =>
                 [{ label: 'None', value: '' }].slice().concat(
-                  data.map(({ name }) => ({
-                    label: name,
-                    value: name,
-                  })),
+                  sorterAlphabetically(
+                    data.map(({ name }) => ({
+                      label: name,
+                      value: name,
+                    })),
+
+                    'label',
+                  ),
                 ),
             ),
             //* el campo de brokerage no se envia al endpoint de crear quota, es solo filtro
             fetch(`${API._PACKAGE_BUILDER}/company-list`)
               .then(res => res.json())
               .then(data =>
-                data.map(({ name, slug }) => ({
-                  label: name,
-                  value: slug,
-                })),
+                sorterAlphabetically(
+                  data.map(({ name, slug }) => ({
+                    label: name,
+                    value: slug,
+                  })),
+                  'label',
+                ),
               ),
             fetchWithBQ({
               url: '/list-state',
@@ -118,10 +136,14 @@ export const billing = createApi({
               .then(res => res.json())
               .then(data =>
                 [{ label: 'None', value: '' }].slice().concat(
-                  data.map(({ name, id }) => ({
-                    label: name,
-                    value: id,
-                  })),
+                  sorterAlphabetically(
+                    data.map(({ name, id }) => ({
+                      label: name,
+                      value: id,
+                    })),
+
+                    'label',
+                  ),
                 ),
               ),
           ])

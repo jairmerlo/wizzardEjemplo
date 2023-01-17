@@ -19,7 +19,12 @@ import {
   useGetNewQuotesOptionsQuery,
 } from '../../../app/api/billing'
 import { ErrorHandler } from '../../../components'
-import { capitalize, getConfig, toTitleCase } from '../../../helpers'
+import {
+  capitalize,
+  getConfig,
+  getSelectSearchProps,
+  toTitleCase,
+} from '../../../helpers'
 
 function formatUSNumber(entry = '') {
   const match = entry
@@ -38,6 +43,7 @@ export const NewQuote = () => {
   const customerId = searchParams.get('customerId')
   const hasProspect = !customerId
   const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
+  const [currentProspect, setCurrentProspect] = useState('')
 
   const openNotification = () => {
     notification.error({
@@ -141,12 +147,13 @@ export const NewQuote = () => {
               state: '',
             }}
             enableReinitialize
-            onSubmit={values => {
+            onSubmit={(values, helpers) => {
               console.log({ values })
               createProspect(values)
                 .then(({ data }) => {
                   if (data.status === 200) {
                     console.log('refetch options')
+                    setCurrentProspect(data.data)
                     refetch()
                     handleCloseProspect()
                   }
@@ -339,7 +346,7 @@ export const NewQuote = () => {
       <Formik
         initialValues={{
           quoteId,
-          prospect: '',
+          prospect: currentProspect,
           brokerage: '',
           program: '',
           board: '',
@@ -439,7 +446,11 @@ export const NewQuote = () => {
                       gap: 8,
                     }}
                   >
-                    <Select name='prospect' options={prospects} />
+                    <Select
+                      name='prospect'
+                      options={prospects}
+                      {...getSelectSearchProps()}
+                    />
                     <Button onClick={handleAddProspect}>Add</Button>
                   </div>
                 </Form.Item>
@@ -461,6 +472,7 @@ export const NewQuote = () => {
                     setFieldValue('program', '')
                     console.log('brokerage', value)
                   }}
+                  {...getSelectSearchProps()}
                 />
               </Form.Item>
               <Form.Item
@@ -469,7 +481,11 @@ export const NewQuote = () => {
                 validateStatus={errors.program && touched.program && 'error'}
                 help={<ErrorMessage name='program' />}
               >
-                <Select name='program' options={programs} />
+                <Select
+                  name='program'
+                  options={programs}
+                  {...getSelectSearchProps()}
+                />
               </Form.Item>
               <Form.Item
                 label='Board'
@@ -477,7 +493,11 @@ export const NewQuote = () => {
                 validateStatus={errors.board && touched.board && 'error'}
                 help={<ErrorMessage name='board' />}
               >
-                <Select name='board' options={boards} />
+                <Select
+                  name='board'
+                  options={boards}
+                  {...getSelectSearchProps()}
+                />
               </Form.Item>
               <Form.Item
                 label='Payment Method'
@@ -500,7 +520,11 @@ export const NewQuote = () => {
                 validateStatus={errors.coupon && touched.coupon && 'error'}
                 help={<ErrorMessage name='coupon' />}
               >
-                <Select name='coupon' options={coupons} />
+                <Select
+                  name='coupon'
+                  options={coupons}
+                  {...getSelectSearchProps()}
+                />
               </Form.Item>
             </Form>
             <div
@@ -518,7 +542,7 @@ export const NewQuote = () => {
                   marginRight: 'auto',
                 }}
               >
-                Send
+                Send quote
               </Checkbox>
               <Link to='/'>
                 <Button>Cancel</Button>

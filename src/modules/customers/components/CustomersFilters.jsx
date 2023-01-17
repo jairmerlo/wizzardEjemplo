@@ -1,9 +1,11 @@
 import { Tabs } from 'antd'
+import { useState } from 'react'
 import { CustomersTableV1 } from '.'
 
 export const CustomersFilters = () => {
+  const [tableKey, setTableKey] = useState('1')
   const onChange = key => {
-    console.log(key)
+    setTableKey(key)
   }
 
   return (
@@ -16,49 +18,49 @@ export const CustomersFilters = () => {
         {
           label: `All`,
           key: '1',
-          children: <CustomersTableV1 />,
+          children: tableKey === '1' && <CustomersTableV1 />,
           forceRender: true,
         },
         {
           label: `Access`,
           key: '2',
-          children: `Content of Tab Pane 2`,
+          children: tableKey === '2' && <CustomersTableV1 filter='access' />,
           forceRender: true,
         },
         {
           label: `IDX`,
           key: '3',
-          children: `Content of Tab Pane 3`,
+          children: tableKey === '3' && <CustomersTableV1 filter='idx' />,
           forceRender: true,
         },
         {
           label: `Premium`,
           key: '4',
-          children: `Content of Tab Pane 4`,
+          children: tableKey === '4' && <CustomersTableV1 filter='premium' />,
           forceRender: true,
         },
         {
           label: `Generate`,
           key: '5',
-          children: `Content of Tab Pane 5`,
+          children: tableKey === '5' && <CustomersTableV1 filter='generate' />,
           forceRender: true,
         },
         {
           label: `Dominate`,
           key: '6',
-          children: `Content of Tab Pane 6`,
+          children: tableKey === '6' && <CustomersTableV1 filter='dominate' />,
           forceRender: true,
         },
         {
           label: `Pending`,
           key: '7',
-          children: `Content of Tab Pane 7`,
+          children: tableKey === '7' && <CustomersTableV1 filter='pending' />,
           forceRender: true,
         },
         {
           label: `Cancelled`,
           key: '8',
-          children: `Content of Tab Pane 8`,
+          children: tableKey === '8' && <CustomersTableV1 filter='cancelled' />,
           forceRender: true,
         },
       ]}

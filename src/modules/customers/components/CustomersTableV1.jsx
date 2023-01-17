@@ -43,10 +43,12 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const CustomersTableV1 = () => {
+export const CustomersTableV1 = ({ filter }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
-  const { data, isLoading } = useGetAllCustomersQuery()
+  const { data, isLoading } = useGetAllCustomersQuery({
+    filter,
+  })
   const totalData = data?.length
 
   const [tableKey, setTableKey] = useState(0)
