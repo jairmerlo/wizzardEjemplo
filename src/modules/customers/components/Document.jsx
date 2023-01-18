@@ -22,7 +22,7 @@ export const Document = () => {
       },
     )
   const document = authorizationForms.find(
-    item => item.status === 'Complete',
+    item => item.status === 'Completed',
   )?.document
   if (isLoadingAuthForms || isLoadingCustomer) return 'Loading...'
   if (!document) return '404 Not Found'

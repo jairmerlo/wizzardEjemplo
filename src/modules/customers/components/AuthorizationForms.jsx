@@ -169,7 +169,7 @@ export const AuthorizationForms = ({
       render: (text, { authorization_form_type, status }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          {(status === 'Waiting for client' || status === 'Complete') && (
+          {(status === 'Waiting for client' || status === 'Completed') && (
             <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
               <Link
                 to={`/${customerId}/${authorization_form_type}/${membershipId}`}
@@ -179,7 +179,7 @@ export const AuthorizationForms = ({
               </Link>
             </Tooltip>
           )}
-          {status === 'Waiting for client' || status === 'Complete' || (
+          {status === 'Waiting for client' || status === 'Completed' || (
             <Tooltip title='Send' overlayStyle={{ zIndex: 10000 }}>
               <a>
                 <SendOutlined
@@ -211,7 +211,7 @@ export const AuthorizationForms = ({
               </a>
             </Tooltip>
           )}
-          {status === 'Complete' && (
+          {status === 'Completed' && (
             <Tooltip title='Replace' overlayStyle={{ zIndex: 10000 }}>
               <a>
                 <CopyOutlined
