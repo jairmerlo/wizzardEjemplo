@@ -9,6 +9,7 @@ import App from '../../../App'
 import {
   CustomerView,
   CustomerViewChild,
+  Document,
   MembershipDetails,
   NewQuote,
 } from '../components'
@@ -27,6 +28,10 @@ const customersRouter = createHashRouter(
           element={<MembershipDetails />}
         />
       </Route>
+      <Route
+        path=':customerId/:formType/:membershipId'
+        element={<Document />}
+      />
       <Route path='new-quote' element={<NewQuote />} />
       <Route path='*' element={<Navigate to='/' replace={true} />} />
     </Route>,

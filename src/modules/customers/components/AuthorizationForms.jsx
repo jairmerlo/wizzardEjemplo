@@ -6,6 +6,7 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import { Modal, notification, Space, Table, Tooltip } from 'antd'
+import { Link, useParams } from 'react-router-dom'
 import {
   useReplaceAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
@@ -19,6 +20,7 @@ export const AuthorizationForms = ({
   userId,
   registrationKey,
 }) => {
+  const { customerId, membershipId } = useParams()
   const rows = [
     achData.length === 0
       ? {
@@ -26,14 +28,14 @@ export const AuthorizationForms = ({
           authorization_form_type: 'ACH',
           status: '',
         }
-      : achData[0],
+      : achData.find(item => item.is_pricipal === '1') || achData[0],
     cardData.length === 0
       ? {
           id: '-2',
           authorization_form_type: 'Card',
           status: '',
         }
-      : cardData[0],
+      : cardData.find(item => item.is_pricipal === '1') || cardData[0],
   ]
 
   const { confirm } = Modal
@@ -169,9 +171,12 @@ export const AuthorizationForms = ({
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {(status === 'Waiting for client' || status === 'Complete') && (
             <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-              <a>
+              <Link
+                to={`/${customerId}/${authorization_form_type}/${membershipId}`}
+                target='_blank'
+              >
                 <EyeTwoTone style={{ fontSize: '18px' }} />
-              </a>
+              </Link>
             </Tooltip>
           )}
           {status === 'Waiting for client' || status === 'Complete' || (
