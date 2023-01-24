@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Descriptions,
   Divider,
   Modal,
   notification,
@@ -558,6 +559,12 @@ export const NewQuote = () => {
           </Fragment>
         )}
       </Formik>
+      <Descriptions bordered style={{ marginTop: '32px' }}>
+        <Descriptions.Item label='Monthly Program'>$1000</Descriptions.Item>
+        <Descriptions.Item label='Setup Free Program'>
+          $1000.00
+        </Descriptions.Item>
+      </Descriptions>
     </div>
   )
 }

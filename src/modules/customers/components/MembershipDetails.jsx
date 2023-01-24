@@ -13,26 +13,28 @@ export const MembershipDetails = () => {
   const { data: customer = {}, isLoading } = useGetCustomerQuery(customerId)
   const { memberships = [] } = customer
   const membership = memberships.find(item => item.id === membershipId)
-  const { data: authorizationFormsACH = [] } = useGetAuthorizationFormsQuery(
-    {
-      registration_key: membership?.registration_key,
-      authorization_form_type: 'ACH',
-      order: 'id desc',
-    },
-    {
-      skip: !membership,
-    },
-  )
-  const { data: authorizationFormsCard = [] } = useGetAuthorizationFormsQuery(
-    {
-      registration_key: membership?.registration_key,
-      authorization_form_type: 'Card',
-      order: 'id desc',
-    },
-    {
-      skip: !membership,
-    },
-  )
+  const { data: authorizationFormsACH = [], refetch: refetchACH } =
+    useGetAuthorizationFormsQuery(
+      {
+        registration_key: membership?.registration_key,
+        authorization_form_type: 'ACH',
+        order: 'id desc',
+      },
+      {
+        skip: !membership,
+      },
+    )
+  const { data: authorizationFormsCard = [], refetch: refetchCard } =
+    useGetAuthorizationFormsQuery(
+      {
+        registration_key: membership?.registration_key,
+        authorization_form_type: 'Card',
+        order: 'id desc',
+      },
+      {
+        skip: !membership,
+      },
+    )
   console.log({ membership })
   const [section, setSection] = useState('Billing Information')
   const fullName = customer.name + ' ' + customer.last_name
@@ -146,6 +148,10 @@ export const MembershipDetails = () => {
             achData={authorizationFormsACH}
             userId={getConfig().userId}
             registrationKey={membership?.registration_key}
+            onSuccess={() => {
+              refetchACH()
+              refetchCard()
+            }}
           />
         )}
       </div>

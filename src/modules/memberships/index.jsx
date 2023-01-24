@@ -24,7 +24,7 @@ const Memberships = () => {
         {
           label: `Access`,
           key: '2',
-          children: tableKey === '2' && <div children={1} filter='access' />,
+          children: tableKey === '2' && <MembershipsTable filter='access' />,
           forceRender: true,
         },
         {

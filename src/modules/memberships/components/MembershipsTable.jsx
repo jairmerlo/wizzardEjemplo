@@ -17,10 +17,10 @@ import {
   UserAddOutlined,
 } from '@ant-design/icons'
 import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
-import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
+import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -46,10 +46,11 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 export const MembershipsTable = ({ filter }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
-  const { data, isLoading } = useGetAllCustomersQuery({
+  const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
   })
-  const totalData = data?.length
+  const { data: memberships, total } = data
+  console.log({ memberships })
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -76,7 +77,7 @@ export const MembershipsTable = ({ filter }) => {
     setTableKey(tableKey => tableKey + 1)
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
-    setTotalCurrentItems(totalData)
+    setTotalCurrentItems(total)
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
@@ -226,41 +227,24 @@ export const MembershipsTable = ({ filter }) => {
   const columns = [
     {
       title: 'Membership ID',
-      dataIndex: 'uuid',
-      key: 'uuid',
-      ...getColumnSearchProps('uuid'),
-      ...getColumnSortProps('uuid'),
+      dataIndex: 'memberships_id',
+      key: 'memberships_id',
+      ...getColumnSearchProps('memberships_id'),
+      ...getColumnSortProps('memberships_id'),
     },
     {
       title: 'Client Name',
-      dataIndex: 'clientName',
-      key: 'clientName',
-      ...getColumnSearchProps('clientName'),
-      render: (text, record) =>
-        renderTextHighlighter({
-          text: `${record?.name} ${record.last_name}`,
-          isHighlighted: searchedColumn['clientName'],
-          highlightedText: searchText['clientName'],
-        }),
-      onFilter: (value, record) =>
-        `${record?.name} ${record.last_name}`
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return `${a.name} ${a.last_name}`.localeCompare(
-            `${b.name} ${b.last_name}`,
-          )
-        },
-      }),
+      dataIndex: 'client_name',
+      key: 'client_name',
+      ...getColumnSearchProps('client_name'),
+      ...getColumnSortProps('client_name'),
     },
     {
       title: 'Email',
-      dataIndex: 'email_contact',
-      key: 'email_contact',
-      ...getColumnSearchProps('email_contact'),
-      ...getColumnSortProps('email_contact'),
+      dataIndex: 'email',
+      key: 'email',
+      ...getColumnSearchProps('email'),
+      ...getColumnSortProps('email'),
     },
     {
       title: 'URL',
@@ -279,15 +263,15 @@ export const MembershipsTable = ({ filter }) => {
     },
     {
       title: 'Product/Service',
-      key: 'accounting_class_name',
-      dataIndex: 'accounting_class_name',
-      ...getColumnSearchProps('accounting_class_name'),
-      ...getColumnSortProps('accounting_class_name'),
+      key: 'class_accounting_name',
+      dataIndex: 'class_accounting_name',
+      ...getColumnSearchProps('class_accounting_name'),
+      ...getColumnSortProps('class_accounting_name'),
     },
     {
       title: 'Created',
-      dataIndex: 'created_on',
-      key: 'created_on',
+      dataIndex: 'created_at',
+      key: 'created_at',
       // ...getDateColumnSearchProps('created_on'),
       // render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
       // ...getCustomColumnSortProps({
@@ -303,26 +287,6 @@ export const MembershipsTable = ({ filter }) => {
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
-      render: monthlyAmount =>
-        monthlyAmount ? (
-          renderTextHighlighter({
-            text: USD(monthlyAmount),
-            isHighlighted: searchedColumn['price'],
-            highlightedText: searchText['price'],
-          })
-        ) : (
-          <NoDataCell />
-        ),
-      onFilter: (value, record) =>
-        USD(record['price'])
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return parseFloat(a.price) - parseFloat(b.price)
-        },
-      }),
     },
     {
       title: 'Periods',
@@ -333,29 +297,29 @@ export const MembershipsTable = ({ filter }) => {
     },
     {
       title: 'Monthly Amount',
-      dataIndex: 'monthly_amount',
-      key: 'monthly_amount',
-      ...getColumnSearchProps('monthly_amount'),
-      render: monthlyAmount =>
-        monthlyAmount ? (
-          renderTextHighlighter({
-            text: USD(monthlyAmount),
-            isHighlighted: searchedColumn['monthly_amount'],
-            highlightedText: searchText['monthly_amount'],
-          })
-        ) : (
-          <NoDataCell />
-        ),
-      onFilter: (value, record) =>
-        USD(record['monthly_amount'])
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
-        },
-      }),
+      dataIndex: 'amount',
+      key: 'amount',
+      ...getColumnSearchProps('amount'),
+      // render: monthlyAmount =>
+      //   monthlyAmount ? (
+      //     renderTextHighlighter({
+      //       text: USD(monthlyAmount),
+      //       isHighlighted: searchedColumn['monthly_amount'],
+      //       highlightedText: searchText['monthly_amount'],
+      //     })
+      //   ) : (
+      //     <NoDataCell />
+      //   ),
+      // onFilter: (value, record) =>
+      //   USD(record['monthly_amount'])
+      //     .toString()
+      //     .toLowerCase()
+      //     .includes(value.toLowerCase()),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
+      //   },
+      // }),
     },
     {
       title: 'Actions',
@@ -406,7 +370,7 @@ export const MembershipsTable = ({ filter }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Customer List ({totalData})
+          Customer List ({total})
         </Typography.Title>
         <Link to='/new-quote'>
           <Button
@@ -434,12 +398,12 @@ export const MembershipsTable = ({ filter }) => {
         key={tableKey}
         rowKey='id'
         columns={columns}
-        dataSource={data}
+        dataSource={memberships}
         bordered
         loading={isLoading}
         onChange={handleChange}
         pagination={{
-          total: totalCurrentItems || totalData,
+          total: totalCurrentItems || total,
           pageSize,
           showQuickJumper: true,
           showSizeChanger: true,

@@ -281,7 +281,7 @@ export const CustomersTableV1 = ({ filter }) => {
       }),
     },
     {
-      title: 'Monthly Amount',
+      title: 'Price',
       dataIndex: 'monthly_amount',
       key: 'monthly_amount',
       ...getColumnSearchProps('monthly_amount'),

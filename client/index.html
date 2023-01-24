@@ -11,11 +11,8 @@
 <body>
     <script>
         console.log("fetching")
-        fetch(`https://backoffice.idxboost.dev/tgapi/api/getBoards`, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            }
+        fetch(`https://backoffice.idxboost.dev/tgapi/api/listActiveMemberships`, {
+            method: 'POST'
         })
             .then(res => res.json())
             .then(data =>

@@ -1,6 +1,6 @@
 import { EyeTwoTone, EditTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
-import { getColumnProps, showTotal } from '../../../helpers'
+import { getColumnProps, showTotal, USD } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
 export const QuotesTable = ({ dataSource }) => {
@@ -26,7 +26,8 @@ export const QuotesTable = ({ dataSource }) => {
       ...getColumnProps({ title: 'Created Date', dataIndex: 'created_on' }),
     },
     {
-      ...getColumnProps({ title: 'Price', dataIndex: '' }),
+      ...getColumnProps({ title: 'Price', dataIndex: 'total_amount' }),
+      render: (text, r) => '$' + parseFloat(r.total_amount + r.total_setup),
     },
     {
       ...getColumnProps({
@@ -52,7 +53,7 @@ export const QuotesTable = ({ dataSource }) => {
       render: status => <Tag color={getStatusColor(status)}>{status}</Tag>,
     },
     {
-      ...getColumnProps({ title: 'Sales Agent', dataIndex: '' }),
+      ...getColumnProps({ title: 'Sales Agent', dataIndex: 'user_name' }),
     },
     {
       title: 'Actions',

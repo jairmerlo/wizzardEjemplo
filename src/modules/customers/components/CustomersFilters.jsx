@@ -63,6 +63,20 @@ export const CustomersFilters = () => {
           children: tableKey === '8' && <CustomersTableV1 filter='cancelled' />,
           forceRender: true,
         },
+        {
+          label: `Omnipresence`,
+          key: '9',
+          children: tableKey === '9' && (
+            <CustomersTableV1 filter='omnipresence' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Custom`,
+          key: '10',
+          children: tableKey === '10' && <CustomersTableV1 filter='custom' />,
+          forceRender: true,
+        },
       ]}
     />
   )

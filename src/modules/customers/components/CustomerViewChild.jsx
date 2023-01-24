@@ -23,6 +23,7 @@ export const CustomerViewChild = () => {
     memberships,
     quotes = [],
     invoices = [],
+    uuid,
   } = data
   const fullName = name + ' ' + last_name
   const isError = Array.isArray(data) || Object.keys(data).length === 0
@@ -55,7 +56,37 @@ export const CustomerViewChild = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'flex', width: '100%' }}>
-            <Avatar {...stringAvatar(fullName)} size={200} shape='square' />
+            <div
+              style={{
+                ...stringAvatar(fullName).style,
+                height: '200px',
+                width: '200px',
+                color: '#fff',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              children={
+                <>
+                  <p
+                    style={{
+                      margin: 0,
+                    }}
+                  >
+                    {stringAvatar(fullName).children}
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: '24px',
+                    }}
+                  >
+                    {uuid}
+                  </p>
+                </>
+              }
+            />
             <Card style={{ borderRadius: 0, display: 'flex' }}>
               <Card.Grid style={gridStyle}>
                 {stringFallback(fullName)}

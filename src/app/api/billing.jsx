@@ -74,16 +74,17 @@ export const billing = createApi({
                 company: args?.company,
                 has_trial: args?.has_trial,
               }),
-            }).then(({ data }) =>
-              sorterAlphabetically(
-                data.map(({ name, id, has_idx }) => ({
-                  label: name,
+            }).then(({ data }) => {
+              console.log({ data })
+              return sorterAlphabetically(
+                data.map(({ name, id, has_idx, code }) => ({
+                  label: `${code} ${name}`,
                   value: id,
                   has_idx,
                 })),
                 'label',
-              ),
-            ),
+              )
+            }),
             //* el campo payment_method se muestra el name, se envia un array de id, como payment_method
             fetchWithBQ({ url: '/list-payment_method', method: 'POST' }).then(
               ({ data }) =>

@@ -19,6 +19,7 @@ export const AuthorizationForms = ({
   cardData = [],
   userId,
   registrationKey,
+  onSuccess = f => f,
 }) => {
   const { customerId, membershipId } = useParams()
   const rows = [
@@ -27,6 +28,7 @@ export const AuthorizationForms = ({
           id: '-1',
           authorization_form_type: 'ACH',
           status: '',
+          document: null,
         }
       : achData.find(item => item.is_pricipal === '1') || achData[0],
     cardData.length === 0
@@ -34,6 +36,7 @@ export const AuthorizationForms = ({
           id: '-2',
           authorization_form_type: 'Card',
           status: '',
+          document: null,
         }
       : cardData.find(item => item.is_pricipal === '1') || cardData[0],
   ]
@@ -60,6 +63,7 @@ export const AuthorizationForms = ({
             registration_key,
             user_id,
           }).unwrap()
+          onSuccess()
           console.log({ res })
           notification.success({
             message: `The ${authorization_form_type} form has been sent succesfully.`,
@@ -67,8 +71,9 @@ export const AuthorizationForms = ({
             // description: '',
           })
         } catch (error) {
+          console.log({ error })
           notification.error({
-            message: error.data.message,
+            message: error.data?.message || 'Error',
             placement: 'bottomRight',
             // description: '',
           })
@@ -95,6 +100,7 @@ export const AuthorizationForms = ({
             registration_key,
             user_id,
           }).unwrap()
+          onSuccess()
           console.log({ res })
           notification.success({
             message: `The ${authorization_form_type} form has been re-sent succesfully.`,
@@ -102,8 +108,9 @@ export const AuthorizationForms = ({
             // description: '',
           })
         } catch (error) {
+          console.log({ error })
           notification.error({
-            message: error.data.message,
+            message: error.data?.message || 'Error',
             placement: 'bottomRight',
             // description: '',
           })
@@ -130,6 +137,7 @@ export const AuthorizationForms = ({
             registration_key,
             user_id,
           }).unwrap()
+          onSuccess()
           console.log({ res })
           notification.success({
             message: `The ${authorization_form_type} form has been replaced succesfully.`,
@@ -138,7 +146,7 @@ export const AuthorizationForms = ({
           })
         } catch (error) {
           notification.error({
-            message: error.data.message,
+            message: error.data?.message || 'Error',
             placement: 'bottomRight',
             // description: '',
           })
@@ -166,19 +174,20 @@ export const AuthorizationForms = ({
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { authorization_form_type, status }) => (
+      render: (text, { authorization_form_type, status, document }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          {(status === 'Waiting for client' || status === 'Completed') && (
-            <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-              <Link
-                to={`/${customerId}/${authorization_form_type}/${membershipId}`}
-                target='_blank'
-              >
-                <EyeTwoTone style={{ fontSize: '18px' }} />
-              </Link>
-            </Tooltip>
-          )}
+          {(status === 'Waiting for client' || status === 'Completed') &&
+            !!document && (
+              <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
+                <Link
+                  to={`/${customerId}/${authorization_form_type}/${membershipId}`}
+                  target='_blank'
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </Link>
+              </Tooltip>
+            )}
           {status === 'Waiting for client' || status === 'Completed' || (
             <Tooltip title='Send' overlayStyle={{ zIndex: 10000 }}>
               <a>

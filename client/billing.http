@@ -10,3 +10,6 @@ Content-Type: application/json
 
 ### GET BOARDS
 POST https://backoffice.idxboost.dev/tgapi/api/getBoards
+
+### GET MEMBERSHIPS
+POST https://backoffice.idxboost.dev/tgapi/api/listActiveMemberships
