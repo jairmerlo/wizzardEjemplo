@@ -77,11 +77,15 @@ export const billing = createApi({
             }).then(({ data }) => {
               console.log({ data })
               return sorterAlphabetically(
-                data.map(({ name, id, has_idx, code }) => ({
-                  label: `${code} ${name}`,
-                  value: id,
-                  has_idx,
-                })),
+                data.map(
+                  ({ name, id, has_idx, code, total_amount, total_setup }) => ({
+                    label: `${code} ${name}`,
+                    value: id,
+                    has_idx,
+                    total_amount,
+                    total_setup,
+                  }),
+                ),
                 'label',
               )
             }),

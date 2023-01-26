@@ -165,7 +165,7 @@ export const MembershipTable = ({ memberships }) => {
       ...getColumnSearchProps('created_at'),
     },
     {
-      ...getColumnProps({ title: 'Price', dataIndex: 'price' }),
+      ...getColumnProps({ title: '$ Price', dataIndex: 'price' }),
       ...getColumnSearchProps('price'),
     },
     {
@@ -173,7 +173,7 @@ export const MembershipTable = ({ memberships }) => {
       ...getColumnSearchProps('periods'),
     },
     {
-      title: 'Amount',
+      title: '$ Lifetime',
       dataIndex: 'amount',
       key: 'amount',
       ...getColumnSearchProps('amount'),

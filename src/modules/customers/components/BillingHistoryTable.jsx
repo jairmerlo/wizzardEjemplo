@@ -31,7 +31,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
       ...getColumnProps({ title: 'Date', dataIndex: 'created_at' }),
     },
     {
-      title: 'Amount',
+      title: '$ Lifetime',
       dataIndex: 'total',
       key: 'total',
       //   render: monthlyAmount =>

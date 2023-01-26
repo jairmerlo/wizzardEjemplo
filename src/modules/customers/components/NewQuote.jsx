@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  Descriptions,
   Divider,
   Modal,
   notification,
@@ -26,7 +25,7 @@ import {
   getSelectSearchProps,
   toTitleCase,
 } from '../../../helpers'
-
+import { NewQuoteDescription } from '.'
 function formatUSNumber(entry = '') {
   const match = entry
     .replace(/\D+/g, '')
@@ -45,7 +44,6 @@ export const NewQuote = () => {
   const hasProspect = !customerId
   const openModal = searchParams.get('add') === 'new-prospect' && hasProspect
   const [currentProspect, setCurrentProspect] = useState('')
-
   const openNotification = () => {
     notification.error({
       message: `Error`,
@@ -106,6 +104,7 @@ export const NewQuote = () => {
   console.log({
     programsHasIdx: programs.filter(item => item.has_idx === true),
   })
+  console.log({ programs })
   const handleAddProspect = () => {
     setSearchParams({
       add: 'new-prospect',
@@ -484,7 +483,7 @@ export const NewQuote = () => {
               >
                 <Select
                   name='program'
-                  options={programs}
+                  options={values.brokerage ? programs : []}
                   {...getSelectSearchProps()}
                 />
               </Form.Item>
@@ -528,6 +527,7 @@ export const NewQuote = () => {
                 />
               </Form.Item>
             </Form>
+            <NewQuoteDescription programs={programs} />
             <div
               style={{
                 display: 'flex',
@@ -559,12 +559,6 @@ export const NewQuote = () => {
           </Fragment>
         )}
       </Formik>
-      <Descriptions bordered style={{ marginTop: '32px' }}>
-        <Descriptions.Item label='Monthly Program'>$1000</Descriptions.Item>
-        <Descriptions.Item label='Setup Free Program'>
-          $1000.00
-        </Descriptions.Item>
-      </Descriptions>
     </div>
   )
 }

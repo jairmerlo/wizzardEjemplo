@@ -27,7 +27,8 @@ export const QuotesTable = ({ dataSource }) => {
     },
     {
       ...getColumnProps({ title: 'Price', dataIndex: 'total_amount' }),
-      render: (text, r) => '$' + parseFloat(r.total_amount + r.total_setup),
+      render: (text, r) =>
+        '$' + parseFloat(r.total_amount) + parseFloat(r.total_setup),
     },
     {
       ...getColumnProps({

@@ -201,7 +201,7 @@ export const MembershipsTable = ({ filter }) => {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
-    render: text =>
+    render: (text = '') =>
       renderTextHighlighter({
         text,
         isHighlighted: searchedColumn[dataIndex],
@@ -212,7 +212,7 @@ export const MembershipsTable = ({ filter }) => {
   const getColumnSortProps = dataIndex => {
     return {
       sorter: (a, b) => {
-        return a[dataIndex].localeCompare(b[dataIndex])
+        return (a[dataIndex] || '').localeCompare(b[dataIndex] || '')
       },
       ellipsis: true,
     }
@@ -260,6 +260,7 @@ export const MembershipsTable = ({ filter }) => {
           })}
         </a>
       ),
+      ...getColumnSortProps('wordpress_install_url'),
     },
     {
       title: 'Product/Service',
@@ -272,15 +273,15 @@ export const MembershipsTable = ({ filter }) => {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      // ...getDateColumnSearchProps('created_on'),
-      // render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return moment(moment(a.created_on, 'MM-DD-YYYY')).diff(
-      //       moment(b.created_on, 'MM-DD-YYYY'),
-      //     )
-      //   },
-      // }),
+      ...getDateColumnSearchProps('created_at'),
+      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
+            moment(b.created_at, 'MM-DD-YYYY'),
+          )
+        },
+      }),
     },
     {
       title: 'Price',
@@ -293,7 +294,11 @@ export const MembershipsTable = ({ filter }) => {
       dataIndex: 'periods',
       key: 'periods',
       ...getColumnSearchProps('periods'),
-      ...getColumnSortProps('periods'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
+        },
+      }),
     },
     {
       title: 'Monthly Amount',
@@ -370,9 +375,9 @@ export const MembershipsTable = ({ filter }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Customer List ({total})
+          Memberships List ({total})
         </Typography.Title>
-        <Link to='/new-quote'>
+        {/* <Link to='/new-quote'>
           <Button
             type='primary'
             shape='round'
@@ -384,7 +389,7 @@ export const MembershipsTable = ({ filter }) => {
           >
             Add New Customer
           </Button>
-        </Link>
+        </Link> */}
       </div>
       <Divider dashed />
       <Button

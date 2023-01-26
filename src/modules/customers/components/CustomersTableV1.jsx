@@ -281,14 +281,14 @@ export const CustomersTableV1 = ({ filter }) => {
       }),
     },
     {
-      title: 'Price',
+      title: '$ Lifetime',
       dataIndex: 'monthly_amount',
       key: 'monthly_amount',
       ...getColumnSearchProps('monthly_amount'),
       render: monthlyAmount =>
         monthlyAmount ? (
           renderTextHighlighter({
-            text: USD(monthlyAmount),
+            text: monthlyAmount,
             isHighlighted: searchedColumn['monthly_amount'],
             highlightedText: searchText['monthly_amount'],
           })
