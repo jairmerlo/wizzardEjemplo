@@ -108,14 +108,12 @@ export const MembershipDetails = () => {
             {stringFallback(membership.create_at)}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
-            {/* //todo: determinar */}
-            {stringFallback(membership.create_at)}
+            {stringFallback(membership.activated_at)}
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
             {stringFallback(membership.price)}
           </Descriptions.Item>
-          <Descriptions.Item label='$ Life Time'>
-            {/* //todo: determinar */}
+          <Descriptions.Item label='$ Lifetime'>
             {stringFallback(membership.amount)}
           </Descriptions.Item>
           <Descriptions.Item label='Periods'>

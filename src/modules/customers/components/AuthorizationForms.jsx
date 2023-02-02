@@ -171,6 +171,15 @@ export const AuthorizationForms = ({
       }),
     },
     {
+      ...getColumnProps({
+        title: 'Date',
+        dataIndex: 'date',
+      }),
+      render() {
+        return <span>01/02/23</span>
+      },
+    },
+    {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',

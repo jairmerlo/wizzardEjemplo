@@ -25,7 +25,7 @@ import {
   getSelectSearchProps,
   toTitleCase,
 } from '../../../helpers'
-import { NewQuoteDescription } from '.'
+import { NewQuoteDescription, NewQuoteProducts } from '.'
 function formatUSNumber(entry = '') {
   const match = entry
     .replace(/\D+/g, '')
@@ -90,7 +90,7 @@ export const NewQuote = () => {
   console.log({ openModal, customerId })
   const form = useCss({
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '49% 49%',
     columnGap: '16px',
     rowGap: '30px',
     '& > .ant-form-item': {
@@ -353,6 +353,7 @@ export const NewQuote = () => {
           paymentMethod: [],
           coupon: '',
           send_email: false,
+          show_cupon_wizard: 0,
         }}
         enableReinitialize
         onSubmit={values => {
@@ -526,8 +527,20 @@ export const NewQuote = () => {
                   {...getSelectSearchProps()}
                 />
               </Form.Item>
+              {values.coupon && (
+                <Checkbox
+                  style={{ marginTop: 'auto', marginBottom: 'auto' }}
+                  onChange={e =>
+                    setFieldValue('show_cupon_wizard', e.target.checked ? 1 : 0)
+                  }
+                  value={values.show_cupon_wizard}
+                >
+                  Showing Applying Coupon
+                </Checkbox>
+              )}
             </Form>
             <NewQuoteDescription programs={programs} />
+            <NewQuoteProducts />
             <div
               style={{
                 display: 'flex',

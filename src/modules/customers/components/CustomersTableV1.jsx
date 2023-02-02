@@ -11,6 +11,7 @@ import {
 } from 'antd'
 import {
   DeleteTwoTone,
+  DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
@@ -21,6 +22,7 @@ import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
+import currency from 'currency.js'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -46,10 +48,19 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 export const CustomersTableV1 = ({ filter }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
+  const [currentItems, setCurrentItems] = useState([])
   const { data, isLoading } = useGetAllCustomersQuery({
     filter,
   })
+  const items = currentItems.length !== 0 ? currentItems : data
   const totalData = data?.length
+  const totalLifetime = items
+    ?.map(item => currency(item.monthly_amount).value ?? 0)
+    .reduce((a, b) => a + b, 0)
+  const totalMonthly = items
+    ?.map(item => currency(item.monthly).value ?? 0)
+    .reduce((a, b) => a + b, 0)
+  console.log({ totalLifetime, totalMonthly, items })
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -77,11 +88,13 @@ export const CustomersTableV1 = ({ filter }) => {
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     setTotalCurrentItems(totalData)
+    setCurrentItems([])
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
     // console.log('Various parameters', pagination, filters, sorter)
     setTotalCurrentItems(currentDataSource?.length)
+    setCurrentItems(currentDataSource)
   }
 
   const getDateColumnSearchProps = dataIndex => ({
@@ -281,28 +294,30 @@ export const CustomersTableV1 = ({ filter }) => {
       }),
     },
     {
+      title: 'Monthly',
+      dataIndex: 'monthly',
+      key: 'monthly',
+      ...getColumnSearchProps('monthly'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.monthly_amount).value) -
+            parseFloat(currency(b.monthly_amount).value)
+          )
+        },
+      }),
+    },
+    {
       title: '$ Lifetime',
       dataIndex: 'monthly_amount',
       key: 'monthly_amount',
       ...getColumnSearchProps('monthly_amount'),
-      render: monthlyAmount =>
-        monthlyAmount ? (
-          renderTextHighlighter({
-            text: monthlyAmount,
-            isHighlighted: searchedColumn['monthly_amount'],
-            highlightedText: searchText['monthly_amount'],
-          })
-        ) : (
-          <NoDataCell />
-        ),
-      onFilter: (value, record) =>
-        USD(record['monthly_amount'])
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase()),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
+          return (
+            parseFloat(currency(a.monthly_amount).value) -
+            parseFloat(currency(b.monthly_amount).value)
+          )
         },
       }),
     },
@@ -368,9 +383,32 @@ export const CustomersTableV1 = ({ filter }) => {
           alignItems: 'center',
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          Customer List ({totalData})
-        </Typography.Title>
+        <div
+          style={{
+            display: 'flex',
+            gap: '32px',
+          }}
+        >
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Active Customers ({totalData ?? '...'})
+          </Typography.Title>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            {typeof totalMonthly === 'number' ? (
+              USD(totalMonthly, { precision: 2 })
+            ) : (
+              <DollarOutlined spin />
+            )}{' '}
+            Monthly
+          </Typography.Title>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            {typeof totalLifetime === 'number' ? (
+              USD(totalLifetime, { precision: 2 })
+            ) : (
+              <DollarOutlined spin />
+            )}{' '}
+            $ Lifetime
+          </Typography.Title>
+        </div>
         <Link to='/new-quote'>
           <Button
             type='primary'

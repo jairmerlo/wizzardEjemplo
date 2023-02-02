@@ -43,7 +43,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const MembershipsTable = ({ filter }) => {
+export const MembershipsTableTrial = ({ filter }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
@@ -207,6 +207,7 @@ export const MembershipsTable = ({ filter }) => {
         isHighlighted: searchedColumn[dataIndex],
         highlightedText: searchText[dataIndex],
       }),
+    width: 200,
   })
 
   const getColumnSortProps = dataIndex => {
@@ -231,24 +232,13 @@ export const MembershipsTable = ({ filter }) => {
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
+      fixed: 'left',
     },
     {
       title: 'Client Name',
       dataIndex: 'client_name',
       key: 'client_name',
       ...getColumnSearchProps('client_name'),
-      render: (clientName, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-          rel='noreferrer'
-        >
-          {renderTextHighlighter({
-            text: clientName,
-            isHighlighted: searchedColumn['client_name'],
-            highlightedText: searchText['client_name'],
-          })}
-        </a>
-      ),
       ...getColumnSortProps('client_name'),
     },
     {
@@ -282,18 +272,34 @@ export const MembershipsTable = ({ filter }) => {
       ...getColumnSortProps('class_accounting_name'),
     },
     {
-      title: 'Created',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      ...getDateColumnSearchProps('created_at'),
-      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
-            moment(b.created_at, 'MM-DD-YYYY'),
-          )
-        },
-      }),
+      title: 'Trial Due',
+      key: 'trial_due',
+      dataIndex: 'trial_due',
+      ...getColumnSearchProps('trial_due'),
+    },
+    {
+      title: 'Published Status',
+      key: 'published_status',
+      dataIndex: 'published_status',
+      ...getColumnSearchProps('published_status'),
+    },
+    {
+      title: 'IDX',
+      key: 'idx',
+      dataIndex: 'idx',
+      ...getColumnSearchProps('idx'),
+    },
+    {
+      title: 'IDX Requested',
+      key: 'idx_requested',
+      dataIndex: 'idx_requested',
+      ...getColumnSearchProps('idx_requested'),
+    },
+    {
+      title: 'Board',
+      key: 'board',
+      dataIndex: 'board',
+      ...getColumnSearchProps('board'),
     },
     {
       title: 'Price',
@@ -368,6 +374,8 @@ export const MembershipsTable = ({ filter }) => {
           {/* eslint-enable jsx-a11y/anchor-is-valid */}
         </Space>
       ),
+      fixed: 'right',
+      width: '150px',
     },
   ]
   return (
@@ -387,7 +395,7 @@ export const MembershipsTable = ({ filter }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships List ({total ?? '...'})
+          Memberships List ({total})
         </Typography.Title>
         {/* <Link to='/new-quote'>
           <Button
@@ -417,12 +425,14 @@ export const MembershipsTable = ({ filter }) => {
         columns={columns}
         dataSource={memberships}
         bordered
+        scroll={{ x: '100%' }}
         loading={isLoading}
         onChange={handleChange}
         pagination={{
           total: totalCurrentItems || total,
           pageSize,
           showQuickJumper: true,
+
           showSizeChanger: true,
           onChange: (page, pageSize) => setPageSize(pageSize),
           showTotal,

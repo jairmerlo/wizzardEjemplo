@@ -297,6 +297,41 @@ export const billing = createApi({
         },
       }),
     }),
+    getProductOptions: builder.query({
+      async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
+        try {
+          const [products, categories, groups] = await Promise.all([
+            fetchWithBQ({
+              url: '/items-bycompany',
+              method: 'POST',
+              body: {
+                company: args?.company,
+              },
+            }).then(({ data }) => data),
+            fetchWithBQ({
+              url: '/list-bundle-type',
+              method: 'POST',
+              body: {
+                company: args?.company,
+              },
+            }).then(({ data }) => data),
+            fetchWithBQ({
+              url: '/product_group/list',
+            })
+              .then(({ data }) => data)
+              .map(({ name }) => ({ label: name, value: '' })),
+          ])
+
+          return {
+            data: { groups, products, categories },
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -315,4 +350,5 @@ export const {
   useSendAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
   useReplaceAuthorizationFormMutation,
+  useGetProductOptionsQuery,
 } = billing

@@ -1,6 +1,6 @@
 import { Tabs } from 'antd'
 import { useState } from 'react'
-import { MembershipsTable } from './components'
+import { MembershipsTable, MembershipsTableTrial } from './components'
 
 const Memberships = () => {
   const [tableKey, setTableKey] = useState('1')
@@ -61,6 +61,12 @@ const Memberships = () => {
           label: `Cancelled`,
           key: '8',
           children: tableKey === '8' && <div children={1} filter='cancelled' />,
+          forceRender: true,
+        },
+        {
+          label: `Trial`,
+          key: '9',
+          children: tableKey === '9' && <MembershipsTableTrial />,
           forceRender: true,
         },
       ]}
