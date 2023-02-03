@@ -6,6 +6,7 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import { Modal, notification, Space, Table, Tooltip } from 'antd'
+import moment from 'moment'
 import { Link, useParams } from 'react-router-dom'
 import {
   useReplaceAuthorizationFormMutation,
@@ -13,6 +14,7 @@ import {
   useSendAuthorizationFormMutation,
 } from '../../../app/api/billing'
 import { getColumnProps, showTotal } from '../../../helpers'
+import { AFTimeLine } from './AFTimeLine'
 
 export const AuthorizationForms = ({
   achData = [],
@@ -22,6 +24,16 @@ export const AuthorizationForms = ({
   onSuccess = f => f,
 }) => {
   const { customerId, membershipId } = useParams()
+  const ACHHistory = achData.map(({ create_at, completed_at, status }) => ({
+    completed_at,
+    create_at,
+    status,
+  }))
+  const cardHistory = cardData.map(({ create_at, completed_at, status }) => ({
+    completed_at,
+    create_at,
+    status,
+  }))
   const rows = [
     achData.length === 0
       ? {
@@ -30,7 +42,7 @@ export const AuthorizationForms = ({
           status: '',
           document: null,
         }
-      : achData.find(item => item.is_pricipal === '1') || achData[0],
+      : achData.find(item => item.is_principal === '1') || achData[0],
     cardData.length === 0
       ? {
           id: '-2',
@@ -38,8 +50,9 @@ export const AuthorizationForms = ({
           status: '',
           document: null,
         }
-      : cardData.find(item => item.is_pricipal === '1') || cardData[0],
+      : cardData.find(item => item.is_principal === '1') || cardData[0],
   ]
+  console.log({ rows })
 
   const { confirm } = Modal
   const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
@@ -175,15 +188,38 @@ export const AuthorizationForms = ({
         title: 'Date',
         dataIndex: 'date',
       }),
-      render() {
-        return <span>01/02/23</span>
+      render(text, { completed_at, create_at, authorization_form_type }) {
+        if (authorization_form_type === 'ACH')
+          return (
+            <AFTimeLine
+              history={ACHHistory}
+              authorization_form_type={authorization_form_type}
+              completed_at={
+                completed_at && moment(completed_at).format('MM-DD-YYYY')
+              }
+              create_at={moment(create_at).format('MM-DD-YYYY')}
+            />
+          )
+        return (
+          <AFTimeLine
+            history={cardHistory}
+            authorization_form_type={authorization_form_type}
+            completed_at={
+              completed_at && moment(completed_at).format('MM-DD-YYYY')
+            }
+            create_at={moment(create_at).format('MM-DD-YYYY')}
+          />
+        )
       },
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { authorization_form_type, status, document }) => (
+      render: (
+        text,
+        { authorization_form_type, status, document, completed_at, created_at },
+      ) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {(status === 'Waiting for client' || status === 'Completed') &&

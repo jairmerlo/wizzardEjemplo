@@ -43,7 +43,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const MembershipsTableTrial = ({ filter }) => {
+export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
@@ -279,9 +279,9 @@ export const MembershipsTableTrial = ({ filter }) => {
     },
     {
       title: 'Published Status',
-      key: 'published_status',
-      dataIndex: 'published_status',
-      ...getColumnSearchProps('published_status'),
+      key: 'publication_dtate',
+      dataIndex: 'publication_dtate',
+      ...getColumnSearchProps('publication_dtate'),
     },
     {
       title: 'IDX',
@@ -291,15 +291,15 @@ export const MembershipsTableTrial = ({ filter }) => {
     },
     {
       title: 'IDX Requested',
-      key: 'idx_requested',
-      dataIndex: 'idx_requested',
-      ...getColumnSearchProps('idx_requested'),
+      key: 'idx_requested_date',
+      dataIndex: 'idx_requested_date',
+      ...getColumnSearchProps('idx_requested_date'),
     },
     {
       title: 'Board',
-      key: 'board',
-      dataIndex: 'board',
-      ...getColumnSearchProps('board'),
+      key: 'board_name',
+      dataIndex: 'board_name',
+      ...getColumnSearchProps('board_name'),
     },
     {
       title: 'Price',
