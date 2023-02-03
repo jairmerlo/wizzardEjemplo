@@ -72,7 +72,6 @@ export const AuthorizationForms = ({
         try {
           const res = await sendAuthorizationForm({
             authorization_form_type,
-            //TODO: Que registration Key va?
             registration_key,
             user_id,
           }).unwrap()
@@ -222,6 +221,7 @@ export const AuthorizationForms = ({
       ) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
+          {/* //TODO: remplazar por pdf */}
           {(status === 'Waiting for client' || status === 'Completed') &&
             !!document && (
               <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>

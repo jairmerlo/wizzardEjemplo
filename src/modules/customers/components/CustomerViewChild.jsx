@@ -116,7 +116,6 @@ export const CustomerViewChild = () => {
           {table === 'Membership' && (
             <MembershipTable memberships={memberships} />
           )}
-          {/* //todo: Configurar la tabla quotes */}
           {table === 'Billing' && <BillingHistoryTable dataSource={invoices} />}
           {table === 'Quotes' && <QuotesTable dataSource={quotes} />}
         </div>

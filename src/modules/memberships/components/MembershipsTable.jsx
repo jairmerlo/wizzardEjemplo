@@ -11,16 +11,21 @@ import {
 } from 'antd'
 import {
   DeleteTwoTone,
+  DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
-  UserAddOutlined,
 } from '@ant-design/icons'
-import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
+import {
+  capitalize,
+  renderTextHighlighter,
+  showTotal,
+  USD,
+} from '../../../helpers'
 import moment from 'moment/moment'
-import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
+import currency from 'currency.js'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -43,13 +48,18 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const MembershipsTable = ({ filter }) => {
+export const MembershipsTable = ({ filter = '' }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
   })
+  const [currentItems, setCurrentItems] = useState([])
   const { data: memberships, total } = data
+  const items = currentItems.length !== 0 ? currentItems : memberships
+  const totalPrice = items
+    ?.map(item => currency(item.price || 0).value ?? 0)
+    .reduce((a, b) => a + b, 0)
   console.log({ memberships })
 
   const [tableKey, setTableKey] = useState(0)
@@ -78,11 +88,13 @@ export const MembershipsTable = ({ filter }) => {
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     setTotalCurrentItems(total)
+    setCurrentItems([])
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
     // console.log('Various parameters', pagination, filters, sorter)
     setTotalCurrentItems(currentDataSource?.length)
+    setCurrentItems(currentDataSource)
   }
 
   const getDateColumnSearchProps = dataIndex => ({
@@ -345,11 +357,6 @@ export const MembershipsTable = ({ filter }) => {
       render: (text, { id }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Add Membership'>
-            <Link to={`/new-quote?customerId=${id}`}>
-              <UserAddOutlined style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
           <Tooltip title='Details'>
             <Link to={`/customer-view/${id}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
@@ -382,12 +389,21 @@ export const MembershipsTable = ({ filter }) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'baseline',
+          gap: '32px',
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships List ({total ?? '...'})
+          Memberships {filter ? capitalize(filter) : 'Active'} ({total ?? '...'}
+          )
+        </Typography.Title>
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Price:{' '}
+          {typeof totalPrice === 'number' ? (
+            USD(totalPrice, { precision: 2 })
+          ) : (
+            <DollarOutlined spin />
+          )}
         </Typography.Title>
         {/* <Link to='/new-quote'>
           <Button

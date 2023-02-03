@@ -17,7 +17,12 @@ import {
   SearchOutlined,
   UserAddOutlined,
 } from '@ant-design/icons'
-import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
+import {
+  capitalize,
+  renderTextHighlighter,
+  showTotal,
+  USD,
+} from '../../../helpers'
 import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
@@ -387,26 +392,28 @@ export const CustomersTableV1 = ({ filter }) => {
           style={{
             display: 'flex',
             gap: '32px',
+            alignItems: 'baseline',
           }}
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
-            Active Customers ({totalData ?? '...'})
+            {filter ? capitalize(filter) : 'Active'} Customers (
+            {totalData ?? '...'})
           </Typography.Title>
-          <Typography.Title level={4} style={{ margin: 0 }}>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            Monthly:{' '}
             {typeof totalMonthly === 'number' ? (
               USD(totalMonthly, { precision: 2 })
             ) : (
               <DollarOutlined spin />
-            )}{' '}
-            Monthly
+            )}
           </Typography.Title>
-          <Typography.Title level={4} style={{ margin: 0 }}>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            $ Lifetime:{' '}
             {typeof totalLifetime === 'number' ? (
               USD(totalLifetime, { precision: 2 })
             ) : (
               <DollarOutlined spin />
-            )}{' '}
-            $ Lifetime
+            )}
           </Typography.Title>
         </div>
         <Link to='/new-quote'>

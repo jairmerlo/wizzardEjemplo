@@ -227,12 +227,27 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   }
   const columns = [
     {
+      title: 'Product/Service',
+      key: 'class_accounting_name',
+      dataIndex: 'class_accounting_name',
+      ...getColumnSearchProps('class_accounting_name'),
+      ...getColumnSortProps('class_accounting_name'),
+      fixed: 'left',
+    },
+    {
+      title: 'Trial Due',
+      key: 'trial_due',
+      dataIndex: 'trial_due',
+      ...getColumnSearchProps('trial_due'),
+      width: 120,
+      fixed: 'left',
+    },
+    {
       title: 'Membership ID',
       dataIndex: 'memberships_id',
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
-      fixed: 'left',
     },
     {
       title: 'Client Name',
@@ -241,109 +256,111 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('client_name'),
       ...getColumnSortProps('client_name'),
     },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      ...getColumnSearchProps('email'),
-      ...getColumnSortProps('email'),
-    },
-    {
-      title: 'URL',
-      dataIndex: 'wordpress_install_url',
-      key: 'wordpress_install_url',
-      ...getColumnSearchProps('wordpress_install_url'),
-      render: url => (
-        <a href={url} target='_blank' rel='noreferrer'>
-          {renderTextHighlighter({
-            text: url,
-            isHighlighted: searchedColumn['wordpress_install_url'],
-            highlightedText: searchText['wordpress_install_url'],
-          })}
-        </a>
-      ),
-      ...getColumnSortProps('wordpress_install_url'),
-    },
-    {
-      title: 'Product/Service',
-      key: 'class_accounting_name',
-      dataIndex: 'class_accounting_name',
-      ...getColumnSearchProps('class_accounting_name'),
-      ...getColumnSortProps('class_accounting_name'),
-    },
-    {
-      title: 'Trial Due',
-      key: 'trial_due',
-      dataIndex: 'trial_due',
-      ...getColumnSearchProps('trial_due'),
-    },
+    // {
+    //   title: 'Email',
+    //   dataIndex: 'email',
+    //   key: 'email',
+    //   ...getColumnSearchProps('email'),
+    //   ...getColumnSortProps('email'),
+    // },
+    // {
+    //   title: 'URL',
+    //   dataIndex: 'wordpress_install_url',
+    //   key: 'wordpress_install_url',
+    //   ...getColumnSearchProps('wordpress_install_url'),
+    //   render: url => (
+    //     <a href={url} target='_blank' rel='noreferrer'>
+    //       {renderTextHighlighter({
+    //         text: url,
+    //         isHighlighted: searchedColumn['wordpress_install_url'],
+    //         highlightedText: searchText['wordpress_install_url'],
+    //       })}
+    //     </a>
+    //   ),
+    //   ...getColumnSortProps('wordpress_install_url'),
+    // },
+
     {
       title: 'Published Status',
       key: 'publication_dtate',
       dataIndex: 'publication_dtate',
       ...getColumnSearchProps('publication_dtate'),
+      width: 120,
     },
     {
       title: 'IDX',
       key: 'idx',
       dataIndex: 'idx',
       ...getColumnSearchProps('idx'),
+      width: 80,
     },
     {
       title: 'IDX Requested',
       key: 'idx_requested_date',
       dataIndex: 'idx_requested_date',
       ...getColumnSearchProps('idx_requested_date'),
+      width: 120,
     },
     {
       title: 'Board',
       key: 'board_name',
       dataIndex: 'board_name',
       ...getColumnSearchProps('board_name'),
+      ellipsis: true,
+    },
+    // TODO: Premium column
+    {
+      title: 'Premium',
+      key: 'premium',
+      dataIndex: 'premium',
+      ...getColumnSearchProps('premium'),
     },
     {
-      title: 'Price',
+      title: '$ Price',
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
+      width: 120,
     },
-    {
-      title: 'Periods',
-      dataIndex: 'periods',
-      key: 'periods',
-      ...getColumnSearchProps('periods'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
-        },
-      }),
-    },
-    {
-      title: 'Monthly Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      ...getColumnSearchProps('amount'),
-      // render: monthlyAmount =>
-      //   monthlyAmount ? (
-      //     renderTextHighlighter({
-      //       text: USD(monthlyAmount),
-      //       isHighlighted: searchedColumn['monthly_amount'],
-      //       highlightedText: searchText['monthly_amount'],
-      //     })
-      //   ) : (
-      //     <NoDataCell />
-      //   ),
-      // onFilter: (value, record) =>
-      //   USD(record['monthly_amount'])
-      //     .toString()
-      //     .toLowerCase()
-      //     .includes(value.toLowerCase()),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
-      //   },
-      // }),
-    },
+    // {
+    //   title: 'Periods',
+    //   dataIndex: 'periods',
+    //   key: 'periods',
+    //   ...getColumnSearchProps('periods'),
+    //   ...getCustomColumnSortProps({
+    //     sorter: (a, b) => {
+    //       return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
+    //     },
+    //   }),
+    //   width: 120,
+    // },
+    // {
+    //   title: '$ Monthly',
+    //   dataIndex: 'amount',
+    //   key: 'amount',
+    //   ...getColumnSearchProps('amount'),
+    //   width: 120,
+    //   // render: monthlyAmount =>
+    //   //   monthlyAmount ? (
+    //   //     renderTextHighlighter({
+    //   //       text: USD(monthlyAmount),
+    //   //       isHighlighted: searchedColumn['monthly_amount'],
+    //   //       highlightedText: searchText['monthly_amount'],
+    //   //     })
+    //   //   ) : (
+    //   //     <NoDataCell />
+    //   //   ),
+    //   // onFilter: (value, record) =>
+    //   //   USD(record['monthly_amount'])
+    //   //     .toString()
+    //   //     .toLowerCase()
+    //   //     .includes(value.toLowerCase()),
+    //   // ...getCustomColumnSortProps({
+    //   //   sorter: (a, b) => {
+    //   //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
+    //   //   },
+    //   // }),
+    // },
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -351,11 +368,6 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       render: (text, { id }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Add Membership'>
-            <Link to={`/new-quote?customerId=${id}`}>
-              <UserAddOutlined style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
           <Tooltip title='Details'>
             <Link to={`/customer-view/${id}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
@@ -395,7 +407,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships List ({total})
+          Memberships Trial ({total})
         </Typography.Title>
         {/* <Link to='/new-quote'>
           <Button

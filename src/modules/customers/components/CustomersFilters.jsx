@@ -16,7 +16,7 @@ export const CustomersFilters = () => {
       type='card'
       items={[
         {
-          label: `All`,
+          label: `Active`,
           key: '1',
           children: tableKey === '1' && <CustomersTableV1 />,
           forceRender: true,
