@@ -308,7 +308,6 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('board_name'),
       ellipsis: true,
     },
-    // TODO: Premium column
     {
       title: 'Premium',
       key: 'premium',

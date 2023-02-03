@@ -54,8 +54,8 @@ export const MembershipsTable = ({ filter = '' }) => {
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
   })
-  const [currentItems, setCurrentItems] = useState([])
   const { data: memberships, total } = data
+  const [currentItems, setCurrentItems] = useState([])
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
     ?.map(item => currency(item.price || 0).value ?? 0)
