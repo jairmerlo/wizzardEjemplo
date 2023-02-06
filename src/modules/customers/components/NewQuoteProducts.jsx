@@ -1,11 +1,18 @@
 import { Button, Descriptions, Divider, Typography } from 'antd'
+import { useFormikContext } from 'formik'
 import { ProductItem } from '.'
 
 export const NewQuoteProducts = () => {
+  const { values } = useFormikContext()
   return (
     <div style={{ marginTop: '32px', marginBottom: '32px' }}>
       <Typography.Title level={4}>Products</Typography.Title>
       <Divider dashed />
+      <div>
+        {values.products.map(item => (
+          <li>{item.product_category}</li>
+        ))}
+      </div>
       <div>
         <ProductItem />
       </div>

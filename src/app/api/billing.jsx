@@ -307,19 +307,29 @@ export const billing = createApi({
               body: {
                 company: args?.company,
               },
-            }).then(({ data }) => data),
+            })
+              .then(({ data }) => data)
+              .then(data =>
+                data.map(({ name }) => ({ label: name, value: '' })),
+              ),
             fetchWithBQ({
               url: '/list-bundle-type',
               method: 'POST',
               body: {
                 company: args?.company,
               },
-            }).then(({ data }) => data),
+            })
+              .then(({ data }) => data)
+              .then(data =>
+                data.map(({ name }) => ({ label: name, value: '' })),
+              ),
             fetchWithBQ({
               url: '/product_group/list',
             })
               .then(({ data }) => data)
-              .map(({ name }) => ({ label: name, value: '' })),
+              .then(data =>
+                data.map(({ name }) => ({ label: name, value: '' })),
+              ),
           ])
 
           return {

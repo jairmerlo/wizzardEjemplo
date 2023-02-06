@@ -11,16 +11,16 @@ import {
 } from 'antd'
 import {
   DeleteTwoTone,
+  DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
-  UserAddOutlined,
 } from '@ant-design/icons'
 import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
 import moment from 'moment/moment'
-import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
+import currency from 'currency.js'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -50,6 +50,11 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     filter,
   })
   const { data: memberships, total } = data
+  const [currentItems, setCurrentItems] = useState([])
+  const items = currentItems.length !== 0 ? currentItems : memberships
+  const totalPrice = items
+    ?.map(item => currency(item.price || 0).value ?? 0)
+    .reduce((a, b) => a + b, 0)
   console.log({ memberships })
 
   const [tableKey, setTableKey] = useState(0)
@@ -78,11 +83,13 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     setTotalCurrentItems(total)
+    setCurrentItems([])
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
     // console.log('Various parameters', pagination, filters, sorter)
     setTotalCurrentItems(currentDataSource?.length)
+    setCurrentItems(currentDataSource)
   }
 
   const getDateColumnSearchProps = dataIndex => ({
@@ -401,12 +408,20 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'baseline',
+          gap: '32px',
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
           Memberships Trial ({total})
+        </Typography.Title>
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Price:{' '}
+          {typeof totalPrice === 'number' ? (
+            USD(totalPrice, { precision: 2 })
+          ) : (
+            <DollarOutlined spin />
+          )}
         </Typography.Title>
         {/* <Link to='/new-quote'>
           <Button

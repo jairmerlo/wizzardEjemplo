@@ -354,6 +354,7 @@ export const NewQuote = () => {
           coupon: '',
           send_email: false,
           show_cupon_wizard: 0,
+          products: [],
         }}
         enableReinitialize
         onSubmit={values => {
