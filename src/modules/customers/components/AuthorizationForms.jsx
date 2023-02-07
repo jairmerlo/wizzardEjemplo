@@ -13,7 +13,7 @@ import {
   useResendAuthorizationFormMutation,
   useSendAuthorizationFormMutation,
 } from '../../../app/api/billing'
-import { getColumnProps, showTotal } from '../../../helpers'
+import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 
 export const AuthorizationForms = ({
@@ -42,7 +42,7 @@ export const AuthorizationForms = ({
           status: '',
           document: null,
         }
-      : achData.find(item => item.is_principal === '1') || achData[0],
+      : achData[0],
     cardData.length === 0
       ? {
           id: '-2',
@@ -50,9 +50,10 @@ export const AuthorizationForms = ({
           status: '',
           document: null,
         }
-      : cardData.find(item => item.is_principal === '1') || cardData[0],
+      : cardData[0],
   ]
-  console.log({ rows })
+  const principalACH = achData.find(item => item.is_principal === '1')
+  const principalCard = cardData.find(item => item.is_principal === '1')
 
   const { confirm } = Modal
   const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
@@ -196,7 +197,11 @@ export const AuthorizationForms = ({
               completed_at={
                 completed_at && moment(completed_at).format('MM-DD-YYYY')
               }
-              create_at={moment(create_at).format('MM-DD-YYYY')}
+              create_at={
+                create_at
+                  ? moment(create_at).format('MM-DD-YYYY')
+                  : stringFallback()
+              }
             />
           )
         return (
@@ -206,7 +211,11 @@ export const AuthorizationForms = ({
             completed_at={
               completed_at && moment(completed_at).format('MM-DD-YYYY')
             }
-            create_at={moment(create_at).format('MM-DD-YYYY')}
+            create_at={
+              create_at
+                ? moment(create_at).format('MM-DD-YYYY')
+                : stringFallback()
+            }
           />
         )
       },
@@ -215,15 +224,14 @@ export const AuthorizationForms = ({
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (
-        text,
-        { authorization_form_type, status, document, completed_at, created_at },
-      ) => (
+      render: (text, { authorization_form_type, status }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {/* //TODO: remplazar por pdf */}
           {(status === 'Waiting for client' || status === 'Completed') &&
-            !!document && (
+            (authorization_form_type === 'ACH'
+              ? !!principalACH?.document
+              : !!principalCard?.document) && (
               <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
                 <Link
                   to={`/${customerId}/${authorization_form_type}/${membershipId}`}
