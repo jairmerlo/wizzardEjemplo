@@ -35,9 +35,29 @@ export const backoffice = createApi({
         }
       },
     }),
+    getMembership: builder.query({
+      queryFn: async ({ registration_key }, _api, _extraOptions, fetchWithBQ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getMembership', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const {data} = res
+          return {
+            data
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
 export default backoffice
 
-export const { useGetAllMembershipsQuery } = backoffice
+export const { useGetAllMembershipsQuery,useGetMembershipQuery } = backoffice

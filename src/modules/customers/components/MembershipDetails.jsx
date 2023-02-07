@@ -2,17 +2,30 @@ import { Avatar, Descriptions, Segmented, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
+import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import {
   useGetAuthorizationFormsQuery,
   useGetCustomerQuery,
 } from '../../../app/api/billing'
 import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
+import { BillinInformation } from './BillinInformation'
 
 export const MembershipDetails = () => {
   const { membershipId, customerId } = useParams()
   const { data: customer = {}, isLoading } = useGetCustomerQuery(customerId)
   const { memberships = [] } = customer
+
   const membership = memberships.find(item => item.id === membershipId)
+
+  const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
+    { registration_key: membership?.registration_key },
+    {
+      skip: !membership,
+    },
+  )
+
+  console.info('membershipDataaaaa', membershipData)
+
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
     useGetAuthorizationFormsQuery(
       {
@@ -24,6 +37,7 @@ export const MembershipDetails = () => {
         skip: !membership,
       },
     )
+
   const { data: authorizationFormsCard = [], refetch: refetchCard } =
     useGetAuthorizationFormsQuery(
       {
@@ -38,7 +52,7 @@ export const MembershipDetails = () => {
   console.log({ membership })
   const [section, setSection] = useState('Billing Information')
   const fullName = customer.name + ' ' + customer.last_name
-  if (isLoading) return 'Cargando...'
+  if (isLoading || isLoadingM) return 'Cargando...'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>
@@ -48,18 +62,21 @@ export const MembershipDetails = () => {
         style={{
           display: 'flex',
           gap: '16px',
+          backgroundColor: 'rgb(128 128 128 / 6%)',
+          borderRadius: '12px',
         }}
       >
         <div
           style={{
             ...stringAvatar(fullName).style,
-            height: '200px',
             width: '200px',
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            borderTopLeftRadius: '12px',
+            borderBottomLeftRadius: '12px',
           }}
           children={
             <>
@@ -90,38 +107,76 @@ export const MembershipDetails = () => {
           }}
           style={{
             width: 'calc(100% - 200px)',
+            margin: '10px',
           }}
           // extra={<Button type='primary'>Edit</Button>}
         >
           <Descriptions.Item label='URL' span={2}>
-            <a href={membership?.wordpress_install_url} target='_blank'>
-              {membership?.wordpress_install_url}
+            <a
+              href={membershipData?.wordpressInstallUrl}
+              target='_blank'
+              rel='noreferrer'
+            >
+              {membershipData?.wordpressInstallUrl}
             </a>
           </Descriptions.Item>
           <Descriptions.Item label='Service/Product' span={2}>
-            {stringFallback(membership.accounting_class_name)}
+            {stringFallback(membershipData.classAccountingName)}
           </Descriptions.Item>
           <Descriptions.Item label='Customer' span={2}>
             {stringFallback(fullName)}
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
-            {stringFallback(membership.create_at)}
+            {stringFallback(membershipData.createdAt)}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
-            {stringFallback(membership.activated_at)}
+            {stringFallback(membershipData.activatedAt)}
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
-            {stringFallback(membership.price)}
+            {stringFallback(membershipData.price)}
           </Descriptions.Item>
           <Descriptions.Item label='$ Lifetime'>
-            {stringFallback(membership.amount)}
+            {stringFallback(membershipData.amount)}
           </Descriptions.Item>
-          <Descriptions.Item label='Periods'>
-            {stringFallback(membership.periods)}
-          </Descriptions.Item>
-          <Descriptions.Item label='Last Payment'>
-            {stringFallback(membership.last_payment)}
-          </Descriptions.Item>
+
+          {!membershipData.hasTrial && (
+            <>
+              <Descriptions.Item label='Periods'>
+                {stringFallback(membershipData.periods)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Last Payment'>
+                {stringFallback(membershipData.lastPayment)}
+              </Descriptions.Item>
+            </>
+          )}
+
+          {/* trial information */}
+          {membershipData.hasTrial && (
+            <>
+              <Descriptions.Item label='Trial Due'>
+                {stringFallback(membershipData.trialDue)}
+              </Descriptions.Item>
+              <Descriptions.Item label='Board'>
+                  {stringFallback(membershipData.boardName)}
+              </Descriptions.Item>
+              <Descriptions.Item label='IDX Requested'>
+                {stringFallback(membershipData.idxRequestedDate)}
+              </Descriptions.Item>
+              {/* <Descriptions.Item label='Balance'>
+                -------
+              </Descriptions.Item> */}
+              <Descriptions.Item label='IDX'>
+                {stringFallback(membershipData.idx)}
+              </Descriptions.Item>             
+              <Descriptions.Item label='Premium'>
+                {stringFallback(membershipData.hasPremium === true ? 'Yes' : 'No' )}
+              </Descriptions.Item>
+               <Descriptions.Item label='Premium Date'>
+                {stringFallback(membershipData.premium)}
+              </Descriptions.Item>
+             
+            </>
+          )}
         </Descriptions>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -138,7 +193,18 @@ export const MembershipDetails = () => {
           value={section}
           onChange={setSection}
         />
-        {section === 'Billing Information' && <div>Billing Information</div>}
+        {section === 'Billing Information' && (
+          <BillinInformation
+            cardData={authorizationFormsCard}
+            achData={authorizationFormsACH}
+            userId={getConfig().userId}
+            registrationKey={membership?.registration_key}
+            onSuccess={() => {
+              refetchACH()
+              refetchCard()
+            }}
+          />
+        )}
         {section === 'Billing History' && <div>Billing History</div>}
         {section === 'Authorization Forms' && (
           <AuthorizationForms
