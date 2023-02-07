@@ -25,7 +25,7 @@ import {
   getSelectSearchProps,
   toTitleCase,
 } from '../../../helpers'
-import { NewQuoteDescription, NewQuoteProducts } from '.'
+import { NewQuoteDescription } from '.'
 function formatUSNumber(entry = '') {
   const match = entry
     .replace(/\D+/g, '')
@@ -409,6 +409,22 @@ export const NewQuote = () => {
             setHasIdx(hasIdx)
             return hasIdx ? field.required('This field is required.') : field
           }),
+          products: Yup.array().of(
+            Yup.object().shape({
+              plan_id: Yup.string().required('This field is required.'),
+              item_id: Yup.string().required('This field is required.'),
+              currencies: Yup.object({
+                currency: Yup.string(),
+                setup_fee: Yup.number().required('This field is required.'),
+                unit_amount: Yup.number().required('This field is required.'),
+              }),
+              category: Yup.string(), //* id group
+              product_category: Yup.string().required(
+                'This field is required.',
+              ),
+              item_sort: Yup.number(),
+            }),
+          ),
         })}
       >
         {({ handleSubmit, errors, touched, values, setFieldValue }) => (
@@ -541,7 +557,6 @@ export const NewQuote = () => {
               )}
             </Form>
             <NewQuoteDescription programs={programs} />
-            <NewQuoteProducts />
             <div
               style={{
                 display: 'flex',

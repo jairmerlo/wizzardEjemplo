@@ -2,6 +2,7 @@ import { Descriptions } from 'antd'
 import { useFormikContext } from 'formik'
 import React, { useEffect, useState } from 'react'
 import { applyCouponToProgram } from '../helpers'
+import { NewQuoteProducts } from './NewQuoteProducts'
 
 export const NewQuoteDescription = ({ programs = [] }) => {
   const { values } = useFormikContext()
@@ -9,7 +10,14 @@ export const NewQuoteDescription = ({ programs = [] }) => {
     total_amount: 0,
     total_setup: 0,
   })
-  console.log({ values })
+  const monthlyProgram =
+    values.coupon && values.program
+      ? couponToProgram.total_amount
+      : programs.find(item => item.value === values.program)?.total_amount || 0
+  const setupFeeProgram =
+    couponToProgram.total_setup ||
+    programs.find(item => item.value === values.program)?.total_setup ||
+    0
   useEffect(() => {
     values.coupon &&
       values.program &&
@@ -19,22 +27,19 @@ export const NewQuoteDescription = ({ programs = [] }) => {
       }).then(data => setCouponToProgram(data))
   }, [values.coupon, values.program])
   return (
-    <Descriptions bordered style={{ marginTop: '32px' }}>
-      <Descriptions.Item label='Monthly Program'>
-        {`$${
-          values.coupon && values.program
-            ? couponToProgram.total_amount
-            : programs.find(item => item.value === values.program)
-                ?.total_amount || 0
-        }`}
-      </Descriptions.Item>
-      <Descriptions.Item label='Setup Free Program'>
-        {`$${
-          couponToProgram.total_setup ||
-          programs.find(item => item.value === values.program)?.total_setup ||
-          0
-        }`}
-      </Descriptions.Item>
-    </Descriptions>
+    <>
+      <Descriptions bordered style={{ marginTop: '32px' }}>
+        <Descriptions.Item label='Monthly Program'>
+          {`$${monthlyProgram}`}
+        </Descriptions.Item>
+        <Descriptions.Item label='Setup Free Program'>
+          {`$${setupFeeProgram}`}
+        </Descriptions.Item>
+      </Descriptions>
+      <NewQuoteProducts
+        monthlyProgram={monthlyProgram}
+        setupFeeProgram={setupFeeProgram}
+      />
+    </>
   )
 }

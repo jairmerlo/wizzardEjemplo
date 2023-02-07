@@ -310,7 +310,10 @@ export const billing = createApi({
             })
               .then(({ data }) => data)
               .then(data =>
-                data.map(({ name }) => ({ label: name, value: '' })),
+                data.map(({ name, item_id }) => ({
+                  label: name,
+                  value: item_id,
+                })),
               ),
             fetchWithBQ({
               url: '/list-bundle-type',
@@ -321,7 +324,7 @@ export const billing = createApi({
             })
               .then(({ data }) => data)
               .then(data =>
-                data.map(({ name }) => ({ label: name, value: '' })),
+                data.map(({ name }) => ({ label: name, value: name })),
               ),
             fetchWithBQ({
               url: '/product_group/list',

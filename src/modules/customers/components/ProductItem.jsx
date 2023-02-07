@@ -1,8 +1,10 @@
 import { DeleteOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Select } from 'antd'
-import { useFormikContext } from 'formik'
+import { Button, Form } from 'antd'
+import { Select, Input } from 'formik-antd'
+import { ErrorMessage, useFormikContext } from 'formik'
 import { useCss } from 'react-use'
 import { useGetProductOptionsQuery } from '../../../app/api/billing'
+
 const productsData = [
   {
     plan_id: '1029', //* program seleccionado
@@ -21,8 +23,10 @@ const productsData = [
     item_sort: 1,
   },
 ]
-export const ProductItem = () => {
-  const { values, setFieldValue } = useFormikContext()
+
+export const ProductItem = ({ onRemove, productIndex }) => {
+  const { values, errors, touched } = useFormikContext()
+  console.log({ errors })
   const { data = {} } = useGetProductOptionsQuery(
     {
       company: values.brokerage,
@@ -42,51 +46,114 @@ export const ProductItem = () => {
     flexBasis: '32px',
   })
   return (
-    <>
-      <div>
-        <div
-          style={{
-            padding: '16px 24px',
-            backgroundColor: 'rgba(0, 0, 0, 0.02)',
-            borderRadius: '8px',
-            border: '1px solid rgba(5, 5, 5, 0.06)',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button shape='circle' icon={<DeleteOutlined />} />
-          </div>
-          <Form
-            layout='vertical'
-            autoComplete='off'
-            style={{ display: 'flex', gap: '16px', position: 'relative' }}
-          >
-            <Form.Item label='Product' className={formItemSelect}>
-              <Select placeholder='Product' options={products} />
-            </Form.Item>
-            <Form.Item label='Monthly' className={formItemInput}>
-              <Input />
-            </Form.Item>
-            <Form.Item label='SetUp Fee' className={formItemInput}>
-              <Input />
-            </Form.Item>
-            <Form.Item label='Category' className={formItemSelect}>
-              <Select placeholder='Category' options={categories} />
-            </Form.Item>
-            <Form.Item label='Group' className={formItemSelect}>
-              <Select placeholder='Group' options={groups} />
-            </Form.Item>
-          </Form>
-        </div>
-      </div>
+    <div>
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          paddingTop: '16px',
+          padding: '16px 24px',
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+          borderRadius: '8px',
+          border: '1px solid rgba(5, 5, 5, 0.06)',
         }}
       >
-        <Button>Add Product</Button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={onRemove} shape='circle' icon={<DeleteOutlined />} />
+        </div>
+        <Form
+          layout='vertical'
+          autoComplete='off'
+          style={{ display: 'flex', gap: '16px', position: 'relative' }}
+        >
+          <Form.Item
+            label='Product'
+            className={formItemSelect}
+            required
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.item_id &&
+              touched.products &&
+              touched.products?.[productIndex]?.item_id &&
+              'error'
+            }
+            help={<ErrorMessage name={`products[${productIndex}].item_id`} />}
+          >
+            <Select
+              placeholder='Product'
+              options={products}
+              name={`products[${productIndex}].item_id`}
+            />
+          </Form.Item>
+          <Form.Item
+            label='Monthly'
+            className={formItemInput}
+            required
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.currencies?.unit_amount &&
+              touched.products &&
+              touched.products?.[productIndex]?.currencies?.unit_amount &&
+              'error'
+            }
+            help={
+              <ErrorMessage
+                name={`products[${productIndex}].currencies.unit_amount`}
+              />
+            }
+          >
+            <Input
+              name={`products[${productIndex}].currencies.unit_amount`}
+              type='number'
+            />
+          </Form.Item>
+          <Form.Item
+            label='SetUp Fee'
+            className={formItemInput}
+            required
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.currencies?.setup_fee &&
+              touched.products &&
+              touched.products?.[productIndex]?.currencies?.setup_fee &&
+              'error'
+            }
+            help={
+              <ErrorMessage
+                name={`products[${productIndex}].currencies.setup_fee`}
+              />
+            }
+          >
+            <Input
+              name={`products[${productIndex}].currencies.setup_fee`}
+              type='number'
+            />
+          </Form.Item>
+          <Form.Item
+            label='Category'
+            className={formItemSelect}
+            required
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.product_category &&
+              touched.products &&
+              touched.products?.[productIndex]?.product_category &&
+              'error'
+            }
+            help={
+              <ErrorMessage
+                name={`products[${productIndex}].product_category`}
+              />
+            }
+          >
+            <Select
+              placeholder='Category'
+              options={categories}
+              name={`products[${productIndex}].product_category`}
+            />
+          </Form.Item>
+          {/* <Form.Item label='Group' className={formItemSelect}>
+            <Select placeholder='Group' options={groups} />
+          </Form.Item> */}
+        </Form>
       </div>
-    </>
+    </div>
   )
 }
