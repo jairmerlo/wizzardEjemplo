@@ -15,6 +15,7 @@ import {
 } from '../../../app/api/billing'
 import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
+import { DocumentPDF } from './DocumentPDF'
 
 export const AuthorizationForms = ({
   achData = [],
@@ -224,7 +225,7 @@ export const AuthorizationForms = ({
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { authorization_form_type, status }) => (
+      render: (text, { authorization_form_type, status, id }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {/* //TODO: remplazar por pdf */}
@@ -232,14 +233,15 @@ export const AuthorizationForms = ({
             (authorization_form_type === 'ACH'
               ? !!principalACH?.document
               : !!principalCard?.document) && (
-              <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-                <Link
-                  to={`/${customerId}/${authorization_form_type}/${membershipId}`}
-                  target='_blank'
-                >
-                  <EyeTwoTone style={{ fontSize: '18px' }} />
-                </Link>
-              </Tooltip>
+              // <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
+              //   <Link
+              //     to={`/${customerId}/${authorization_form_type}/${membershipId}`}
+              //     target='_blank'
+              //   >
+              //     <EyeTwoTone style={{ fontSize: '18px' }} />
+              //   </Link>
+              // </Tooltip>
+              <DocumentPDF id={id} />
             )}
           {status === 'Waiting for client' || status === 'Completed' || (
             <Tooltip title='Send' overlayStyle={{ zIndex: 10000 }}>

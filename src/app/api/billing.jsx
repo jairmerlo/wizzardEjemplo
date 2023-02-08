@@ -345,6 +345,15 @@ export const billing = createApi({
         }
       },
     }),
+    getPdf: builder.query({
+      query: id => ({
+        url: '/get-pdf-access',
+        method: 'POST',
+        body: {
+          id,
+        },
+      }),
+    }),
   }),
 })
 
@@ -353,6 +362,7 @@ export default billing
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const {
+  useGetPdfQuery,
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
