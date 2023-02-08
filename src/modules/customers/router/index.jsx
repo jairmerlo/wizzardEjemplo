@@ -23,15 +23,17 @@ const customersRouter = createHashRouter(
       <Route index element={<Customers />} />
       <Route path='customer-view/:customerId' element={<CustomerView />}>
         <Route index element={<CustomerViewChild />} />
-        <Route
-          path='membership-details/:membershipId'
-          element={<MembershipDetails />}
-        />
       </Route>
       <Route
+        path='membership-details/:membershipRegKey'
+        element={<CustomerView />}
+      >
+        <Route index element={<MembershipDetails />} />
+      </Route>
+      {/* <Route
         path=':customerId/:formType/:membershipId'
         element={<Document />}
-      />
+      /> */}
       <Route path='new-quote' element={<NewQuote />} />
       <Route path='*' element={<Navigate to='/' replace={true} />} />
     </Route>,

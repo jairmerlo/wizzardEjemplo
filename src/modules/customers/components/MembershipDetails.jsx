@@ -1,26 +1,19 @@
-import { Avatar, Descriptions, Segmented, Typography } from 'antd'
+import { Descriptions, Segmented, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
-import {
-  useGetAuthorizationFormsQuery,
-  useGetCustomerQuery,
-} from '../../../app/api/billing'
+import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
 import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
 import { BillinInformation } from './BillinInformation'
 
 export const MembershipDetails = () => {
-  const { membershipId, customerId } = useParams()
-  const { data: customer = {}, isLoading } = useGetCustomerQuery(customerId)
-  const { memberships = [] } = customer
-
-  const membership = memberships.find(item => item.id === membershipId)
+  const { membershipRegKey } = useParams()
 
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
-    { registration_key: membership?.registration_key },
+    { registration_key: membershipRegKey },
     {
-      skip: !membership,
+      skip: !membershipRegKey,
     },
   )
 
@@ -29,30 +22,30 @@ export const MembershipDetails = () => {
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
     useGetAuthorizationFormsQuery(
       {
-        registration_key: membership?.registration_key,
+        registration_key: membershipRegKey,
         authorization_form_type: 'ACH',
         order: 'id desc',
       },
       {
-        skip: !membership,
+        skip: !membershipRegKey,
       },
     )
 
   const { data: authorizationFormsCard = [], refetch: refetchCard } =
     useGetAuthorizationFormsQuery(
       {
-        registration_key: membership?.registration_key,
+        registration_key: membershipRegKey,
         authorization_form_type: 'Card',
         order: 'id desc',
       },
       {
-        skip: !membership,
+        skip: !membershipRegKey,
       },
     )
-  console.log({ membership })
   const [section, setSection] = useState('Billing Information')
-  const fullName = customer.name + ' ' + customer.last_name
-  if (isLoading || isLoadingM) return 'Cargando...'
+  // const fullName = customer.name + ' ' + customer.last_name
+  const fullName = 'Por hacer'
+  if (isLoadingM) return 'Cargando...'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>
@@ -93,7 +86,7 @@ export const MembershipDetails = () => {
                   fontSize: '24px',
                 }}
               >
-                {membership.membership_id}
+                {membershipData?.membership_id}
               </p>
             </>
           }
@@ -157,7 +150,7 @@ export const MembershipDetails = () => {
                 {stringFallback(membershipData.trialDue)}
               </Descriptions.Item>
               <Descriptions.Item label='Board'>
-                  {stringFallback(membershipData.boardName)}
+                {stringFallback(membershipData.boardName)}
               </Descriptions.Item>
               <Descriptions.Item label='IDX Requested'>
                 {stringFallback(membershipData.idxRequestedDate)}
@@ -167,14 +160,15 @@ export const MembershipDetails = () => {
               </Descriptions.Item> */}
               <Descriptions.Item label='IDX'>
                 {stringFallback(membershipData.idx)}
-              </Descriptions.Item>             
-              <Descriptions.Item label='Premium'>
-                {stringFallback(membershipData.hasPremium === true ? 'Yes' : 'No' )}
               </Descriptions.Item>
-               <Descriptions.Item label='Premium Date'>
+              <Descriptions.Item label='Premium'>
+                {stringFallback(
+                  membershipData.hasPremium === true ? 'Yes' : 'No',
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label='Premium Date'>
                 {stringFallback(membershipData.premium)}
               </Descriptions.Item>
-             
             </>
           )}
         </Descriptions>
@@ -198,7 +192,7 @@ export const MembershipDetails = () => {
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
-            registrationKey={membership?.registration_key}
+            registrationKey={membershipRegKey}
             onSuccess={() => {
               refetchACH()
               refetchCard()
@@ -211,7 +205,7 @@ export const MembershipDetails = () => {
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
-            registrationKey={membership?.registration_key}
+            registrationKey={membershipRegKey}
             onSuccess={() => {
               refetchACH()
               refetchCard()

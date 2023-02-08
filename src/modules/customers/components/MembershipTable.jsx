@@ -195,11 +195,11 @@ export const MembershipTable = ({ memberships }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
+      render: (text, { registration_key }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-            <Link to={`membership-details/${id}`}>
+            <Link to={`/membership-details/${registration_key}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
             </Link>
           </Tooltip>

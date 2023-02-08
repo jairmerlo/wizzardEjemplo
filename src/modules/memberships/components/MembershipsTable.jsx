@@ -23,7 +23,6 @@ import {
   USD,
 } from '../../../helpers'
 import moment from 'moment/moment'
-import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
 
@@ -354,13 +353,15 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
+      render: (text, { registration_key }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Details'>
-            <Link to={`/customer-view/${id}`}>
+            <a
+              href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+            >
               <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Link>
+            </a>
           </Tooltip>
           <Tooltip title='Edit'>
             <a>

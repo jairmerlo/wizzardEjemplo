@@ -24,7 +24,6 @@ export const AuthorizationForms = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
-  const { customerId, membershipId } = useParams()
   const ACHHistory = achData.map(({ create_at, completed_at, status }) => ({
     completed_at,
     create_at,

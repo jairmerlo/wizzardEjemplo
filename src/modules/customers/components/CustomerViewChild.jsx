@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Segmented, Spin } from 'antd'
+import { Button, Card, Segmented, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
 import { useGetCustomerQuery } from '../../../app/api/billing'

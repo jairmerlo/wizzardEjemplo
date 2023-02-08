@@ -6,7 +6,7 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form, Input } from 'antd'
 
 import moment from 'moment'
 import { Fragment, useState } from 'react'
@@ -28,9 +28,7 @@ export const BillinInformation = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
-  const { customerId, membershipId } = useParams()
-
- console.log('aaaaaaaaa', achData)
+  console.log('aaaaaaaaa', achData)
 
   const ACHHistory = achData.map(
     ({
@@ -81,8 +79,7 @@ export const BillinInformation = ({
       : cardData.find(item => item.is_principal === '1') || cardData[0],
   ]
 
-
-  const [cardInfo,setCardInfo] = useState(rows[1])
+  const [cardInfo, setCardInfo] = useState(rows[1])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -156,8 +153,23 @@ export const BillinInformation = ({
           credit_card_number,
         },
       ) {
-        if (authorization_form_type === 'ACH') return <td>{account_number ? '**** **** **** ' + account_number.substring(account_number.length - 4) : ''}</td>
-        return <td>{credit_card_number ? '**** **** **** ' + credit_card_number.substring(credit_card_number.length - 4) : ''}</td>
+        if (authorization_form_type === 'ACH')
+          return (
+            <td>
+              {account_number
+                ? '**** **** **** ' +
+                  account_number.substring(account_number.length - 4)
+                : ''}
+            </td>
+          )
+        return (
+          <td>
+            {credit_card_number
+              ? '**** **** **** ' +
+                credit_card_number.substring(credit_card_number.length - 4)
+              : ''}
+          </td>
+        )
       },
     },
     {
@@ -207,77 +219,117 @@ export const BillinInformation = ({
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form layout='vertical' autoComplete='off' style={{marginTop: '24px', marginBottom: '30px'}}>
+        <Form
+          layout='vertical'
+          autoComplete='off'
+          style={{ marginTop: '24px', marginBottom: '30px' }}
+        >
           <div className={form} style={{ gap: '16px' }}>
-            <Form.Item
-              label='Payment Method'
-              
-            >
-              <Input name='payment_method' placeholder='Payment Method' value={'Card'} disabled />
+            <Form.Item label='Payment Method'>
+              <Input
+                name='payment_method'
+                placeholder='Payment Method'
+                value={'Card'}
+                disabled
+              />
             </Form.Item>
-            <Form.Item
-              label='Credit Card'
-            >
-              <Input name='credit_card' placeholder='Credit Card' disabled value={cardInfo.credit_card_number ? '**** **** **** ' + cardInfo.credit_card_number.substring(cardInfo.credit_card_number.length - 4) : ''} />
+            <Form.Item label='Credit Card'>
+              <Input
+                name='credit_card'
+                placeholder='Credit Card'
+                disabled
+                value={
+                  cardInfo.credit_card_number
+                    ? '**** **** **** ' +
+                      cardInfo.credit_card_number.substring(
+                        cardInfo.credit_card_number.length - 4,
+                      )
+                    : ''
+                }
+              />
             </Form.Item>
           </div>
 
           <div className={form3} style={{ gap: '16px', marginTop: '12px' }}>
-            <Form.Item
-              label='Expires(MM/YY)'
-              
-            >
-              <Input name='expires' placeholder='Expires(MM/YY)' disabled value={cardInfo.expiration_date ? moment(cardInfo.expiration_date).format('MM/YYYY') : ''} disabled />
+            <Form.Item label='Expires(MM/YY)'>
+              <Input
+                name='expires'
+                placeholder='Expires(MM/YY)'
+                disabled
+                value={
+                  cardInfo.expiration_date
+                    ? moment(cardInfo.expiration_date).format('MM/YYYY')
+                    : ''
+                }
+                disabled
+              />
             </Form.Item>
-            <Form.Item
-              label='CVC'
-            >
-              <Input name='cvc' placeholder='CVC' disabled value={cardInfo.cvc ? '****' : ''} />
+            <Form.Item label='CVC'>
+              <Input
+                name='cvc'
+                placeholder='CVC'
+                disabled
+                value={cardInfo.cvc ? '****' : ''}
+              />
             </Form.Item>
-            <Form.Item
-              label='Company Billing'
-            >
-              <Input name='company' disabled placeholder='Company Billing' value={cardInfo.company ? cardInfo.company : ''} />
+            <Form.Item label='Company Billing'>
+              <Input
+                name='company'
+                disabled
+                placeholder='Company Billing'
+                value={cardInfo.company ? cardInfo.company : ''}
+              />
             </Form.Item>
           </div>
 
-          <div  style={{ marginTop: '12px' }}>
-            <Form.Item
-              label='Billing Address'
-              
-            >
-              <Input name='billing_address' placeholder='Billing Address' disabled value={cardInfo.address ? cardInfo.address : ''}  />
-            </Form.Item>           
+          <div style={{ marginTop: '12px' }}>
+            <Form.Item label='Billing Address'>
+              <Input
+                name='billing_address'
+                placeholder='Billing Address'
+                disabled
+                value={cardInfo.address ? cardInfo.address : ''}
+              />
+            </Form.Item>
           </div>
 
-          <div  style={{  marginTop: '-12px' }}>
-            <Form.Item
-              label='Billing Address2'
-              
-            >
-              <Input name='billing_address2' placeholder='Billing Address2' disabled value={cardInfo.address ? cardInfo.address : ''}  />
-            </Form.Item>           
+          <div style={{ marginTop: '-12px' }}>
+            <Form.Item label='Billing Address2'>
+              <Input
+                name='billing_address2'
+                placeholder='Billing Address2'
+                disabled
+                value={cardInfo.address ? cardInfo.address : ''}
+              />
+            </Form.Item>
           </div>
 
           <div className={form3} style={{ gap: '16px', marginTop: '-12px' }}>
-            <Form.Item
-              label='City'
-              
-            >
-              <Input name='city' placeholder='City' disabled value={cardInfo.city ? cardInfo.city : ''} />
+            <Form.Item label='City'>
+              <Input
+                name='city'
+                placeholder='City'
+                disabled
+                value={cardInfo.city ? cardInfo.city : ''}
+              />
             </Form.Item>
-            <Form.Item
-              label='State / Region'
-            >
-              <Input name='region' placeholder='State/Region' disabled value={cardInfo.region ? cardInfo.region : ''} />
+            <Form.Item label='State / Region'>
+              <Input
+                name='region'
+                placeholder='State/Region'
+                disabled
+                value={cardInfo.region ? cardInfo.region : ''}
+              />
             </Form.Item>
-            <Form.Item
-              label='Zip / Postal Code'
-            >
-              <Input name='zip_code' disabled placeholder='Zip / Postal Code' value={cardInfo.zip_code ? cardInfo.zip_code : ''} />
+            <Form.Item label='Zip / Postal Code'>
+              <Input
+                name='zip_code'
+                disabled
+                placeholder='Zip / Postal Code'
+                value={cardInfo.zip_code ? cardInfo.zip_code : ''}
+              />
             </Form.Item>
           </div>
-         
         </Form>
       </Modal>
     </>
