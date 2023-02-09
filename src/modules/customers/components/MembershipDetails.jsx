@@ -5,6 +5,7 @@ import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
 import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
+import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
 
 export const MembershipDetails = () => {
@@ -16,8 +17,6 @@ export const MembershipDetails = () => {
       skip: !membershipRegKey,
     },
   )
-
-  console.info('membershipDataaaaa', membershipData)
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
     useGetAuthorizationFormsQuery(
@@ -185,7 +184,17 @@ export const MembershipDetails = () => {
             alignSelf: 'flex-start',
           }}
           value={section}
-          onChange={setSection}
+          onChange={section => {
+            console.log(section)
+            setSection(section)
+            if (
+              section === 'Authorization Forms' ||
+              section === 'Billing Information'
+            ) {
+              refetchACH()
+              refetchCard()
+            }
+          }}
         />
         {section === 'Billing Information' && (
           <BillinInformation
@@ -194,12 +203,25 @@ export const MembershipDetails = () => {
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
             onSuccess={() => {
+              console.log('llama')
               refetchACH()
               refetchCard()
             }}
           />
         )}
-        {section === 'Billing History' && <div>Billing History</div>}
+        {section === 'Billing History' && (
+          <BillinHistory
+            cardData={authorizationFormsCard}
+            achData={authorizationFormsACH}
+            userId={getConfig().userId}
+            registrationKey={membershipRegKey}
+            onSuccess={() => {
+              console.log('llama')
+              refetchACH()
+              refetchCard()
+            }}
+          />
+        )}
         {section === 'Authorization Forms' && (
           <AuthorizationForms
             cardData={authorizationFormsCard}

@@ -1,25 +1,12 @@
-import {
-  CopyOutlined,
-  ExclamationCircleFilled,
-  EyeTwoTone,
-  RetweetOutlined,
-  SendOutlined,
-} from '@ant-design/icons'
-import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
-import { Checkbox, Form, Input } from 'antd'
+import { EyeTwoTone } from '@ant-design/icons'
+import { Modal, Space, Table, Tooltip } from 'antd'
+import { Form, Input } from 'antd'
 
 import moment from 'moment'
 import { Fragment, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { useCss } from 'react-use'
-import {
-  useReplaceAuthorizationFormMutation,
-  useResendAuthorizationFormMutation,
-  useSendAuthorizationFormMutation,
-} from '../../../app/api/billing'
+
 import { getColumnProps, showTotal } from '../../../helpers'
-import { AFTimeLine } from './AFTimeLine'
-import * as Yup from 'yup'
 
 export const BillinInformation = ({
   achData = [],
@@ -79,7 +66,7 @@ export const BillinInformation = ({
       : cardData.find(item => item.is_principal === '1') || cardData[0],
   ]
 
-  const [cardInfo, setCardInfo] = useState(rows[1])
+  const cardInfo = rows[1]
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -261,7 +248,6 @@ export const BillinInformation = ({
                     ? moment(cardInfo.expiration_date).format('MM/YYYY')
                     : ''
                 }
-                disabled
               />
             </Form.Item>
             <Form.Item label='CVC'>
