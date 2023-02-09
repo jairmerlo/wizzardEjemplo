@@ -13,6 +13,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useCss } from 'react-use'
 import {
+  useGetPdfInvoiceQuery,
   useListAccountInvoiceByRegkeyQuery,
   useReplaceAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
@@ -29,18 +30,39 @@ export const BillinHistory = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
+  
+
+  const [id, setId] = useState(null)
+
   const { data: billinHistoryData = [], isLoading: isLoadingH } =
     useListAccountInvoiceByRegkeyQuery(
       { registration_key: registrationKey },
       {
         skip: !registrationKey,
       },
-    )  
+    )
+
+  const {
+    data: pdfData = [],
+    isLoading: isLoadingPdf,
+    refetch: refetchPDF,
+  } = useGetPdfInvoiceQuery(
+    { id: id },
+    {
+      skip: !id,
+    },
+  )
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const showModal = () => {
     setIsModalOpen(true)
+  }
+
+  const handleViewPdf = async id => {
+    setId(id)
+    refetchPDF()
+    console.log('ss', id)
   }
 
   const handleOk = () => {
@@ -83,19 +105,14 @@ export const BillinHistory = ({
         title: 'INVOICE #',
         dataIndex: 'name',
       }),
-    }, 
+    },
     {
       ...getColumnProps({
         title: 'Date',
         dataIndex: 'date',
       }),
       render(text, { created_at }) {
-       
-          return (
-              <td>{moment(created_at).format('MM-DD-YYYY')}</td>
-              
-          )
-       
+        return <td>{moment(created_at).format('MM-DD-YYYY')}</td>
       },
     },
     {
@@ -108,37 +125,32 @@ export const BillinHistory = ({
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (
-        text,
-        { id },
-      ) => (
-        <Space size='middle'>         
-            <Tooltip
-              title='Details'
-              overlayStyle={{ zIndex: 10000 }}
-              onClick={showModal}
-            >
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Tooltip>      
+      render: (text, { id }) => (
+        <Space size='middle'>
+          <Tooltip
+            title='Details'
+            overlayStyle={{ zIndex: 10000 }}
+            onClick={() => handleViewPdf(id)}
+          >
+            <EyeTwoTone style={{ fontSize: '18px' }} />
+          </Tooltip>
         </Space>
       ),
     },
   ]
   return (
     <>
-     
-        <Table
-          rowKey='id'
-          size='small'
-          columns={columns}
-          dataSource={billinHistoryData}
-          bordered
-          pagination={{
-            showTotal,
-          }}
-          loading={isLoadingH}
-        />
-      
+      <Table
+        rowKey='id'
+        size='small'
+        columns={columns}
+        dataSource={billinHistoryData}
+        bordered
+        pagination={{
+          showTotal,
+        }}
+        loading={isLoadingH}
+      />
 
       {/* <Modal
         title='Payment Billing Information'

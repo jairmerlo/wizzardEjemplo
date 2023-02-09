@@ -365,6 +365,23 @@ export const billing = createApi({
         }
       },
     }),
+    getPdfInvoice: builder.query({
+      queryFn: async ({ id }, _api, _extraOptions, fetchWithBQ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
+            method: 'get',
+          }).then(res => res.json())         
+        
+          return {
+            data: res
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -384,5 +401,6 @@ export const {
   useResendAuthorizationFormMutation,
   useReplaceAuthorizationFormMutation,
   useGetProductOptionsQuery,
-  useListAccountInvoiceByRegkeyQuery
+  useListAccountInvoiceByRegkeyQuery,
+  useGetPdfInvoiceQuery
 } = billing
