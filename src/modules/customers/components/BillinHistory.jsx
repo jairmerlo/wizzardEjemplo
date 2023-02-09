@@ -30,8 +30,6 @@ export const BillinHistory = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
-  
-
   const [id, setId] = useState(null)
 
   const { data: billinHistoryData = [], isLoading: isLoadingH } =
