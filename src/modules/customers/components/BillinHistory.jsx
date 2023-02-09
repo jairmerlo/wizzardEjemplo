@@ -6,13 +6,14 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Form, Input } from 'antd'
 
 import moment from 'moment'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useCss } from 'react-use'
 import {
+  useListAccountInvoiceByRegkeyQuery,
   useReplaceAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
   useSendAuthorizationFormMutation,
@@ -21,68 +22,20 @@ import { getColumnProps, showTotal } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 import * as Yup from 'yup'
 
-export const BillinInformation = ({
+export const BillinHistory = ({
   achData = [],
   cardData = [],
   userId,
   registrationKey,
   onSuccess = f => f,
 }) => {
-  const { customerId, membershipId } = useParams()
-
- console.log('aaaaaaaaa', achData)
-
-  const ACHHistory = achData.map(
-    ({
-      create_at,
-      completed_at,
-      status,
-      account_number,
-      credit_card_number,
-    }) => ({
-      completed_at,
-      account_number,
-      credit_card_number,
-      create_at,
-      status,
-    }),
-  )
-  const cardHistory = cardData.map(
-    ({
-      create_at,
-      completed_at,
-      status,
-      account_number,
-      credit_card_number,
-    }) => ({
-      completed_at,
-      account_number,
-      credit_card_number,
-      create_at,
-      status,
-    }),
-  )
-  const rows = [
-    achData.length === 0
-      ? {
-          id: '-1',
-          authorization_form_type: 'ACH',
-          status: '',
-          document: null,
-        }
-      : achData.find(item => item.is_principal === '1') || achData[0],
-    cardData.length === 0
-      ? {
-          id: '-2',
-          authorization_form_type: 'Card',
-          status: '',
-          document: null,
-        }
-      : cardData.find(item => item.is_principal === '1') || cardData[0],
-  ]
-
-
-  const cardInfo = rows[1]
+  const { data: billinHistoryData = [], isLoading: isLoadingH } =
+    useListAccountInvoiceByRegkeyQuery(
+      { registration_key: registrationKey },
+      {
+        skip: !registrationKey,
+      },
+    )  
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -127,38 +80,29 @@ export const BillinInformation = ({
   const columns = [
     {
       ...getColumnProps({
-        title: 'Payment Method',
-        dataIndex: 'authorization_form_type',
+        title: 'INVOICE #',
+        dataIndex: 'name',
       }),
-    },
+    }, 
     {
       ...getColumnProps({
-        title: 'Number',
-        dataIndex: 'authorization_form_type',
+        title: 'Date',
+        dataIndex: 'date',
       }),
-      render(text, { completed_at, create_at, authorization_form_type }) {
-        if (authorization_form_type === 'ACH') return <td>Account Number</td>
-        return <td>Credit Card Number</td>
+      render(text, { created_at }) {
+       
+          return (
+              <td>{moment(created_at).format('MM-DD-YYYY')}</td>
+              
+          )
+       
       },
     },
     {
       ...getColumnProps({
-        title: 'Account',
-        dataIndex: 'authorization_form_type',
+        title: 'AMOUNT',
+        dataIndex: 'total',
       }),
-      render(
-        text,
-        {
-          completed_at,
-          create_at,
-          authorization_form_type,
-          account_number,
-          credit_card_number,
-        },
-      ) {
-        if (authorization_form_type === 'ACH') return <td>{account_number ? '**** **** **** ' + account_number.substring(account_number.length - 4) : ''}</td>
-        return <td>{credit_card_number ? '**** **** **** ' + credit_card_number.substring(credit_card_number.length - 4) : ''}</td>
-      },
     },
     {
       title: 'Actions',
@@ -166,40 +110,37 @@ export const BillinInformation = ({
       key: 'actions',
       render: (
         text,
-        { authorization_form_type, status, document, completed_at, created_at },
+        { id },
       ) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          {/* //TODO: remplazar por pdf */}
-          {authorization_form_type === 'Card' && (
+        <Space size='middle'>         
             <Tooltip
               title='Details'
               overlayStyle={{ zIndex: 10000 }}
               onClick={showModal}
             >
               <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Tooltip>
-          )}
-
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Tooltip>      
         </Space>
       ),
     },
   ]
   return (
     <>
-      <Table
-        rowKey='id'
-        size='small'
-        columns={columns}
-        dataSource={rows}
-        bordered
-        pagination={{
-          showTotal,
-        }}
-      />
+     
+        <Table
+          rowKey='id'
+          size='small'
+          columns={columns}
+          dataSource={billinHistoryData}
+          bordered
+          pagination={{
+            showTotal,
+          }}
+          loading={isLoadingH}
+        />
+      
 
-      <Modal
+      {/* <Modal
         title='Payment Billing Information'
         width='60%'
         open={isModalOpen}
@@ -279,7 +220,7 @@ export const BillinInformation = ({
           </div>
          
         </Form>
-      </Modal>
+      </Modal> */}
     </>
   )
 }

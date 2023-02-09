@@ -345,6 +345,26 @@ export const billing = createApi({
         }
       },
     }),
+    listAccountInvoiceByRegkey: builder.query({
+      queryFn: async ({ registration_key }, _api, _extraOptions, fetchWithBQ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/list-account-invoice-byregkey', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())         
+        
+          return {
+            data: res
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -364,4 +384,5 @@ export const {
   useResendAuthorizationFormMutation,
   useReplaceAuthorizationFormMutation,
   useGetProductOptionsQuery,
+  useListAccountInvoiceByRegkeyQuery
 } = billing
