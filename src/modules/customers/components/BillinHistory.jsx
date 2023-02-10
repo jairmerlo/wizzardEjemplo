@@ -1,11 +1,21 @@
 import {
   CopyOutlined,
+  DotChartOutlined,
   ExclamationCircleFilled,
   EyeTwoTone,
+  FilePdfOutlined,
   RetweetOutlined,
   SendOutlined,
 } from '@ant-design/icons'
-import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
+import {
+  Button,
+  Modal,
+  notification,
+  Skeleton,
+  Space,
+  Table,
+  Tooltip,
+} from 'antd'
 import { Checkbox, Form, Input } from 'antd'
 
 import moment from 'moment'
@@ -22,6 +32,7 @@ import {
 import { getColumnProps, showTotal } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 import * as Yup from 'yup'
+import { API } from '../../../api'
 
 export const BillinHistory = ({
   achData = [],
@@ -40,16 +51,18 @@ export const BillinHistory = ({
       },
     )
 
-  const {
-    data: pdfData = [],
-    isLoading: isLoadingPdf,
-    refetch: refetchPDF,
-  } = useGetPdfInvoiceQuery(
-    { id: id },
-    {
-      skip: !id,
-    },
-  )
+  // let {
+  //   data: pdfData = [],
+  //   isLoading: isLoadingPdf,
+  //   refetch: refetchPDF,
+  // } = useGetPdfInvoiceQuery(
+  //   { id: id },
+  //   {
+  //     skip: !id,
+  //   },
+  // )
+
+  const [pdfs, setPdfS] = useState([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -58,10 +71,17 @@ export const BillinHistory = ({
   }
 
   const handleViewPdf = async id => {
-    setId(id)
-    refetchPDF()
-    console.log('ss', id)
+    setPdfS([])
+    setIsModalOpen(true)
+    const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
+      method: 'get',
+    }).then(res => res.json())
+    setPdfS(res)
   }
+
+  // useEffect(()=>{
+  //   setPdfS(pdfData)
+  // },[pdfData])
 
   const handleOk = () => {
     setIsModalOpen(false)
@@ -150,87 +170,44 @@ export const BillinHistory = ({
         loading={isLoadingH}
       />
 
-      {/* <Modal
+      <Modal
         title='Payment Billing Information'
-        width='60%'
+        width='50%'
+        style={{ height: '20px' }}
         open={isModalOpen}
         footer={[]}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form layout='vertical' autoComplete='off' style={{marginTop: '24px', marginBottom: '30px'}}>
-          <div className={form} style={{ gap: '16px' }}>
-            <Form.Item
-              label='Payment Method'
+        {pdfs.url && (
+          <object
+            data={pdfs.url}
+            type='application/pdf'
+            style={{ width: '100%', height: '700px' }}
+          >
+            <iframe
+              frameborder='0'
+              width={'100%'}
+              title='pdf'
               
-            >
-              <Input name='payment_method' placeholder='Payment Method' value={'Card'} disabled />
-            </Form.Item>
-            <Form.Item
-              label='Credit Card'
-            >
-              <Input name='credit_card' placeholder='Credit Card' disabled value={cardInfo.credit_card_number ? '**** **** **** ' + cardInfo.credit_card_number.substring(cardInfo.credit_card_number.length - 4) : ''} />
-            </Form.Item>
-          </div>
+            ></iframe>
+          </object>
+        )}
 
-          <div className={form3} style={{ gap: '16px', marginTop: '12px' }}>
-            <Form.Item
-              label='Expires(MM/YY)'
-              
-            >
-              <Input name='expires' placeholder='Expires(MM/YY)' disabled value={cardInfo.expiration_date ? moment(cardInfo.expiration_date).format('MM/YYYY') : ''} disabled />
-            </Form.Item>
-            <Form.Item
-              label='CVC'
-            >
-              <Input name='cvc' placeholder='CVC' disabled value={cardInfo.cvc ? '****' : ''} />
-            </Form.Item>
-            <Form.Item
-              label='Company Billing'
-            >
-              <Input name='company' disabled placeholder='Company Billing' value={cardInfo.company ? cardInfo.company : ''} />
-            </Form.Item>
-          </div>
-
-          <div  style={{ marginTop: '12px' }}>
-            <Form.Item
-              label='Billing Address'
-              
-            >
-              <Input name='billing_address' placeholder='Billing Address' disabled value={cardInfo.address ? cardInfo.address : ''}  />
-            </Form.Item>           
-          </div>
-
-          <div  style={{  marginTop: '-12px' }}>
-            <Form.Item
-              label='Billing Address2'
-              
-            >
-              <Input name='billing_address2' placeholder='Billing Address2' disabled value={cardInfo.address ? cardInfo.address : ''}  />
-            </Form.Item>           
-          </div>
-
-          <div className={form3} style={{ gap: '16px', marginTop: '-12px' }}>
-            <Form.Item
-              label='City'
-              
-            >
-              <Input name='city' placeholder='City' disabled value={cardInfo.city ? cardInfo.city : ''} />
-            </Form.Item>
-            <Form.Item
-              label='State / Region'
-            >
-              <Input name='region' placeholder='State/Region' disabled value={cardInfo.region ? cardInfo.region : ''} />
-            </Form.Item>
-            <Form.Item
-              label='Zip / Postal Code'
-            >
-              <Input name='zip_code' disabled placeholder='Zip / Postal Code' value={cardInfo.zip_code ? cardInfo.zip_code : ''} />
-            </Form.Item>
+        {!pdfs.url && (
+          <div style={{ display: 'flex' , justifyContent: 'center'}}>
+             <Skeleton.Node active={true} size={'large'} block={true} >
+            <FilePdfOutlined
+              style={{
+                fontSize: 60,
+                color: '#bfbfbf',
+              }}
+            />
+          </Skeleton.Node>
           </div>
          
-        </Form>
-      </Modal> */}
+        )}
+      </Modal>
     </>
   )
 }
