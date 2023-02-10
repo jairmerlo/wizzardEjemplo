@@ -311,6 +311,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
     },
     {
       title: 'Periods',
@@ -328,26 +336,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'amount',
       key: 'amount',
       ...getColumnSearchProps('amount'),
-      // render: monthlyAmount =>
-      //   monthlyAmount ? (
-      //     renderTextHighlighter({
-      //       text: USD(monthlyAmount),
-      //       isHighlighted: searchedColumn['monthly_amount'],
-      //       highlightedText: searchText['monthly_amount'],
-      //     })
-      //   ) : (
-      //     <NoDataCell />
-      //   ),
-      // onFilter: (value, record) =>
-      //   USD(record['monthly_amount'])
-      //     .toString()
-      //     .toLowerCase()
-      //     .includes(value.toLowerCase()),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
-      //   },
-      // }),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.amount).value) -
+            parseFloat(currency(b.amount).value)
+          )
+        },
+      }),
     },
     {
       title: 'Actions',

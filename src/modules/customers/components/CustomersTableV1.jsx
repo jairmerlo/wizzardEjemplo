@@ -344,7 +344,7 @@ export const CustomersTableV1 = ({ filter }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
+      render: (text, { id, uuid }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Add Membership'>
@@ -353,7 +353,7 @@ export const CustomersTableV1 = ({ filter }) => {
             </Link>
           </Tooltip>
           <Tooltip title='Details'>
-            <Link to={`/customer-view/${id}`}>
+            <Link to={`/customer-view/${uuid}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
             </Link>
           </Tooltip>

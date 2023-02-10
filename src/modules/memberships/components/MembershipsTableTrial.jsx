@@ -316,7 +316,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ellipsis: true,
     },
     {
-      title: 'Premium',
+      title: 'Premium Requested',
       key: 'premium',
       dataIndex: 'premium',
       ...getColumnSearchProps('premium'),
