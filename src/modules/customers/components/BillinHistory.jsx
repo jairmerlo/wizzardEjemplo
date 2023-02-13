@@ -138,6 +138,9 @@ export const BillinHistory = ({
         title: 'AMOUNT',
         dataIndex: 'total',
       }),
+      render(text, { total }) {
+        return <td>${total}</td>
+      },
     },
     {
       title: 'Actions',
