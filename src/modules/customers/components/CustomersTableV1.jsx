@@ -28,6 +28,7 @@ import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
 import currency from 'currency.js'
+import { API } from '../../../api'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -51,6 +52,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 }
 
 export const CustomersTableV1 = ({ filter }) => {
+  console.log({ API })
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])

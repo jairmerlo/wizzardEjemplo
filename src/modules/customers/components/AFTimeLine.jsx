@@ -54,12 +54,12 @@ export const AFTimeLine = ({
                 {item.completed_at && (
                   <tr>
                     <td>Completed</td>
-                    <td>{item.completed_at}</td>
+                    <td>{item.completed_at + 'UTC+0'}</td>
                   </tr>
                 )}
                 <tr>
                   <td>Waiting for Client </td>
-                  <td>{item.create_at}</td>
+                  <td>{item.create_at + 'UTC+0'}</td>
                 </tr>
               </>
             ))}

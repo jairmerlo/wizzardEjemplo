@@ -16,7 +16,12 @@ import {
   EyeTwoTone,
   SearchOutlined,
 } from '@ant-design/icons'
-import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
+import {
+  renderTextHighlighter,
+  showTotal,
+  stringFallback,
+  USD,
+} from '../../../helpers'
 import moment from 'moment/moment'
 import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
@@ -201,8 +206,10 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         }}
       />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      const text = record[dataIndex] || ''
+      return text.toString().toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -232,6 +239,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ellipsis: true,
     }
   }
+  const getColumnFilterProps = ({ dataIndex, filters }) => {
+    return {
+      filters,
+      filterSearch: true,
+      onFilter: (value, record) =>
+        record[dataIndex] && record[dataIndex].startsWith(value),
+    }
+  }
   const columns = [
     {
       title: 'Product/Service',
@@ -246,6 +261,24 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       key: 'trial_due',
       dataIndex: 'trial_due',
       ...getColumnSearchProps('trial_due'),
+      render: date =>
+        date
+          ? moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment())
+            ? moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
+            : stringFallback(null, { fallback: 'Timed out' })
+          : stringFallback(),
+      onFilter: (value, record) => {
+        const text = record['trial_due']
+          ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
+              moment(),
+            )
+            ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
+              ' left'
+            : ''
+          : ''
+        return text.toString().toLowerCase().includes(value.toLowerCase())
+      },
+      ...getColumnSortProps('trial_due'),
       width: 120,
       fixed: 'left',
     },
@@ -291,21 +324,48 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       title: 'Published Status',
       key: 'publication_dtate',
       dataIndex: 'publication_dtate',
-      ...getColumnSearchProps('publication_dtate'),
+      ...getColumnFilterProps({
+        filters: [
+          {
+            text: 'Unpublished',
+            value: 'Unpublished',
+          },
+        ],
+        dataIndex: 'publication_dtate',
+      }),
       width: 120,
     },
     {
       title: 'IDX',
       key: 'idx',
       dataIndex: 'idx',
-      ...getColumnSearchProps('idx'),
+      ...getColumnFilterProps({
+        filters: [
+          {
+            text: 'No',
+            value: 'No',
+          },
+          {
+            text: 'Active',
+            value: 'Active',
+          },
+        ],
+        dataIndex: 'idx',
+      }),
       width: 80,
     },
     {
       title: 'IDX Requested',
       key: 'idx_requested_date',
       dataIndex: 'idx_requested_date',
-      ...getColumnSearchProps('idx_requested_date'),
+      ...getDateColumnSearchProps('idx_requested_date'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'),
+          ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
+        },
+      }),
       width: 120,
     },
     {
@@ -313,6 +373,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       key: 'board_name',
       dataIndex: 'board_name',
       ...getColumnSearchProps('board_name'),
+      ...getColumnSortProps('board_name'),
       ellipsis: true,
     },
     {
@@ -326,6 +387,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
       width: 120,
     },
     // {

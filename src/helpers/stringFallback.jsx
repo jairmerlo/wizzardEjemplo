@@ -1,4 +1,5 @@
-export const stringFallback = text => {
+export const stringFallback = (text, opts = {}) => {
+  const { fallback } = opts
   switch (text) {
     case '':
     case undefined:
@@ -11,7 +12,7 @@ export const stringFallback = text => {
             pointerEvents: 'none',
           }}
         >
-          No data
+          {fallback || 'No data'}
         </span>
       )
     default:
