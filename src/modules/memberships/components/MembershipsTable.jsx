@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Popover,
   Space,
   Table,
   Tooltip,
@@ -15,6 +16,7 @@ import {
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
+  ToolOutlined,
 } from '@ant-design/icons'
 import {
   capitalize,
@@ -349,28 +351,40 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
+      width: 90,
       render: (text, { registration_key }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Details'>
-            <a
-              href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
-            >
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Edit'>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
+        <Popover
+          placement='bottom'
+          title={text}
+          content={
+            <Space size='middle' direction='vertical'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Tooltip title='Details'>
+                <a
+                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <Tooltip title='Edit'>
+                <a>
+                  <EditTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <Tooltip title='Delete'>
+                <a>
+                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+          trigger='click'
+        >
+          <a>
+            <ToolOutlined style={{ fontSize: '24px' }} />
+          </a>
+        </Popover>
       ),
     },
   ]

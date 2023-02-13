@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Popover,
   Space,
   Table,
   Tooltip,
@@ -15,6 +16,7 @@ import {
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
+  ToolOutlined,
 } from '@ant-design/icons'
 import {
   renderTextHighlighter,
@@ -294,6 +296,18 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       dataIndex: 'client_name',
       key: 'client_name',
       ...getColumnSearchProps('client_name'),
+      render: (clientName, record) => (
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          rel='noreferrer'
+        >
+          {renderTextHighlighter({
+            text: clientName,
+            isHighlighted: searchedColumn['client_name'],
+            highlightedText: searchText['client_name'],
+          })}
+        </a>
+      ),
       ...getColumnSortProps('client_name'),
     },
     // {
@@ -440,29 +454,41 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Details'>
-            <Link to={`/customer-view/${id}`}>
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
-          <Tooltip title='Edit'>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
+      width: 90,
+      render: (text, { id, registration_key }) => (
+        <Popover
+          placement='bottom'
+          title={text}
+          content={
+            <Space size='middle'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Tooltip title='Details'>
+                <a
+                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <Tooltip title='Edit'>
+                <a>
+                  <EditTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <Tooltip title='Delete'>
+                <a>
+                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+        >
+          <a>
+            <ToolOutlined style={{ fontSize: '24px' }} />
+          </a>
+        </Popover>
       ),
       fixed: 'right',
-      width: '150px',
     },
   ]
   return (
