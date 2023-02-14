@@ -55,9 +55,50 @@ export const backoffice = createApi({
         }
       },
     }),
+    getTheamMembership: builder.query({
+      queryFn: async ({ registration_key }, _api, _extraOptions, fetchWithBQ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getTeamMembership', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const {data} = res
+          return {
+            data
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    
+    getAgentsMembership: builder.query({
+      queryFn: async ({ registration_key }, _api, _extraOptions, fetchWithBQ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getAgentsMembership', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const {data} = res
+          return {
+            data
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
 export default backoffice
 
-export const { useGetAllMembershipsQuery,useGetMembershipQuery } = backoffice
+export const { useGetAllMembershipsQuery,useGetMembershipQuery, useGetTheamMembershipQuery, useGetAgentsMembershipQuery } = backoffice
