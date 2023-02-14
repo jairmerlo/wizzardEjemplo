@@ -5,6 +5,7 @@ import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
 import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
+import { AgreementHistory } from './AgreementHistory'
 import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
 
@@ -178,6 +179,7 @@ export const MembershipDetails = () => {
             'Billing Information',
             'Billing History',
             'Authorization Forms',
+            'Agreements',
           ]}
           size='large'
           style={{
@@ -211,6 +213,19 @@ export const MembershipDetails = () => {
         )}
         {section === 'Billing History' && (
           <BillinHistory
+            cardData={authorizationFormsCard}
+            achData={authorizationFormsACH}
+            userId={getConfig().userId}
+            registrationKey={membershipRegKey}
+            onSuccess={() => {
+              console.log('llama')
+              refetchACH()
+              refetchCard()
+            }}
+          />
+        )}
+        {section === 'Agreements' && (
+          <AgreementHistory
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
