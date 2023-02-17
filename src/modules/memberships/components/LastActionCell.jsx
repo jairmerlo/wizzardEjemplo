@@ -14,7 +14,7 @@ export const LastActionCell = ({
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const { data = [] } = useGetLastActionsMembershipQuery(
+  const { data = [], isLoading } = useGetLastActionsMembershipQuery(
     {
       registration_key,
     },
@@ -54,25 +54,41 @@ export const LastActionCell = ({
         //   onOk={handleOk}
         onCancel={handleClose}
         destroyOnClose
+        okButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
       >
-        <table className={table}>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Last Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map(item => (
-              <>
-                <tr>
-                  <td>{item.created_at.substring(0, 12)}</td>
-                  <td>{item.action}</td>
-                </tr>
-              </>
-            ))}
-          </tbody>
-        </table>
+        {isLoading ? (
+          'Loading...'
+        ) : data?.length === 0 ? (
+          'Data is empty'
+        ) : (
+          <table className={table}>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Last Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(item => (
+                <>
+                  <tr>
+                    <td>{item.created_at.substring(0, 12)}</td>
+                    <td>{item.action}</td>
+                  </tr>
+                </>
+              ))}
+            </tbody>
+          </table>
+        )}
       </Modal>
     </>
   )

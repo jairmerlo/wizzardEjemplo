@@ -28,6 +28,7 @@ import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
 import { MembershipEdit, LastActionCell } from '.'
+import numbro from 'numbro'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -61,6 +62,9 @@ export const MembershipsTable = ({ filter = '' }) => {
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
     ?.map(item => currency(item.price || 0).value ?? 0)
+    .reduce((a, b) => a + b, 0)
+  const totalMonthly = items
+    ?.map(item => currency(item.amount || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
   console.log({ memberships })
 
@@ -434,12 +438,20 @@ export const MembershipsTable = ({ filter = '' }) => {
                 .map(word => capitalize(word))
                 .join(' ')
             : 'Active'}{' '}
-          ({total ?? '...'})
+          ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
         </Typography.Title>
         <Typography.Title level={5} style={{ margin: 0 }}>
           Price:{' '}
           {typeof totalPrice === 'number' ? (
             USD(totalPrice, { precision: 2 })
+          ) : (
+            <DollarOutlined spin />
+          )}
+        </Typography.Title>
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Monthly:{' '}
+          {typeof totalMonthly === 'number' ? (
+            USD(totalMonthly, { precision: 2 })
           ) : (
             <DollarOutlined spin />
           )}
