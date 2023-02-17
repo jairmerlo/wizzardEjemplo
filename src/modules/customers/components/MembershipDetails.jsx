@@ -5,9 +5,12 @@ import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
-import { date, getConfig, stringAvatar, stringFallback } from '../../../helpers'
+import { getConfig, stringAvatar, stringFallback, date } from '../../../helpers'
+import { AgentsMembership } from './AgentsMembership'
+import { AgreementHistory } from './AgreementHistory'
 import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
+import { TheamMembership } from './TheamMembership'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
@@ -182,6 +185,9 @@ export const MembershipDetails = () => {
             'Billing Information',
             'Billing History',
             'Authorization Forms',
+            'Agreements',
+            'Theam',
+            'Agents',
           ]}
           size='large'
           style={{
@@ -224,6 +230,31 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+          />
+        )}
+        {section === 'Agreements' && (
+          <AgreementHistory
+            cardData={authorizationFormsCard}
+            achData={authorizationFormsACH}
+            userId={getConfig().userId}
+            registrationKey={membershipRegKey}
+            onSuccess={() => {
+              console.log('llama')
+              refetchACH()
+              refetchCard()
+            }}
+          />
+        )}
+        {section === 'Theam' && (
+          <TheamMembership
+            userId={getConfig().userId}
+            registrationKey={membershipRegKey}
+          />
+        )}
+        {section === 'Agents' && (
+          <AgentsMembership
+            userId={getConfig().userId}
+            registrationKey={membershipRegKey}
           />
         )}
         {section === 'Authorization Forms' && (

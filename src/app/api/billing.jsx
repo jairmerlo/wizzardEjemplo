@@ -382,6 +382,34 @@ export const billing = createApi({
         }
       },
     }),
+    listAgreementByRegkey: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/get-all-agreement-byrkey',
+            {
+              method: 'post',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getPdfInvoice: builder.query({
       queryFn: async ({ id }, _api, _extraOptions, fetchWithBQ) => {
         try {
@@ -424,4 +452,5 @@ export const {
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
   useGetPdfInvoiceQuery,
+  useListAgreementByRegkeyQuery,
 } = billing
