@@ -27,6 +27,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
+import { MembershipEdit, LastActionCell } from '.'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -207,8 +208,10 @@ export const MembershipsTable = ({ filter = '' }) => {
         }}
       />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      const text = record[dataIndex] || ''
+      return text.toString().toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -238,6 +241,29 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
   const columns = [
+    {
+      title: 'Last Action',
+      dataIndex: 'lastAction',
+      key: 'lastAction',
+      ...getColumnSearchProps('lastAction'),
+      render: (text, record) => (
+        <LastActionCell
+          text={text}
+          isHighlighted={searchedColumn['lastAction']}
+          highlightedText={searchText['lastAction']}
+          registration_key={record.registration_key}
+          membershipId={record.memberships_id}
+        />
+      ),
+      ...getColumnSortProps('lastAction'),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
+    },
     {
       title: 'Membership ID',
       dataIndex: 'memberships_id',
@@ -366,11 +392,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
-              <Tooltip title='Edit'>
-                <a>
-                  <EditTwoTone style={{ fontSize: '18px' }} />
-                </a>
-              </Tooltip>
+              <MembershipEdit registration_key={registration_key} />
               <Tooltip title='Delete'>
                 <a>
                   <DeleteTwoTone style={{ fontSize: '18px' }} />
@@ -405,8 +427,14 @@ export const MembershipsTable = ({ filter = '' }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships {filter ? capitalize(filter) : 'Active'} ({total ?? '...'}
-          )
+          Memberships{' '}
+          {filter
+            ? filter
+                .split('_')
+                .map(word => capitalize(word))
+                .join(' ')
+            : 'Active'}{' '}
+          ({total ?? '...'})
         </Typography.Title>
         <Typography.Title level={5} style={{ margin: 0 }}>
           Price:{' '}
@@ -441,7 +469,34 @@ export const MembershipsTable = ({ filter = '' }) => {
       <Table
         key={tableKey}
         rowKey='id'
-        columns={columns}
+        columns={
+          filter === 'idx_requested'
+            ? [
+                {
+                  title: 'IDX Requested',
+                  key: 'idx_requested_date',
+                  dataIndex: 'idx_requested_date',
+                  ...getDateColumnSearchProps('idx_requested_date'),
+                  ...getCustomColumnSortProps({
+                    sorter: (a, b) => {
+                      return moment(
+                        moment(
+                          a.idx_requested_date || '01/01/1970',
+                          'MM/DD/YYYY',
+                        ),
+                      ).diff(
+                        moment(
+                          b.idx_requested_date || '01/01/1970',
+                          'MM/DD/YYYY',
+                        ),
+                      )
+                    },
+                  }),
+                },
+                ...columns,
+              ]
+            : columns
+        }
         dataSource={memberships}
         bordered
         loading={isLoading}

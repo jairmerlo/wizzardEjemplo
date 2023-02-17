@@ -1,19 +1,27 @@
 import { Modal } from 'antd'
-import React from 'react'
 import { useState } from 'react'
 import { useCss } from 'react-use'
-import { date, stringFallback } from '../../../helpers'
+import { useGetLastActionsMembershipQuery } from '../../../app/api/backoffice'
+import { renderTextHighlighter } from '../../../helpers'
 
-export const AFTimeLine = ({
-  completed_at,
-  create_at,
-  authorization_form_type,
-  history = [],
+export const LastActionCell = ({
+  text,
+  isHighlighted,
+  highlightedText,
+  registration_key,
+  membershipId,
 }) => {
-  console.log({ history })
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+  const { data = [] } = useGetLastActionsMembershipQuery(
+    {
+      registration_key,
+    },
+    {
+      skip: !registration_key || !open,
+    },
+  )
   const table = useCss({
     borderRadius: '8px',
     width: '100%',
@@ -22,6 +30,7 @@ export const AFTimeLine = ({
     '& td': {
       padding: '16px 24px',
       border: '1px solid rgba(5, 5, 5, 0.06)',
+      textAlign: 'center',
     },
     '& th': {
       padding: '16px 24px',
@@ -32,35 +41,33 @@ export const AFTimeLine = ({
   })
   return (
     <>
-      <a onClick={handleOpen}>{completed_at || create_at}</a>
+      <a onClick={handleOpen}>
+        {renderTextHighlighter({
+          text,
+          isHighlighted,
+          highlightedText,
+        })}
+      </a>
       <Modal
-        title={`Timeline. Authorization Form: ${
-          authorization_form_type === 'ACH' ? 'ACH' : 'Credit Card'
-        }`}
+        title={'Timeline Membership: ' + membershipId}
         open={open}
-        okButtonProps={{ style: { display: 'none' } }}
-        cancelButtonProps={{ style: { display: 'none' } }}
+        //   onOk={handleOk}
         onCancel={handleClose}
+        destroyOnClose
       >
         <table className={table}>
           <thead>
             <tr>
-              <th>Status</th>
               <th>Date</th>
+              <th>Last Action</th>
             </tr>
           </thead>
           <tbody>
-            {history.map(item => (
+            {data.map(item => (
               <>
-                {item.completed_at && (
-                  <tr>
-                    <td>Completed</td>
-                    <td>{item.completed_at + ' UTC+0'}</td>
-                  </tr>
-                )}
                 <tr>
-                  <td>Waiting for Client </td>
-                  <td>{item.create_at + ' UTC+0'}</td>
+                  <td>{item.created_at.substring(0, 12)}</td>
+                  <td>{item.action}</td>
                 </tr>
               </>
             ))}

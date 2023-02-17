@@ -1,12 +1,13 @@
 import Highlighter from 'react-highlight-words'
 
 export const renderTextHighlighter = ({
-  text,
+  text = '',
   isHighlighted,
   highlightedText,
   color = '#ffc069',
-}) =>
-  isHighlighted ? (
+}) => {
+  const textWithFallback = text === null ? '' : text
+  return isHighlighted ? (
     <Highlighter
       highlightStyle={{
         backgroundColor: color,
@@ -17,5 +18,6 @@ export const renderTextHighlighter = ({
       textToHighlight={text ? text.toString() : ''}
     />
   ) : (
-    text
+    textWithFallback
   )
+}

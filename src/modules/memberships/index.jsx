@@ -69,6 +69,28 @@ const Memberships = () => {
           children: tableKey === '9' && <MembershipsTableTrial />,
           forceRender: true,
         },
+        {
+          label: `IDX Requested`,
+          key: '10',
+          children: tableKey === '10' && (
+            <MembershipsTable filter='idx_requested' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Onnmipresence`,
+          key: '11',
+          children: tableKey === '11' && (
+            <MembershipsTable filter='onnmipresence ' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Custom`,
+          key: '12',
+          children: tableKey === '12' && <MembershipsTable filter='custom' />,
+          forceRender: true,
+        },
       ]}
     />
   )

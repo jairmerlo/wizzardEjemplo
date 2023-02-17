@@ -1,10 +1,11 @@
 import { Descriptions, Segmented, Typography } from 'antd'
+import moment from 'moment'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
-import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
+import { date, getConfig, stringAvatar, stringFallback } from '../../../helpers'
 import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
 
@@ -42,8 +43,7 @@ export const MembershipDetails = () => {
       },
     )
   const [section, setSection] = useState('Billing Information')
-  // const fullName = customer.name + ' ' + customer.last_name
-  const fullName = 'Por hacer'
+  const fullName = membershipData?.firstName + ' ' + membershipData?.lastName
   if (isLoadingM) return 'Cargando...'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -119,7 +119,7 @@ export const MembershipDetails = () => {
             {stringFallback(fullName)}
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
-            {stringFallback(membershipData.createdAt)}
+            {stringFallback(date(membershipData.createdAt, 'MM/DD/YYYY', 'll'))}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
             {stringFallback(membershipData.activatedAt)}
@@ -146,13 +146,17 @@ export const MembershipDetails = () => {
           {membershipData.hasTrial && (
             <>
               <Descriptions.Item label='Trial Due'>
-                {stringFallback(membershipData.trialDue)}
+                {stringFallback(
+                  date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
+                )}
               </Descriptions.Item>
               <Descriptions.Item label='Board'>
                 {stringFallback(membershipData.boardName)}
               </Descriptions.Item>
               <Descriptions.Item label='IDX Requested'>
-                {stringFallback(membershipData.idxRequestedDate)}
+                {stringFallback(
+                  date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
+                )}
               </Descriptions.Item>
               {/* <Descriptions.Item label='Balance'>
                 -------

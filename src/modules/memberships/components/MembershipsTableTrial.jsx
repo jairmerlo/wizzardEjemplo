@@ -219,7 +219,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     },
     render: (text = '') =>
       renderTextHighlighter({
-        text,
+        text: text,
         isHighlighted: searchedColumn[dataIndex],
         highlightedText: searchText[dataIndex],
       }),
@@ -250,6 +250,22 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     }
   }
   const columns = [
+    {
+      title: 'Last Action',
+      dataIndex: 'lastAction',
+      key: 'lastAction',
+      ...getColumnSearchProps('lastAction'),
+      ...getColumnSortProps('lastAction'),
+      fixed: 'left',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
+      fixed: 'left',
+    },
     {
       title: 'Product/Service',
       key: 'class_accounting_name',

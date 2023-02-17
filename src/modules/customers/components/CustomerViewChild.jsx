@@ -3,7 +3,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { Link, useParams } from 'react-router-dom'
 import { useGetCustomerQuery } from '../../../app/api/billing'
 import { ErrorHandler } from '../../../components'
-import { stringAvatar, stringFallback } from '../../../helpers'
+import { date, stringAvatar, stringFallback } from '../../../helpers'
 import { useState } from 'react'
 import { BillingHistoryTable, MembershipTable, QuotesTable } from '.'
 
@@ -97,7 +97,9 @@ export const CustomerViewChild = () => {
               </Card.Grid>
               <Card.Grid style={gridStyle}>{stringFallback(street1)}</Card.Grid>
               <Card.Grid style={gridStyle}>{stringFallback(state)}</Card.Grid>
-              <Card.Grid style={gridStyle}>{`Since ${created_on}`}</Card.Grid>
+              <Card.Grid style={gridStyle}>{`Since ${date(
+                created_on,
+              )}`}</Card.Grid>
             </Card>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>

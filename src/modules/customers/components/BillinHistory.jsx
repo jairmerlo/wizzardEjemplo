@@ -110,7 +110,7 @@ export const BillinHistory = ({
         dataIndex: 'date',
       }),
       render(text, { created_at }) {
-        return <td>{moment(created_at).format('MM-DD-YYYY')}</td>
+        return <td>{moment(created_at).format('ll')}</td>
       },
     },
     {

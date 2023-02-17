@@ -29,6 +29,7 @@ import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
 import currency from 'currency.js'
 import { API } from '../../../api'
+import numbro from 'numbro'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -399,7 +400,7 @@ export const CustomersTableV1 = ({ filter }) => {
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
             {filter ? capitalize(filter) : 'Active'} Customers (
-            {totalData ?? '...'})
+            {numbro(totalData).format({ thousandSeparated: true }) ?? '...'})
           </Typography.Title>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Monthly:{' '}
