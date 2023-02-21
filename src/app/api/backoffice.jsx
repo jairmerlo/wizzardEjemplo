@@ -36,7 +36,12 @@ export const backoffice = createApi({
       },
     }),
     getMembership: builder.query({
-      queryFn: async ({ registration_key }, _api, _extraOptions, fetchWithBQ) => {
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
         try {
           const res = await fetch(API._BACKOFFICE + '/getMembership', {
             method: 'post',
@@ -44,9 +49,87 @@ export const backoffice = createApi({
               registration_key,
             }),
           }).then(res => res.json())
-          const {data} = res
+          const { data } = res
           return {
-            data
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getLastActionsMembership: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const { data } = await fetch(
+            API._BACKOFFICE + '/getLastActionsMembership',
+            {
+              method: 'post',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+          return {
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getTheamMembership: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getTeamMembership', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const { data } = res
+          return {
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+
+    getAgentsMembership: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getAgentsMembership', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const { data } = res
+          return {
+            data,
           }
         } catch (error) {
           return {
@@ -60,4 +143,10 @@ export const backoffice = createApi({
 
 export default backoffice
 
-export const { useGetAllMembershipsQuery,useGetMembershipQuery } = backoffice
+export const {
+  useGetAllMembershipsQuery,
+  useGetMembershipQuery,
+  useGetTheamMembershipQuery,
+  useGetAgentsMembershipQuery,
+  useGetLastActionsMembershipQuery,
+} = backoffice

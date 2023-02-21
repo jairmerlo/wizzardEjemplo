@@ -28,6 +28,8 @@ import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
 import { Link } from 'react-router-dom'
 import currency from 'currency.js'
+import { API } from '../../../api'
+import numbro from 'numbro'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -51,6 +53,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 }
 
 export const CustomersTableV1 = ({ filter }) => {
+  console.log({ API })
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])
@@ -344,7 +347,7 @@ export const CustomersTableV1 = ({ filter }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
+      render: (text, { id, uuid }) => (
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Add Membership'>
@@ -353,7 +356,7 @@ export const CustomersTableV1 = ({ filter }) => {
             </Link>
           </Tooltip>
           <Tooltip title='Details'>
-            <Link to={`/customer-view/${id}`}>
+            <Link to={`/customer-view/${uuid}`}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
             </Link>
           </Tooltip>
@@ -397,7 +400,7 @@ export const CustomersTableV1 = ({ filter }) => {
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
             {filter ? capitalize(filter) : 'Active'} Customers (
-            {totalData ?? '...'})
+            {numbro(totalData).format({ thousandSeparated: true }) ?? '...'})
           </Typography.Title>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Monthly:{' '}

@@ -1,6 +1,6 @@
 import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
-import { getColumnProps, showTotal } from '../../../helpers'
+import { date, getColumnProps, showTotal } from '../../../helpers'
 import { getStatusColor } from '../helpers'
 
 export const BillingHistoryTable = ({ dataSource }) => {
@@ -29,6 +29,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
     },
     {
       ...getColumnProps({ title: 'Date', dataIndex: 'created_at' }),
+      render: text => date(text),
     },
     {
       title: '$ Lifetime',

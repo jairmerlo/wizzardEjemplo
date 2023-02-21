@@ -8,6 +8,7 @@ import { Button, Input, Space, Table, Tag, Tooltip } from 'antd'
 import { useReducer, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
+  date,
   getColumnProps,
   renderTextHighlighter,
   showTotal,
@@ -163,6 +164,7 @@ export const MembershipTable = ({ memberships }) => {
     {
       ...getColumnProps({ title: 'Created Date', dataIndex: 'created_at' }),
       ...getColumnSearchProps('created_at'),
+      render: text => date(text),
     },
     {
       ...getColumnProps({ title: '$ Price', dataIndex: 'price' }),

@@ -15,56 +15,38 @@ export const BillinInformation = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
-  console.log('aaaaaaaaa', achData)
+  
+  let dACH = achData.find(item => item.is_principal === '1' && item.completed_at !== null)
+  let dCard = cardData.find(item => item.is_principal === '1' && item.completed_at !== null)
 
-  const ACHHistory = achData.map(
-    ({
-      create_at,
-      completed_at,
-      status,
-      account_number,
-      credit_card_number,
-    }) => ({
-      completed_at,
-      account_number,
-      credit_card_number,
-      create_at,
-      status,
-    }),
-  )
-  const cardHistory = cardData.map(
-    ({
-      create_at,
-      completed_at,
-      status,
-      account_number,
-      credit_card_number,
-    }) => ({
-      completed_at,
-      account_number,
-      credit_card_number,
-      create_at,
-      status,
-    }),
-  )
-  const rows = [
-    achData.length === 0
-      ? {
-          id: '-1',
-          authorization_form_type: 'ACH',
-          status: '',
-          document: null,
-        }
-      : achData.find(item => item.is_principal === '1') || achData[0],
-    cardData.length === 0
-      ? {
-          id: '-2',
-          authorization_form_type: 'Card',
-          status: '',
-          document: null,
-        }
-      : cardData.find(item => item.is_principal === '1') || cardData[0],
-  ]
+
+  console.log(dACH)
+
+  const rows = [];
+
+  
+
+  if(!dACH && dCard){
+    rows.push(dCard);
+  }
+
+  if(!dCard && dACH){
+    rows.push(dACH);
+  }
+
+  if(dACH && dCard){
+    if(new Date(dACH.completed_at) > new Date(dCard.completed_at)){
+      rows.push(dACH);
+    }else{
+      rows.push(dCard);
+    }
+  }
+
+
+  console.log('rowwwwwww', rows);
+  
+
+
 
   const cardInfo = rows[1]
 
@@ -111,23 +93,13 @@ export const BillinInformation = ({
   const columns = [
     {
       ...getColumnProps({
-        title: 'Payment Method',
+        title: 'Type',
         dataIndex: 'authorization_form_type',
       }),
-    },
+    },    
     {
       ...getColumnProps({
         title: 'Number',
-        dataIndex: 'authorization_form_type',
-      }),
-      render(text, { completed_at, create_at, authorization_form_type }) {
-        if (authorization_form_type === 'ACH') return <td>Account Number</td>
-        return <td>Credit Card Number</td>
-      },
-    },
-    {
-      ...getColumnProps({
-        title: 'Account',
         dataIndex: 'authorization_form_type',
       }),
       render(
@@ -159,32 +131,79 @@ export const BillinInformation = ({
         )
       },
     },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (
-        text,
-        { authorization_form_type, status, document, completed_at, created_at },
-      ) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          {/* //TODO: remplazar por pdf */}
-          {authorization_form_type === 'Card' && (
-            <Tooltip
-              title='Details'
-              overlayStyle={{ zIndex: 10000 }}
-              onClick={showModal}
-            >
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Tooltip>
-          )}
+    // {
+    //   title: 'Actions',
+    //   dataIndex: 'actions',
+    //   key: 'actions',
+    //   render: (
+    //     text,
+    //     { authorization_form_type, status, document, completed_at, created_at },
+    //   ) => (
+    //     <Space size='middle'>
+    //       {/* eslint-disable jsx-a11y/anchor-is-valid */}
+    //       {/* //TODO: remplazar por pdf */}
+    //       {authorization_form_type === 'Card' && (
+    //         <Tooltip
+    //           title='Details'
+    //           overlayStyle={{ zIndex: 10000 }}
+    //           onClick={showModal}
+    //         >
+    //           <EyeTwoTone style={{ fontSize: '18px' }} />
+    //         </Tooltip>
+    //       )}
 
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
-      ),
-    },
+    //       {/* eslint-enable jsx-a11y/anchor-is-valid */}
+    //     </Space>
+    //   ),
+    // },
   ]
+
+  if(rows.length > 0){
+    if(rows[0].authorization_form_type === 'ACH'){
+      columns.push(
+        {
+          ...getColumnProps({
+            title: 'Bank Name',
+            dataIndex: 'bank_name',
+          }),
+        },   
+      )
+    }else{
+     
+      columns.push(
+        {
+          ...getColumnProps({
+            title: 'Expires',
+            dataIndex: 'expiration_date',
+          }),
+          render(
+            text,
+            {
+              expiration_date
+            },
+          ) {
+            if (expiration_date)
+              return (
+                <td>
+                  { moment(expiration_date).format('ll')}
+                </td>
+              )
+           
+          },
+        },   
+      )
+
+      columns.push(
+        {
+          ...getColumnProps({
+            title: 'Name of Card',
+            dataIndex: 'cardholder_name',
+          }),
+        },   
+      )
+    }
+  }
+
   return (
     <>
       <Table
@@ -198,7 +217,7 @@ export const BillinInformation = ({
         }}
       />
 
-      <Modal
+      {/* <Modal
         title='Payment Billing Information'
         width='60%'
         open={isModalOpen}
@@ -317,7 +336,7 @@ export const BillinInformation = ({
             </Form.Item>
           </div>
         </Form>
-      </Modal>
+      </Modal> */}
     </>
   )
 }
