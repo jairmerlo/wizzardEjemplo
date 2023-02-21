@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Popover,
   Space,
   Table,
   Tooltip,
@@ -15,6 +16,7 @@ import {
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
+  ToolOutlined,
 } from '@ant-design/icons'
 import {
   capitalize,
@@ -25,6 +27,8 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
+import { MembershipEdit, LastActionCell } from '.'
+import numbro from 'numbro'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -58,6 +62,9 @@ export const MembershipsTable = ({ filter = '' }) => {
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
     ?.map(item => currency(item.price || 0).value ?? 0)
+    .reduce((a, b) => a + b, 0)
+  const totalMonthly = items
+    ?.map(item => currency(item.amount || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
   console.log({ memberships })
 
@@ -205,8 +212,10 @@ export const MembershipsTable = ({ filter = '' }) => {
         }}
       />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      const text = record[dataIndex] || ''
+      return text.toString().toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -236,6 +245,29 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
   const columns = [
+    {
+      title: 'Last Action',
+      dataIndex: 'lastAction',
+      key: 'lastAction',
+      ...getColumnSearchProps('lastAction'),
+      render: (text, record) => (
+        <LastActionCell
+          text={text}
+          isHighlighted={searchedColumn['lastAction']}
+          highlightedText={searchText['lastAction']}
+          registration_key={record.registration_key}
+          membershipId={record.memberships_id}
+        />
+      ),
+      ...getColumnSortProps('lastAction'),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
+    },
     {
       title: 'Membership ID',
       dataIndex: 'memberships_id',
@@ -311,6 +343,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
     },
     {
       title: 'Periods',
@@ -328,53 +368,49 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'amount',
       key: 'amount',
       ...getColumnSearchProps('amount'),
-      // render: monthlyAmount =>
-      //   monthlyAmount ? (
-      //     renderTextHighlighter({
-      //       text: USD(monthlyAmount),
-      //       isHighlighted: searchedColumn['monthly_amount'],
-      //       highlightedText: searchText['monthly_amount'],
-      //     })
-      //   ) : (
-      //     <NoDataCell />
-      //   ),
-      // onFilter: (value, record) =>
-      //   USD(record['monthly_amount'])
-      //     .toString()
-      //     .toLowerCase()
-      //     .includes(value.toLowerCase()),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
-      //   },
-      // }),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.amount).value) -
+            parseFloat(currency(b.amount).value)
+          )
+        },
+      }),
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
+      width: 90,
       render: (text, { registration_key }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Details'>
-            <a
-              href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
-            >
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Edit'>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
+        <Popover
+          placement='bottom'
+          title={text}
+          content={
+            <Space size='middle' direction='vertical'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Tooltip title='Details'>
+                <a
+                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <MembershipEdit registration_key={registration_key} />
+              <Tooltip title='Delete'>
+                <a>
+                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+          trigger='click'
+        >
+          <a>
+            <ToolOutlined style={{ fontSize: '24px' }} />
+          </a>
+        </Popover>
       ),
     },
   ]
@@ -395,13 +431,27 @@ export const MembershipsTable = ({ filter = '' }) => {
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships {filter ? capitalize(filter) : 'Active'} ({total ?? '...'}
-          )
+          Memberships{' '}
+          {filter
+            ? filter
+                .split('_')
+                .map(word => capitalize(word))
+                .join(' ')
+            : 'Active'}{' '}
+          ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
         </Typography.Title>
         <Typography.Title level={5} style={{ margin: 0 }}>
           Price:{' '}
           {typeof totalPrice === 'number' ? (
             USD(totalPrice, { precision: 2 })
+          ) : (
+            <DollarOutlined spin />
+          )}
+        </Typography.Title>
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Monthly:{' '}
+          {typeof totalMonthly === 'number' ? (
+            USD(totalMonthly, { precision: 2 })
           ) : (
             <DollarOutlined spin />
           )}
@@ -431,7 +481,34 @@ export const MembershipsTable = ({ filter = '' }) => {
       <Table
         key={tableKey}
         rowKey='id'
-        columns={columns}
+        columns={
+          filter === 'idx_requested'
+            ? [
+                {
+                  title: 'IDX Requested',
+                  key: 'idx_requested_date',
+                  dataIndex: 'idx_requested_date',
+                  ...getDateColumnSearchProps('idx_requested_date'),
+                  ...getCustomColumnSortProps({
+                    sorter: (a, b) => {
+                      return moment(
+                        moment(
+                          a.idx_requested_date || '01/01/1970',
+                          'MM/DD/YYYY',
+                        ),
+                      ).diff(
+                        moment(
+                          b.idx_requested_date || '01/01/1970',
+                          'MM/DD/YYYY',
+                        ),
+                      )
+                    },
+                  }),
+                },
+                ...columns,
+              ]
+            : columns
+        }
         dataSource={memberships}
         bordered
         loading={isLoading}

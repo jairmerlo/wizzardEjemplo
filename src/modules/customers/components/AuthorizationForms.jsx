@@ -194,13 +194,9 @@ export const AuthorizationForms = ({
             <AFTimeLine
               history={ACHHistory}
               authorization_form_type={authorization_form_type}
-              completed_at={
-                completed_at && moment(completed_at).format('MM-DD-YYYY')
-              }
+              completed_at={completed_at && moment(completed_at).format('ll')}
               create_at={
-                create_at
-                  ? moment(create_at).format('MM-DD-YYYY')
-                  : stringFallback()
+                create_at ? moment(create_at).format('ll') : stringFallback()
               }
             />
           )

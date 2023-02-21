@@ -130,7 +130,7 @@ export const BillinHistory = ({
         dataIndex: 'date',
       }),
       render(text, { created_at }) {
-        return <td>{moment(created_at).format('MM-DD-YYYY')}</td>
+        return <td>{moment(created_at).format('ll')}</td>
       },
     },
     {
@@ -188,27 +188,21 @@ export const BillinHistory = ({
             type='application/pdf'
             style={{ width: '100%', height: '700px' }}
           >
-            <iframe
-              frameborder='0'
-              width={'100%'}
-              title='pdf'
-              
-            ></iframe>
+            <iframe frameborder='0' width={'100%'} title='pdf'></iframe>
           </object>
         )}
 
         {!pdfs.url && (
-          <div style={{ display: 'flex' , justifyContent: 'center'}}>
-             <Skeleton.Node active={true} size={'large'} block={true} >
-            <FilePdfOutlined
-              style={{
-                fontSize: 60,
-                color: '#bfbfbf',
-              }}
-            />
-          </Skeleton.Node>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Skeleton.Node active={true} size={'large'} block={true}>
+              <FilePdfOutlined
+                style={{
+                  fontSize: 60,
+                  color: '#bfbfbf',
+                }}
+              />
+            </Skeleton.Node>
           </div>
-         
         )}
       </Modal>
     </>

@@ -37,7 +37,7 @@ export const billing = createApi({
       }),
     }),
     getCustomer: builder.query({
-      query: id => `/get-customer/${id}`,
+      query: id => `/get-customer-v2/${id}`,
     }),
     getNewQuotesOptions: builder.query({
       async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
@@ -452,5 +452,5 @@ export const {
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
   useGetPdfInvoiceQuery,
-  useListAgreementByRegkeyQuery
+  useListAgreementByRegkeyQuery,
 } = billing

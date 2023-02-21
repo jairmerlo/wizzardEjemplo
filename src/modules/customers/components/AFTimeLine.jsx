@@ -2,6 +2,7 @@ import { Modal } from 'antd'
 import React from 'react'
 import { useState } from 'react'
 import { useCss } from 'react-use'
+import { date, stringFallback } from '../../../helpers'
 
 export const AFTimeLine = ({
   completed_at,
@@ -54,12 +55,12 @@ export const AFTimeLine = ({
                 {item.completed_at && (
                   <tr>
                     <td>Completed</td>
-                    <td>{item.completed_at}</td>
+                    <td>{item.completed_at + ' UTC+0'}</td>
                   </tr>
                 )}
                 <tr>
                   <td>Waiting for Client </td>
-                  <td>{item.create_at}</td>
+                  <td>{item.create_at + ' UTC+0'}</td>
                 </tr>
               </>
             ))}
