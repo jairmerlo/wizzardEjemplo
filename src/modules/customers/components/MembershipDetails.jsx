@@ -9,10 +9,13 @@ import { AgentsMembership } from './AgentsMembership'
 import { AgreementHistory } from './AgreementHistory'
 import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
+import { MembershipsTableTrialCustomer } from './MembershipsTableTrialCustomer'
 import { TheamMembership } from './TheamMembership'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
+
+  const [tialCount, setTrialCount] = useState(0)
 
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
@@ -182,8 +185,9 @@ export const MembershipDetails = () => {
             'Billing History',
             'Authorization Forms',
             'Agreements',
-            'Theam',
+            'Team',
             'Agents',
+            'Membership Trial',
           ]}
           size='large'
           style={{
@@ -241,7 +245,7 @@ export const MembershipDetails = () => {
             }}
           />
         )}
-        {section === 'Theam' && (
+        {section === 'Team' && (
           <TheamMembership           
             userId={getConfig().userId}
             registrationKey={membershipRegKey}           
@@ -263,6 +267,10 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+          />
+        )}
+         {section === 'Membership Trial' && (
+          <MembershipsTableTrialCustomer customerId={membershipData.customerId}        
           />
         )}
       </div>

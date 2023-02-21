@@ -16,12 +16,13 @@ export const backoffice = createApi({
   keepUnusedDataFor: 0,
   endpoints: builder => ({
     getAllMemberships: builder.query({
-      queryFn: async ({ filter }, _api, _extraOptions, fetchWithBQ) => {
+      queryFn: async ({ filter,customerId }, _api, _extraOptions, fetchWithBQ) => {
         try {
           const data = await fetch(API._BACKOFFICE + '/listActiveMemberships', {
             method: 'post',
             body: JSON.stringify({
               filter,
+              customerId
             }),
           }).then(res => res.json())
           console.log({ data })
