@@ -1,4 +1,10 @@
-import React, { useReducer, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import {
   Button,
   DatePicker,
@@ -26,10 +32,11 @@ import {
 import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { NoDataCell } from '../../../components'
-import { Link } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import currency from 'currency.js'
 import { API } from '../../../api'
 import numbro from 'numbro'
+import { useDebounce, useEvent } from 'react-use'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -54,7 +61,15 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 
 export const CustomersTableV1 = ({ filter }) => {
   console.log({ API })
-  const [pageSize, setPageSize] = useState(10)
+  let [searchParams, setSearchParams] = useSearchParams({
+    page: 1,
+    size: 10,
+  })
+  console.log({
+    page: searchParams.get('page'),
+  })
+  const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
+  const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])
   const { data, isLoading } = useGetAllCustomersQuery({
@@ -104,6 +119,18 @@ export const CustomersTableV1 = ({ filter }) => {
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
+
+  const onScroll = useCallback(() => {
+    localStorage.setItem('scrollY', window.scrollY.toString())
+  }, [])
+
+  useEvent('scroll', onScroll)
+
+  useEffect(() => {
+    if (data?.length !== 0) {
+      window.scrollTo({ top: parseInt(localStorage.getItem('scrollY') || 0) })
+    }
+  }, [data?.length])
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -449,12 +476,26 @@ export const CustomersTableV1 = ({ filter }) => {
         bordered
         loading={isLoading}
         onChange={handleChange}
+        rowSelection={{
+          selectedRowKeys: ['993'],
+          renderCell: () => '',
+          columnTitle: ' ',
+          columnWidth: '8px',
+        }}
         pagination={{
           total: totalCurrentItems || totalData,
           pageSize,
+          current: page,
           showQuickJumper: true,
           showSizeChanger: true,
-          onChange: (page, pageSize) => setPageSize(pageSize),
+          onChange: (page, pageSize) => {
+            setPageSize(pageSize)
+            setPage(page)
+            setSearchParams({
+              size: pageSize,
+              page,
+            })
+          },
           showTotal,
         }}
       />

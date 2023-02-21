@@ -1,4 +1,10 @@
-import React, { useReducer, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import {
   Button,
   DatePicker,
@@ -29,6 +35,8 @@ import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
 import { MembershipEdit, LastActionCell } from '.'
 import numbro from 'numbro'
+import { useSearchParams } from 'react-router-dom'
+import { useEvent } from 'react-use'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -52,12 +60,31 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 }
 
 export const MembershipsTable = ({ filter = '' }) => {
-  const [pageSize, setPageSize] = useState(10)
+  let [searchParams, setSearchParams] = useSearchParams({
+    page: 1,
+    size: 10,
+  })
+  const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
+  const [page, setPage] = useState(parseInt(searchParams.get('page')))
+  const onScroll = useCallback(() => {
+    localStorage.setItem('scrollY002', window.scrollY.toString())
+  }, [])
+
+  useEvent('scroll', onScroll)
+
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
   })
+
   const { data: memberships, total } = data
+  useEffect(() => {
+    if (memberships?.length !== 0) {
+      window.scrollTo({
+        top: parseInt(localStorage.getItem('scrollY002') || 0),
+      })
+    }
+  }, [memberships?.length])
   const [currentItems, setCurrentItems] = useState([])
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
@@ -516,9 +543,17 @@ export const MembershipsTable = ({ filter = '' }) => {
         pagination={{
           total: totalCurrentItems || total,
           pageSize,
+          current: page,
           showQuickJumper: true,
           showSizeChanger: true,
-          onChange: (page, pageSize) => setPageSize(pageSize),
+          onChange: (page, pageSize) => {
+            setPageSize(pageSize)
+            setPage(page)
+            setSearchParams({
+              size: pageSize,
+              page,
+            })
+          },
           showTotal,
         }}
       />
