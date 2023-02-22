@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Popover,
   Space,
   Table,
   Tooltip,
@@ -15,8 +16,14 @@ import {
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
+  ToolOutlined,
 } from '@ant-design/icons'
-import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
+import {
+  renderTextHighlighter,
+  showTotal,
+  stringFallback,
+  USD,
+} from '../../../helpers'
 import moment from 'moment/moment'
 import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
@@ -57,7 +64,6 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
     ?.map(item => currency(item.price || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
   console.log({ memberships })
-  console.log("customer id", customerId)
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -203,8 +209,10 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
         }}
       />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilter: (value, record) => {
+      const text = record[dataIndex] || ''
+      return text.toString().toLowerCase().includes(value.toLowerCase())
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -212,7 +220,7 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
     },
     render: (text = '') =>
       renderTextHighlighter({
-        text,
+        text: text,
         isHighlighted: searchedColumn[dataIndex],
         highlightedText: searchText[dataIndex],
       }),
@@ -234,13 +242,29 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       ellipsis: true,
     }
   }
+  const getColumnFilterProps = ({ dataIndex, filters }) => {
+    return {
+      filters,
+      filterSearch: true,
+      onFilter: (value, record) =>
+        record[dataIndex] && record[dataIndex].startsWith(value),
+    }
+  }
   const columns = [
     {
       title: 'Last Action',
-      key: 'lastAction',
       dataIndex: 'lastAction',
+      key: 'lastAction',
       ...getColumnSearchProps('lastAction'),
       ...getColumnSortProps('lastAction'),
+      fixed: 'left',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
       fixed: 'left',
     },
     {
@@ -256,6 +280,24 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       key: 'trial_due',
       dataIndex: 'trial_due',
       ...getColumnSearchProps('trial_due'),
+      render: date =>
+        date
+          ? moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment())
+            ? moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
+            : stringFallback(null, { fallback: 'Timed out' })
+          : stringFallback(),
+      onFilter: (value, record) => {
+        const text = record['trial_due']
+          ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
+              moment(),
+            )
+            ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
+              ' left'
+            : ''
+          : ''
+        return text.toString().toLowerCase().includes(value.toLowerCase())
+      },
+      ...getColumnSortProps('trial_due'),
       width: 120,
       fixed: 'left',
     },
@@ -271,6 +313,18 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       dataIndex: 'client_name',
       key: 'client_name',
       ...getColumnSearchProps('client_name'),
+      render: (clientName, record) => (
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          rel='noreferrer'
+        >
+          {renderTextHighlighter({
+            text: clientName,
+            isHighlighted: searchedColumn['client_name'],
+            highlightedText: searchText['client_name'],
+          })}
+        </a>
+      ),
       ...getColumnSortProps('client_name'),
     },
     // {
@@ -301,21 +355,48 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       title: 'Published Status',
       key: 'publication_dtate',
       dataIndex: 'publication_dtate',
-      ...getColumnSearchProps('publication_dtate'),
+      ...getColumnFilterProps({
+        filters: [
+          {
+            text: 'Unpublished',
+            value: 'Unpublished',
+          },
+        ],
+        dataIndex: 'publication_dtate',
+      }),
       width: 120,
     },
     {
       title: 'IDX',
       key: 'idx',
       dataIndex: 'idx',
-      ...getColumnSearchProps('idx'),
+      ...getColumnFilterProps({
+        filters: [
+          {
+            text: 'No',
+            value: 'No',
+          },
+          {
+            text: 'Active',
+            value: 'Active',
+          },
+        ],
+        dataIndex: 'idx',
+      }),
       width: 80,
     },
     {
       title: 'IDX Requested',
       key: 'idx_requested_date',
       dataIndex: 'idx_requested_date',
-      ...getColumnSearchProps('idx_requested_date'),
+      ...getDateColumnSearchProps('idx_requested_date'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'),
+          ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
+        },
+      }),
       width: 120,
     },
     {
@@ -323,10 +404,11 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       key: 'board_name',
       dataIndex: 'board_name',
       ...getColumnSearchProps('board_name'),
+      ...getColumnSortProps('board_name'),
       ellipsis: true,
     },
     {
-      title: 'Premium',
+      title: 'Premium Requested',
       key: 'premium',
       dataIndex: 'premium',
       ...getColumnSearchProps('premium'),
@@ -336,6 +418,14 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
       width: 120,
     },
     // {
@@ -377,34 +467,46 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
     //   //   },
     //   // }),
     // },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (text, { id }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Details'>
-            <Link to={`/customer-view/${id}`}>
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
-          <Tooltip title='Edit'>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
-      ),
-      fixed: 'right',
-      width: '150px',
-    },
+    // {
+    //   title: 'Actions',
+    //   dataIndex: 'actions',
+    //   key: 'actions',
+    //   width: 90,
+    //   render: (text, { id, registration_key }) => (
+    //     <Popover
+    //       placement='bottom'
+    //       title={text}
+    //       content={
+    //         <Space size='middle'>
+    //           {/* eslint-disable jsx-a11y/anchor-is-valid */}
+    //           <Tooltip title='Details'>
+    //             <a
+    //               href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+    //             >
+    //               <EyeTwoTone style={{ fontSize: '18px' }} />
+    //             </a>
+    //           </Tooltip>
+    //           <Tooltip title='Edit'>
+    //             <a>
+    //               <EditTwoTone style={{ fontSize: '18px' }} />
+    //             </a>
+    //           </Tooltip>
+    //           <Tooltip title='Delete'>
+    //             <a>
+    //               <DeleteTwoTone style={{ fontSize: '18px' }} />
+    //             </a>
+    //           </Tooltip>
+    //           {/* eslint-enable jsx-a11y/anchor-is-valid */}
+    //         </Space>
+    //       }
+    //     >
+    //       <a>
+    //         <ToolOutlined style={{ fontSize: '24px' }} />
+    //       </a>
+    //     </Popover>
+    //   ),
+    //   fixed: 'right',
+    // },
   ]
   return (
     <div
@@ -422,10 +524,10 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
           gap: '32px',
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
+        <Typography.Title level={4} style={{ margin: 0, color: 'gray' }}>
           Memberships Trial ({total})
         </Typography.Title>
-        <Typography.Title level={5} style={{ margin: 0 }}>
+        <Typography.Title level={5} style={{ margin: 0, color: 'gray' }}>
           Price:{' '}
           {typeof totalPrice === 'number' ? (
             USD(totalPrice, { precision: 2 })
@@ -446,15 +548,15 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
             Add New Customer
           </Button>
         </Link> */}
-      </div>
-      <Divider dashed />
-      <Button
+        <Button
         type='default'
         style={{ marginBottom: 8, marginLeft: 'auto' }}
         onClick={resetFilters}
       >
         Reset
       </Button>
+      </div>
+      
       <Table
         key={tableKey}
         rowKey='id'

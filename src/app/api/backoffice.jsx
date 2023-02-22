@@ -37,6 +37,7 @@ export const backoffice = createApi({
       },
     }),
     getMembership: builder.query({
+      useErrorBoundary: true,
       queryFn: async (
         { registration_key },
         _api,
