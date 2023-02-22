@@ -31,12 +31,12 @@ import {
 } from '../../../helpers'
 import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
-import { NoDataCell } from '../../../components'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import currency from 'currency.js'
 import { API } from '../../../api'
 import numbro from 'numbro'
-import { useDebounce, useEvent } from 'react-use'
+import { useEvent } from 'react-use'
+import { useSelectedRow } from '../../../hooks/useSelectedRow'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -131,6 +131,8 @@ export const CustomersTableV1 = ({ filter }) => {
       window.scrollTo({ top: parseInt(localStorage.getItem('scrollY') || 0) })
     }
   }, [data?.length])
+
+  const { selectedRow, saveSelectedRow } = useSelectedRow('selectedRow')
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -383,7 +385,10 @@ export const CustomersTableV1 = ({ filter }) => {
             </Link>
           </Tooltip>
           <Tooltip title='Details'>
-            <Link to={`/customer-view/${uuid}`}>
+            <Link
+              to={`/customer-view/${uuid}`}
+              onClick={() => saveSelectedRow(id)}
+            >
               <EyeTwoTone style={{ fontSize: '18px' }} />
             </Link>
           </Tooltip>
@@ -477,7 +482,7 @@ export const CustomersTableV1 = ({ filter }) => {
         loading={isLoading}
         onChange={handleChange}
         rowSelection={{
-          selectedRowKeys: ['993'],
+          selectedRowKeys: selectedRow,
           renderCell: () => '',
           columnTitle: ' ',
           columnWidth: '8px',

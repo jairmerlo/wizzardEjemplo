@@ -20,7 +20,8 @@ import {
 const customersRouter = createHashRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
-      <Route index element={<Customers />} />
+      <Route index element={<Navigate to='active' replace={true} />} />
+      <Route path=':filter' element={<Customers />} />
       <Route path='customer-view/:customerId' element={<CustomerView />}>
         <Route index element={<CustomerViewChild />} />
       </Route>

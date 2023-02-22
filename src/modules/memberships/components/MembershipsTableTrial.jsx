@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useState } from 'react'
+import React, { useEffect, useReducer, useRef, useState } from 'react'
 import {
   Button,
   DatePicker,
@@ -28,6 +28,8 @@ import moment from 'moment/moment'
 import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
+import { useScroll } from '../../../hooks/useScroll'
+import { useSelectedRow } from '../../../hooks/useSelectedRow'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -98,6 +100,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
+  const { saveSelectedRow, selectedRow } = useSelectedRow()
+  const { initialScrollY } = useScroll('scrollY003')
+
+  useEffect(() => {
+    if (memberships?.length !== 0) {
+      window.scrollTo({ top: initialScrollY })
+    }
+  }, [memberships?.length])
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -481,6 +491,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               <Tooltip title='Details'>
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+                  onClick={() => saveSelectedRow(id)}
                 >
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
@@ -562,6 +573,12 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         columns={columns}
         dataSource={memberships}
         bordered
+        rowSelection={{
+          selectedRowKeys: selectedRow,
+          renderCell: () => '',
+          columnTitle: ' ',
+          columnWidth: '8px',
+        }}
         scroll={{ x: '100%' }}
         loading={isLoading}
         onChange={handleChange}
