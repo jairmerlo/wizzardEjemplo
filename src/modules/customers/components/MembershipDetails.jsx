@@ -11,10 +11,13 @@ import { AgentsMembership } from './AgentsMembership'
 import { AgreementHistory } from './AgreementHistory'
 import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
+import { MembershipsTableTrialCustomer } from './MembershipsTableTrialCustomer'
 import { TheamMembership } from './TheamMembership'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
+
+  const [tialCount, setTrialCount] = useState(0)
 
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
@@ -117,37 +120,39 @@ export const MembershipDetails = () => {
             </a>
           </Descriptions.Item>
           <Descriptions.Item label='Service/Product' span={2}>
-            {stringFallback(membershipData.classAccountingName)}
+            {stringFallback(membershipData?.classAccountingName)}
           </Descriptions.Item>
           <Descriptions.Item label='Customer' span={2}>
             {stringFallback(fullName)}
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
-            {stringFallback(date(membershipData.createdAt, 'MM/DD/YYYY', 'll'))}
+            {stringFallback(
+              date(membershipData?.createdAt, 'MM/DD/YYYY', 'll'),
+            )}
           </Descriptions.Item>
           <Descriptions.Item label='Published'>
-            {stringFallback(membershipData.activatedAt)}
+            {stringFallback(membershipData?.activatedAt)}
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
-            {stringFallback(membershipData.price)}
+            {stringFallback(membershipData?.price)}
           </Descriptions.Item>
           <Descriptions.Item label='$ Lifetime'>
-            {stringFallback(membershipData.amount)}
+            {stringFallback(membershipData?.amount)}
           </Descriptions.Item>
 
-          {!membershipData.hasTrial && (
+          {!membershipData?.hasTrial && (
             <>
               <Descriptions.Item label='Periods'>
-                {stringFallback(membershipData.periods)}
+                {stringFallback(membershipData?.periods)}
               </Descriptions.Item>
               <Descriptions.Item label='Last Payment'>
-                {stringFallback(membershipData.lastPayment)}
+                {stringFallback(membershipData?.lastPayment)}
               </Descriptions.Item>
             </>
           )}
 
           {/* trial information */}
-          {membershipData.hasTrial && (
+          {membershipData?.hasTrial && (
             <>
               <Descriptions.Item label='Trial Due'>
                 {stringFallback(
@@ -187,8 +192,9 @@ export const MembershipDetails = () => {
             'Billing History',
             'Authorization Forms',
             'Agreements',
-            'Theam',
+            'Team',
             'Agents',
+            'Membership Trial',
           ]}
           size='large'
           style={{
@@ -246,7 +252,7 @@ export const MembershipDetails = () => {
             }}
           />
         )}
-        {section === 'Theam' && (
+        {section === 'Team' && (
           <TheamMembership
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
@@ -268,6 +274,11 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+          />
+        )}
+        {section === 'Membership Trial' && (
+          <MembershipsTableTrialCustomer
+            customerId={membershipData.customerId}
           />
         )}
       </div>
