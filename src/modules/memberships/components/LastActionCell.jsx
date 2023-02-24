@@ -2,6 +2,7 @@ import { Modal } from 'antd'
 import { useState } from 'react'
 import { useCss } from 'react-use'
 import { useGetLastActionsMembershipQuery } from '../../../app/api/backoffice'
+import { Loader } from '../../../components'
 import { renderTextHighlighter } from '../../../helpers'
 
 export const LastActionCell = ({
@@ -66,7 +67,7 @@ export const LastActionCell = ({
         }}
       >
         {isLoading ? (
-          'Loading...'
+          <Loader />
         ) : data?.length === 0 ? (
           'Data is empty'
         ) : (

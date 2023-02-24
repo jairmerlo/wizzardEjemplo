@@ -25,11 +25,11 @@ import {
   USD,
 } from '../../../helpers'
 import moment from 'moment/moment'
-import { Link } from 'react-router-dom'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
 import { useScroll } from '../../../hooks/useScroll'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
+import { useSearchParams } from 'react-router-dom'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -53,7 +53,13 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 }
 
 export const MembershipsTableTrial = ({ filter = 'trial' }) => {
-  const [pageSize, setPageSize] = useState(10)
+  let [searchParams, setSearchParams] = useSearchParams({
+    page: 1,
+    size: 10,
+  })
+  const pageSize = parseInt(searchParams.get('size'))
+  const page = parseInt(searchParams.get('page'))
+
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
@@ -585,10 +591,15 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         pagination={{
           total: totalCurrentItems || total,
           pageSize,
+          current: page,
           showQuickJumper: true,
-
           showSizeChanger: true,
-          onChange: (page, pageSize) => setPageSize(pageSize),
+          onChange: (page, pageSize) => {
+            setSearchParams({
+              page: page,
+              size: pageSize,
+            })
+          },
           showTotal,
         }}
       />

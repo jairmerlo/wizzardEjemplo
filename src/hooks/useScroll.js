@@ -7,8 +7,8 @@ export const useScroll = localStorageKey => {
   }, [localStorageKey])
 
   const initialScrollY = useMemo(
-    () => parseInt(localStorage.getItem('scrollY') || 0),
-    [],
+    () => parseInt(localStorage.getItem(localStorageKey) || 0),
+    [localStorageKey],
   )
 
   useEvent('scroll', onScroll)

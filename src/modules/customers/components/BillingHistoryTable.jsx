@@ -1,19 +1,67 @@
-import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from '@ant-design/icons'
-import { Space, Table, Tag, Tooltip } from 'antd'
-import { date, getColumnProps, showTotal } from '../../../helpers'
-import { getStatusColor } from '../helpers'
+import { EyeTwoTone } from '@ant-design/icons'
+import { Space, Table, Tooltip } from 'antd'
+import currency from 'currency.js'
+import { API } from '../../../api'
+import {
+  date,
+  getColumnProps,
+  getColumnSearchProps,
+  getColumnSortProps,
+  showTotal,
+} from '../../../helpers'
+import { useColumnSearch } from '../../../hooks'
 
 export const BillingHistoryTable = ({ dataSource }) => {
+  const handleOpenPDF = async id => {
+    const { url = 'about:blank' } = await fetch(
+      API._BILLING_HOST + '/get-invoice-pdf/' + id,
+    ).then(res => res.json())
+
+    window.open(url, '_blank')
+  }
+  const { handleReset, handleSearch, searchInput, searchedColumn, searchText } =
+    useColumnSearch({
+      membership_id: null,
+      wordpress_install_url: null,
+      name: null,
+      created_at: null,
+      total: null,
+    })
+
   const columns = [
     {
-      title: 'Membership ID',
-      dataIndex: 'membership_id',
-      key: 'membership_id',
+      ...getColumnProps({
+        title: 'Membership ID',
+        dataIndex: 'membership_id',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'membership_id',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'membership_id',
+      }),
     },
     {
-      title: 'URL',
-      dataIndex: 'wordpress_install_url',
-      key: 'wordpress_install_url',
+      ...getColumnProps({
+        title: 'URL',
+        dataIndex: 'wordpress_install_url',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'wordpress_install_url',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'wordpress_install_url',
+      }),
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
           {url}
@@ -26,21 +74,52 @@ export const BillingHistoryTable = ({ dataSource }) => {
         title: 'Invoice #',
         dataIndex: 'name',
       }),
+      ...getColumnSearchProps({
+        dataIndex: 'name',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'name',
+      }),
     },
     {
       ...getColumnProps({ title: 'Date', dataIndex: 'created_at' }),
+      ...getColumnSearchProps({
+        dataIndex: 'created_at',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'created_at',
+      }),
       render: text => date(text),
     },
     {
-      title: '$ Lifetime',
-      dataIndex: 'total',
-      key: 'total',
-      //   render: monthlyAmount =>
-      //     currency(monthlyAmount, {
-      //       decimal: '.',
-      //       separator: ',',
-      //       precision: 0,
-      //     }).format(),
+      ...getColumnProps({
+        title: '$ Lifetime',
+        dataIndex: 'total',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'total',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'total',
+        sorter: (a, b) =>
+          parseFloat(currency(a.monthlyAmount).value) -
+          parseFloat(currency(b.monthlyAmount).value),
+      }),
     },
     {
       title: 'Actions',
@@ -50,7 +129,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-            <a>
+            <a onClick={() => handleOpenPDF(id)}>
               <EyeTwoTone style={{ fontSize: '18px' }} />
             </a>
           </Tooltip>

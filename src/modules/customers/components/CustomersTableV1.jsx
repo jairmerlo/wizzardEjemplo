@@ -10,6 +10,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Popover,
   Space,
   Table,
   Tooltip,
@@ -21,6 +22,7 @@ import {
   EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
+  ToolOutlined,
   UserAddOutlined,
 } from '@ant-design/icons'
 import {
@@ -377,33 +379,43 @@ export const CustomersTableV1 = ({ filter }) => {
       dataIndex: 'actions',
       key: 'actions',
       render: (text, { id, uuid }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Add Membership'>
-            <Link to={`/new-quote?customerId=${id}`}>
-              <UserAddOutlined style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
-          <Tooltip title='Details'>
-            <Link
-              to={`/customer-view/${uuid}`}
-              onClick={() => saveSelectedRow(id)}
-            >
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </Link>
-          </Tooltip>
-          <Tooltip title='Edit'>
-            <a>
-              <EditTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <a>
-              <DeleteTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
+        <Popover
+          placement='bottom'
+          title={text}
+          content={
+            <Space size='middle' direction='vertical'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Tooltip title='Add Membership'>
+                <Link to={`/new-quote?customerId=${id}`}>
+                  <UserAddOutlined style={{ fontSize: '18px' }} />
+                </Link>
+              </Tooltip>
+              <Tooltip title='Details'>
+                <Link
+                  to={`/customer-view/${uuid}`}
+                  onClick={() => saveSelectedRow(id)}
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </Link>
+              </Tooltip>
+              <Tooltip title='Edit'>
+                <a>
+                  <EditTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <Tooltip title='Delete'>
+                <a>
+                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+        >
+          <a>
+            <ToolOutlined style={{ fontSize: '24px' }} />
+          </a>
+        </Popover>
       ),
     },
   ]

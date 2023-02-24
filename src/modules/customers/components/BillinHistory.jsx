@@ -79,6 +79,7 @@ export const BillinHistory = ({
     setPdfS(res)
   }
 
+  console.log({ pdfs })
   // useEffect(()=>{
   //   setPdfS(pdfData)
   // },[pdfData])

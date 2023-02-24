@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { AuthorizationForms } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
+import { Loader } from '../../../components'
 import { getConfig, stringAvatar, stringFallback, date } from '../../../helpers'
 import { AgentsMembership } from './AgentsMembership'
 import { AgreementHistory } from './AgreementHistory'
@@ -47,7 +48,7 @@ export const MembershipDetails = () => {
     )
   const [section, setSection] = useState('Billing Information')
   const fullName = membershipData?.firstName + ' ' + membershipData?.lastName
-  if (isLoadingM) return 'Cargando...'
+  if (isLoadingM) return <Loader />
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>

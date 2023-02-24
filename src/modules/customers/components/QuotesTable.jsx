@@ -1,18 +1,60 @@
 import { EyeTwoTone, EditTwoTone } from '@ant-design/icons'
 import { Space, Table, Tag, Tooltip } from 'antd'
-import { date, getColumnProps, showTotal, USD } from '../../../helpers'
+import currency from 'currency.js'
+import {
+  getColumnProps,
+  getColumnSearchProps,
+  getColumnSortProps,
+  getDateColumnSearchProps,
+  getSelectSearchProps,
+  showTotal,
+  USD,
+} from '../../../helpers'
+import { getColumnFilterProps } from '../../../helpers/getColumnFilterProps'
+import { useColumnSearch } from '../../../hooks'
 import { getStatusColor } from '../helpers'
 
 export const QuotesTable = ({ dataSource }) => {
+  const { handleReset, handleSearch, searchInput, searchedColumn, searchText } =
+    useColumnSearch({
+      quote_name: null,
+      name: null,
+      accounting_class_name: null,
+      created_on: null,
+      total_amount: null,
+    })
   const columns = [
     {
-      title: 'Quote ID',
-      dataIndex: 'quote_name',
-      key: 'quote_name',
+      ...getColumnProps({
+        title: 'Quote ID',
+        dataIndex: 'quote_name',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'quote_name',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'quote_name',
+      }),
     },
     {
       ...getColumnProps({
         title: 'Program',
+        dataIndex: 'name',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'name',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
         dataIndex: 'name',
       }),
     },
@@ -21,42 +63,93 @@ export const QuotesTable = ({ dataSource }) => {
         title: 'Product/Service',
         dataIndex: 'accounting_class_name',
       }),
+      ...getColumnSearchProps({
+        dataIndex: 'accounting_class_name',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'accounting_class_name',
+      }),
     },
     {
       ...getColumnProps({ title: 'Created Date', dataIndex: 'created_on' }),
-      render: text => date(text),
+      ...getDateColumnSearchProps({
+        dataIndex: 'created_on',
+        initialFormat: 'MM-DD-YYYY',
+        finalFormat: 'll',
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'created_on',
+        type: 'date',
+        format: 'MM-DD-YYYY',
+      }),
     },
     {
-      ...getColumnProps({ title: 'Price', dataIndex: 'total_amount' }),
-      render: (text, r) =>
-        '$' + parseFloat(r.total_amount) + parseFloat(r.total_setup),
+      ...getColumnProps({ title: 'Price', dataIndex: 'price' }),
+      ...getColumnSearchProps({
+        dataIndex: 'price',
+        searchInput,
+        searchedColumn,
+        searchText,
+        normalizeText: USD,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'price',
+        sorter: (a, b) => {
+          return currency(a.price).value - currency(b.price).value
+        },
+      }),
     },
     {
       ...getColumnProps({
         title: 'Expired Date',
         dataIndex: 'expiration_date',
       }),
-      render: text => date(text),
+      ...getDateColumnSearchProps({
+        dataIndex: 'expiration_date',
+        initialFormat: 'MM-DD-YYYY',
+        finalFormat: 'll',
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'expiration_date',
+        type: 'date',
+        format: 'MM-DD-YYYY',
+      }),
     },
-    // {
-    //   title: 'Amount',
-    //   dataIndex: 'amount',
-    //   key: 'amount',
-    //   //   render: monthlyAmount =>
-    //   //     currency(monthlyAmount, {
-    //   //       decimal: '.',
-    //   //       separator: ',',
-    //   //       precision: 0,
-    //   //     }).format(),
-    // },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      ...getColumnProps({
+        title: 'Status',
+        dataIndex: 'status',
+      }),
+      ...getColumnFilterProps({
+        dataIndex: 'status',
+        filters: [{ text: 'Completed', value: 'Completed' }],
+      }),
       render: status => <Tag color={getStatusColor(status)}>{status}</Tag>,
     },
     {
       ...getColumnProps({ title: 'Sales Agent', dataIndex: 'user_name' }),
+      ...getColumnSearchProps({
+        dataIndex: 'user_name',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'user_name',
+      }),
     },
     {
       title: 'Actions',
@@ -85,7 +178,10 @@ export const QuotesTable = ({ dataSource }) => {
       rowKey='id'
       size='small'
       columns={columns}
-      dataSource={dataSource}
+      dataSource={dataSource?.map(item => ({
+        ...item,
+        price: parseFloat(item.total_amount) + parseFloat(item.total_setup),
+      }))}
       bordered
       pagination={{
         showTotal,
