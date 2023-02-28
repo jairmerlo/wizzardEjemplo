@@ -163,7 +163,7 @@ export const MembershipEdit = ({ registration_key }) => {
           </div>
         ) : (
           <Formik>
-            {() => (
+            {({ errors, touched }) => (
               <>
                 <Form layout='vertical' autoComplete='off'>
                   <Typography.Title level={5}>
@@ -171,14 +171,43 @@ export const MembershipEdit = ({ registration_key }) => {
                   </Typography.Title>
                   <Divider dashed />
                   <div className={form} style={{ gap: '16px' }}>
-                    <Form.Item label='Company Template'>
-                      <Input placeholder='Company Template' />
+                    <Form.Item
+                      label='Company Template'
+                      required
+                      validateStatus={
+                        errors.companyName && touched.companyName && 'error'
+                      }
+                      help={<ErrorMessage name='companyName' />}
+                    >
+                      <Input
+                        name='companyName'
+                        placeholder='Company Template'
+                      />
                     </Form.Item>
-                    <Form.Item label='Template Name'>
-                      <Input placeholder='Template Name' />
+                    <Form.Item
+                      label='Template Name'
+                      required
+                      validateStatus={
+                        errors.templateName && touched.templateName && 'error'
+                      }
+                      help={<ErrorMessage name='templateName' />}
+                    >
+                      <Input name='templateName' placeholder='Template Name' />
                     </Form.Item>
-                    <Form.Item label='Cpanel Username'>
-                      <Input placeholder='Cpanel Username' />
+                    <Form.Item
+                      label='Cpanel Username'
+                      required
+                      validateStatus={
+                        errors.cpanelUsername &&
+                        touched.cpanelUsername &&
+                        'error'
+                      }
+                      help={<ErrorMessage name='cpanelUsername' />}
+                    >
+                      <Input
+                        name='cpanelUsername'
+                        placeholder='Cpanel Username'
+                      />
                     </Form.Item>
                     <Form.Item label='Cpanel Password'>
                       <Input.Group compact>
@@ -199,11 +228,35 @@ export const MembershipEdit = ({ registration_key }) => {
                         />
                       </Input.Group>
                     </Form.Item>
-                    <Form.Item label='WordPress Install Name'>
-                      <Input placeholder='WordPress Install Name' />
+                    <Form.Item
+                      label='WordPress Install Name'
+                      required
+                      validateStatus={
+                        errors.wordpressInstallName &&
+                        touched.wordpressInstallName &&
+                        'error'
+                      }
+                      help={<ErrorMessage name='wordpressInstallName' />}
+                    >
+                      <Input
+                        name='wordpressInstallName'
+                        placeholder='WordPress Install Name'
+                      />
                     </Form.Item>
-                    <Form.Item label='WordPress Username'>
-                      <Input placeholder='WordPress Username' />
+                    <Form.Item
+                      label='WordPress Username'
+                      required
+                      validateStatus={
+                        errors.wordpressUsername &&
+                        touched.wordpressUsername &&
+                        'error'
+                      }
+                      help={<ErrorMessage name='wordpressUsername' />}
+                    >
+                      <Input
+                        name='wordpressUsername'
+                        placeholder='WordPress Username'
+                      />
                     </Form.Item>
                     <Form.Item label='Original WordPress URL'>
                       <Input placeholder='Original WordPress URL' />

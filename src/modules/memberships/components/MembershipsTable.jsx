@@ -26,6 +26,7 @@ import {
 } from '@ant-design/icons'
 import {
   capitalize,
+  getColumnProps,
   renderTextHighlighter,
   showTotal,
   USD,
@@ -271,6 +272,160 @@ export const MembershipsTable = ({ filter = '' }) => {
       ellipsis: true,
     }
   }
+  const launch_website_columns = [
+    {
+      ...getColumnProps({
+        title: 'Launch W Requested',
+        dataIndex: 'launch_website',
+      }),
+      ...getColumnSearchProps('launch_website'),
+      ...getColumnSortProps('launch_website'),
+    },
+    {
+      title: 'Last Action',
+      dataIndex: 'lastAction',
+      key: 'lastAction',
+      ...getColumnSearchProps('lastAction'),
+      render: (text, record) => (
+        <LastActionCell
+          text={text}
+          isHighlighted={searchedColumn['lastAction']}
+          highlightedText={searchText['lastAction']}
+          registration_key={record.registration_key}
+          membershipId={record.memberships_id}
+        />
+      ),
+      ...getColumnSortProps('lastAction'),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
+    },
+    {
+      title: 'Product/Service',
+      key: 'class_accounting_name',
+      dataIndex: 'class_accounting_name',
+      ...getColumnSearchProps('class_accounting_name'),
+      ...getColumnSortProps('class_accounting_name'),
+    },
+    {
+      title: 'Client Name',
+      dataIndex: 'client_name',
+      key: 'client_name',
+      ...getColumnSearchProps('client_name'),
+      render: (clientName, record) => (
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          rel='noreferrer'
+        >
+          {renderTextHighlighter({
+            text: clientName,
+            isHighlighted: searchedColumn['client_name'],
+            highlightedText: searchText['client_name'],
+          })}
+        </a>
+      ),
+      ...getColumnSortProps('client_name'),
+    },
+    {
+      title: 'Membership ID',
+      dataIndex: 'memberships_id',
+      key: 'memberships_id',
+      ...getColumnSearchProps('memberships_id'),
+      ...getColumnSortProps('memberships_id'),
+    },
+    {
+      title: 'URL',
+      dataIndex: 'wordpress_install_url',
+      key: 'wordpress_install_url',
+      ...getColumnSearchProps('wordpress_install_url'),
+      render: url => (
+        <a href={url} target='_blank' rel='noreferrer'>
+          {renderTextHighlighter({
+            text: url,
+            isHighlighted: searchedColumn['wordpress_install_url'],
+            highlightedText: searchText['wordpress_install_url'],
+          })}
+        </a>
+      ),
+      ...getColumnSortProps('wordpress_install_url'),
+    },
+    {
+      title: 'Created',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      ...getDateColumnSearchProps('created_at'),
+      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
+            moment(b.created_at, 'MM-DD-YYYY'),
+          )
+        },
+      }),
+    },
+    {
+      ...getColumnProps({
+        title: 'Published',
+        dataIndex: 'published',
+      }),
+      ...getColumnSearchProps('published'),
+      ...getColumnSortProps('published'),
+    },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      width: 90,
+      render: (text, { registration_key }) => (
+        <Popover
+          placement='bottom'
+          title={text}
+          content={
+            <Space size='middle' direction='vertical'>
+              {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Tooltip title='Details'>
+                <a
+                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
+                >
+                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              <MembershipEdit registration_key={registration_key} />
+              <Tooltip title='Delete'>
+                <a>
+                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                </a>
+              </Tooltip>
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+          trigger='click'
+        >
+          <a>
+            <ToolOutlined style={{ fontSize: '24px' }} />
+          </a>
+        </Popover>
+      ),
+    },
+  ]
   const columns = [
     {
       title: 'Last Action',
@@ -441,6 +596,32 @@ export const MembershipsTable = ({ filter = '' }) => {
       ),
     },
   ]
+  const idx_requested_columns = [
+    {
+      title: 'IDX Requested',
+      key: 'idx_requested_date',
+      dataIndex: 'idx_requested_date',
+      ...getDateColumnSearchProps('idx_requested_date'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'),
+          ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
+        },
+      }),
+    },
+    ...columns,
+  ]
+  const getColumns = filter => {
+    switch (filter) {
+      case 'idx_requested':
+        return idx_requested_columns
+      case 'launch_website':
+        return launch_website_columns
+      default:
+        return columns
+    }
+  }
   return (
     <div
       style={{
@@ -508,34 +689,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       <Table
         key={tableKey}
         rowKey='id'
-        columns={
-          filter === 'idx_requested'
-            ? [
-                {
-                  title: 'IDX Requested',
-                  key: 'idx_requested_date',
-                  dataIndex: 'idx_requested_date',
-                  ...getDateColumnSearchProps('idx_requested_date'),
-                  ...getCustomColumnSortProps({
-                    sorter: (a, b) => {
-                      return moment(
-                        moment(
-                          a.idx_requested_date || '01/01/1970',
-                          'MM/DD/YYYY',
-                        ),
-                      ).diff(
-                        moment(
-                          b.idx_requested_date || '01/01/1970',
-                          'MM/DD/YYYY',
-                        ),
-                      )
-                    },
-                  }),
-                },
-                ...columns,
-              ]
-            : columns
-        }
+        columns={getColumns(filter)}
         dataSource={memberships}
         bordered
         loading={isLoading}

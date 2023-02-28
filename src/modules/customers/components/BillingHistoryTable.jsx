@@ -82,6 +82,9 @@ export const BillingHistoryTable = ({ dataSource }) => {
         onReset: handleReset,
         onSearch: handleSearch,
       }),
+      render: (text, record) => (
+        <a onClick={() => handleOpenPDF(record.id)}>{text}</a>
+      ),
       ...getColumnSortProps({
         dataIndex: 'name',
       }),
@@ -120,22 +123,6 @@ export const BillingHistoryTable = ({ dataSource }) => {
           parseFloat(currency(a.monthlyAmount).value) -
           parseFloat(currency(b.monthlyAmount).value),
       }),
-    },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (text, { id }) => (
-        <Space size='middle'>
-          {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-            <a onClick={() => handleOpenPDF(id)}>
-              <EyeTwoTone style={{ fontSize: '18px' }} />
-            </a>
-          </Tooltip>
-          {/* eslint-enable jsx-a11y/anchor-is-valid */}
-        </Space>
-      ),
     },
   ]
   return (

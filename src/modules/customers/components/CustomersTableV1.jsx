@@ -340,8 +340,8 @@ export const CustomersTableV1 = ({ filter }) => {
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return (
-            parseFloat(currency(a.monthly_amount).value) -
-            parseFloat(currency(b.monthly_amount).value)
+            parseFloat(currency(a.monthly).value) -
+            parseFloat(currency(b.monthly).value)
           )
         },
       }),

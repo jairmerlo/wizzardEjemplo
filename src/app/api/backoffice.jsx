@@ -16,13 +16,18 @@ export const backoffice = createApi({
   keepUnusedDataFor: 0,
   endpoints: builder => ({
     getAllMemberships: builder.query({
-      queryFn: async ({ filter,customerId }, _api, _extraOptions, fetchWithBQ) => {
+      queryFn: async (
+        { filter, customerId },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
         try {
           const data = await fetch(API._BACKOFFICE + '/listActiveMemberships', {
             method: 'post',
             body: JSON.stringify({
               filter,
-              customerId
+              customerId,
             }),
           }).then(res => res.json())
           console.log({ data })
@@ -140,6 +145,13 @@ export const backoffice = createApi({
         }
       },
     }),
+    editMembership: builder.mutation({
+      query: ([{ id, username }, body]) => ({
+        url: `/memberships/v2/edit/${id}/${username}`,
+        body,
+        method: 'POST',
+      }),
+    }),
   }),
 })
 
@@ -151,4 +163,5 @@ export const {
   useGetTheamMembershipQuery,
   useGetAgentsMembershipQuery,
   useGetLastActionsMembershipQuery,
+  useEditMembershipMutation,
 } = backoffice

@@ -124,6 +124,7 @@ export const BillinHistory = ({
         title: 'INVOICE #',
         dataIndex: 'name',
       }),
+      render: text => <a onClick={() => handleViewPdf(id)}>{text}</a>,
     },
     {
       ...getColumnProps({
@@ -142,22 +143,6 @@ export const BillinHistory = ({
       render(text, { total }) {
         return <td>${total}</td>
       },
-    },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (text, { id }) => (
-        <Space size='middle'>
-          <Tooltip
-            title='Details'
-            overlayStyle={{ zIndex: 10000 }}
-            onClick={() => handleViewPdf(id)}
-          >
-            <EyeTwoTone style={{ fontSize: '18px' }} />
-          </Tooltip>
-        </Space>
-      ),
     },
   ]
   return (

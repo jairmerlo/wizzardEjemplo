@@ -48,9 +48,9 @@ export const AgreementHistory = ({
     // }).then(res => res.json())
     // setPdfS(res)
 
-    if(agreementHistoryData.find(data => data.id === id)){
-         setPdfS(agreementHistoryData.find(data => data.id === id))
-    }else{
+    if (agreementHistoryData.find(data => data.id === id)) {
+      setPdfS(agreementHistoryData.find(data => data.id === id))
+    } else {
       setPdfS([])
     }
 
@@ -72,7 +72,7 @@ export const AgreementHistory = ({
         dataIndex: 'token_date',
       }),
       render(text, { token_date }) {
-        return <td>{moment(token_date).format('MM-DD-YYYY')}</td>
+        return <td>{moment(token_date).format('ll')}</td>
       },
     },
     {

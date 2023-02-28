@@ -92,7 +92,7 @@ export const MembershipDetails = () => {
                   fontSize: '24px',
                 }}
               >
-                {membershipData?.membership_id}
+                {membershipData?.membershipId}
               </p>
             </>
           }

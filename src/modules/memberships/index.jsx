@@ -51,6 +51,20 @@ const Memberships = () => {
           forceRender: true,
         },
         {
+          label: `Onnmipresence`,
+          key: 'omnipresence',
+          children: filter === 'omnipresence' && (
+            <MembershipsTable filter='onnmipresence ' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Custom`,
+          key: 'custom',
+          children: filter === 'custom' && <MembershipsTable filter='custom' />,
+          forceRender: true,
+        },
+        {
           label: `Dominate`,
           key: 'dominate',
           children: filter === 'dominate' && (
@@ -58,14 +72,14 @@ const Memberships = () => {
           ),
           forceRender: true,
         },
-        {
-          label: `Pending`,
-          key: 'pending',
-          children: filter === 'pending' && (
-            <MembershipsTable filter='pending' />
-          ),
-          forceRender: true,
-        },
+        // {
+        //   label: `Pending`,
+        //   key: 'pending',
+        //   children: filter === 'pending' && (
+        //     <MembershipsTable filter='pending' />
+        //   ),
+        //   forceRender: true,
+        // },
         {
           label: `Cancelled`,
           key: 'cancelled',
@@ -89,17 +103,11 @@ const Memberships = () => {
           forceRender: true,
         },
         {
-          label: `Onnmipresence`,
-          key: 'omnipresence',
-          children: filter === 'omnipresence' && (
-            <MembershipsTable filter='onnmipresence ' />
+          label: `Launch Website`,
+          key: 'launch_website',
+          children: filter === 'launch_website' && (
+            <MembershipsTable filter='launch_website' />
           ),
-          forceRender: true,
-        },
-        {
-          label: `Custom`,
-          key: 'custom',
-          children: filter === 'custom' && <MembershipsTable filter='custom' />,
           forceRender: true,
         },
       ]}
