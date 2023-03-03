@@ -2,9 +2,11 @@ import { EyeTwoTone } from '@ant-design/icons'
 import { Modal, Space, Table, Tooltip } from 'antd'
 
 import moment from 'moment'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useListAgreementByRegkeyQuery } from '../../../app/api/billing'
 import { getColumnProps, showTotal } from '../../../helpers'
+
+import '../../../../src/index.css'
 
 export const AgreementHistory = ({
   achData = [],
@@ -48,14 +50,34 @@ export const AgreementHistory = ({
     // }).then(res => res.json())
     // setPdfS(res)
 
-    if(agreementHistoryData.find(data => data.id === id)){
-         setPdfS(agreementHistoryData.find(data => data.id === id))
-    }else{
+    if (agreementHistoryData.find(data => data.id === id)) {
+      setPdfS(agreementHistoryData.find(data => data.id === id))
+    } else {
       setPdfS([])
     }
 
+   
+
+   
     setIsModalOpen(true)
   }
+
+  useLayoutEffect(() => {
+    let elemento = document.getElementsByClassName('content')
+
+    if (elemento[0]) {
+      elemento[0].parentElement.remove()
+    }
+
+    Array.from(document.getElementsByTagName('p')).forEach(element => {
+    
+      if (element.innerHTML === '&nbsp;' || element.innerHTML === '[@signature]') {
+        console.log('removed')
+        element.remove()
+      }
+    })
+
+  }, [pdfs])
 
   const handleOk = () => {
     setIsModalOpen(false)
@@ -134,9 +156,22 @@ export const AgreementHistory = ({
         onCancel={handleCancel}
       >
         {pdfs.agreement_content && (
-          <div
-            dangerouslySetInnerHTML={{ __html: pdfs.agreement_content }}
-          ></div>
+          <>
+            <div
+              dangerouslySetInnerHTML={{ __html: pdfs.agreement_content }}
+            ></div>
+
+            <div className='ms-wrapper-signature'>
+              <span className='ms-siganture-text'>{pdfs.membership_agreement_name}</span>
+              <div className='ms-info-client'>
+                <span>{pdfs.token_date} </span>
+                <span></span>
+                <span>{pdfs.token}</span>
+              </div>
+            </div>
+
+            <p>[@signature]</p>
+          </>
         )}
       </Modal>
     </>
