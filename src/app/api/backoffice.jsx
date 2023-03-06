@@ -146,11 +146,49 @@ export const backoffice = createApi({
       },
     }),
     editMembership: builder.mutation({
-      query: ([{ id, username }, body]) => ({
-        url: `/memberships/v2/edit/${id}/${username}`,
-        body,
-        method: 'POST',
-      }),
+      // query: ([{ id, username }, body]) => ({
+      //   url: `/memberships/v2/edit/${id}/${username}`,
+      //   body,
+      //   method: 'POST',
+      // }),
+      queryFn: async ([{ id, username }, body]) => {
+        try {
+          const res = await fetch(
+            API._BACKOFFICE + `/memberships/v2/edit/${id}/${username}`,
+            {
+              method: 'POST',
+              body: JSON.stringify(body),
+            },
+          )
+          const data = await res.json()
+          return {
+            data,
+          }
+        } catch (error) {
+          console.log({ error })
+          return {
+            error: 'Error',
+          }
+        }
+      },
+    }),
+    getTheamProfiles: builder.query({
+      queryFn: async () => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getTheamProfiles', {
+            method: 'POST',
+          })
+          const data = await res.json()
+          return {
+            data,
+          }
+        } catch (error) {
+          console.log({ error })
+          return {
+            error: 'Error',
+          }
+        }
+      },
     }),
   }),
 })
@@ -164,4 +202,5 @@ export const {
   useGetAgentsMembershipQuery,
   useGetLastActionsMembershipQuery,
   useEditMembershipMutation,
+  useGetTheamProfilesQuery,
 } = backoffice

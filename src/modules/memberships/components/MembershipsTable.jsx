@@ -34,7 +34,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { MembershipEdit, LastActionCell } from '.'
+import { MembershipEdit, LastActionCell, EditMemberhipIcon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -546,7 +546,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       }),
     },
     {
-      title: 'Monthly Amount',
+      title: '$ Lifetime',
       dataIndex: 'amount',
       key: 'amount',
       ...getColumnSearchProps('amount'),
@@ -578,7 +578,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
-              <MembershipEdit registration_key={registration_key} />
+              <EditMemberhipIcon registration_key={registration_key} />
               <Tooltip title='Delete'>
                 <a>
                   <DeleteTwoTone style={{ fontSize: '18px' }} />
@@ -649,7 +649,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
         </Typography.Title>
         <Typography.Title level={5} style={{ margin: 0 }}>
-          Price:{' '}
+          Monthly:{' '}
           {typeof totalPrice === 'number' ? (
             USD(totalPrice, { precision: 2 })
           ) : (
@@ -657,7 +657,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )}
         </Typography.Title>
         <Typography.Title level={5} style={{ margin: 0 }}>
-          Monthly:{' '}
+          $ Lifetime:{' '}
           {typeof totalMonthly === 'number' ? (
             USD(totalMonthly, { precision: 2 })
           ) : (
