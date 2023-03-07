@@ -162,9 +162,12 @@ export const MembershipDetails = () => {
           {membershipData?.hasTrial && (
             <>
               <Descriptions.Item label='Trial Due'>
-                {stringFallback(
-                  date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
-                )}
+                {
+                  membershipData.trialDue && stringFallback(
+                    date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
+                  )
+                }
+                
               </Descriptions.Item>
               <Descriptions.Item label='Board'>
                 {stringFallback(membershipData.boardName)}

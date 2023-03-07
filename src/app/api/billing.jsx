@@ -430,6 +430,34 @@ export const billing = createApi({
         }
       },
     }),
+    billingInformation: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/billing-information',
+            {
+              method: 'post',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -453,4 +481,5 @@ export const {
   useListAccountInvoiceByRegkeyQuery,
   useGetPdfInvoiceQuery,
   useListAgreementByRegkeyQuery,
+  useBillingInformationQuery
 } = billing

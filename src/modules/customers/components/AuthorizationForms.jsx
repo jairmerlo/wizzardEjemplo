@@ -205,7 +205,7 @@ export const AuthorizationForms = ({
             history={cardHistory}
             authorization_form_type={authorization_form_type}
             completed_at={
-              completed_at && moment(completed_at).format('MM-DD-YYYY')
+              completed_at && moment(completed_at).format('ll')
             }
             create_at={
               create_at
