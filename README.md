@@ -44,3 +44,17 @@ _https://api-billing.idxboost.dev|com/api_
 ### Endpoints
 
 - [_/list-customers-v2_](https://docs.google.com/document/d/1wurpzMqiLl5DBNZA82RzfPVlBlGmGJvSvn8kMQ3v534/edit)
+
+### Compilados
+
+* Memberships v2
+
+```console
+VITE_APP_COMPONENT=memberships
+```
+
+* Customers v2
+
+```console
+VITE_APP_COMPONENT=customers
+```
