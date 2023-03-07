@@ -30,6 +30,7 @@ import currency from 'currency.js'
 import { useScroll } from '../../../hooks/useScroll'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
 import { useSearchParams } from 'react-router-dom'
+import { EditMemberhipIcon } from '.'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -492,7 +493,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           placement='bottom'
           title={text}
           content={
-            <Space size='middle'>
+            <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
               <Tooltip title='Details'>
                 <a
@@ -502,11 +503,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
-              <Tooltip title='Edit'>
-                <a>
-                  <EditTwoTone style={{ fontSize: '18px' }} />
-                </a>
-              </Tooltip>
+              <EditMemberhipIcon registration_key={registration_key} />
               <Tooltip title='Delete'>
                 <a>
                   <DeleteTwoTone style={{ fontSize: '18px' }} />
