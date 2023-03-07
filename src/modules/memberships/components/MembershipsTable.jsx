@@ -477,6 +477,13 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSortProps('client_name'),
     },
     {
+      title: 'Project Name',
+      dataIndex: 'projectName',
+      key: 'projectName',
+      ...getColumnSearchProps('project_name'),
+      ...getColumnSortProps('project_name'),
+    },
+    {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
@@ -642,9 +649,9 @@ export const MembershipsTable = ({ filter = '' }) => {
           Memberships{' '}
           {filter
             ? filter
-                .split('_')
-                .map(word => capitalize(word))
-                .join(' ')
+              .split('_')
+              .map(word => capitalize(word))
+              .join(' ')
             : 'Active'}{' '}
           ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
         </Typography.Title>
