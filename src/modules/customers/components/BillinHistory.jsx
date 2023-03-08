@@ -29,7 +29,11 @@ import {
   useResendAuthorizationFormMutation,
   useSendAuthorizationFormMutation,
 } from '../../../app/api/billing'
-import { getColumnProps, showTotal } from '../../../helpers'
+import {
+  getColumnProps,
+  getColumnSearchProps,
+  showTotal,
+} from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 import * as Yup from 'yup'
 import { API } from '../../../api'
@@ -122,7 +126,7 @@ export const BillinHistory = ({
     {
       ...getColumnProps({
         title: 'INVOICE #',
-        dataIndex: 'name',
+        dataIndex: 'invoice_number',
       }),
       render: text => <a onClick={() => handleViewPdf(id)}>{text}</a>,
     },

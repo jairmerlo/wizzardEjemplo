@@ -51,6 +51,12 @@ export const getDateColumnSearchProps = ({
     <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
   ),
   onFilter: (value, record) => {
+    console.log({
+      cell: moment(moment(record[dataIndex], initialFormat)).format(
+        'DD-MM-YYYY',
+      ),
+      value: value.format('DD-MM-YYYY'),
+    })
     return (
       moment(moment(record[dataIndex], initialFormat)).format('DD-MM-YYYY') ===
       value.format('DD-MM-YYYY')
