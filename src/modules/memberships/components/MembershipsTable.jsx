@@ -102,7 +102,6 @@ export const MembershipsTable = ({ filter = '' }) => {
   const totalMonthly = items
     ?.map(item => currency(item.amount || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
-  console.log({ memberships })
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -285,7 +284,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
 
-  console.log(memberships)
   const launch_website_columns = [
     {
       ...getColumnProps({
@@ -742,6 +740,7 @@ export const MembershipsTable = ({ filter = '' }) => {
             <DollarOutlined spin />
           )}
         </Typography.Title>
+
         {/* <Link to='/new-quote'>
           <Button
             type='primary'
@@ -756,6 +755,9 @@ export const MembershipsTable = ({ filter = '' }) => {
           </Button>
         </Link> */}
       </div>
+      <Typography.Title level={5} style={{ margin: 0 }}>
+        We gonna show the last 30 days launch websites
+      </Typography.Title>
       <Divider dashed />
       <Button
         type='default'
