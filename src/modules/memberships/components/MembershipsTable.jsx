@@ -17,11 +17,18 @@ import {
   Typography,
 } from 'antd'
 import {
+  ArrowUpOutlined,
+  BookOutlined,
   DeleteTwoTone,
   DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
+  FormOutlined,
+  KeyOutlined,
+  PullRequestOutlined,
   SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
   ToolOutlined,
 } from '@ant-design/icons'
 import {
@@ -34,7 +41,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { MembershipEdit, LastActionCell, EditMemberhipIcon } from '.'
+import { MembershipEdit, LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon, Wordpressicon, Cpanelicon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -578,6 +585,30 @@ export const MembershipsTable = ({ filter = '' }) => {
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
+
+              <Popover
+                placement='bottom'
+                title={text}
+                content={
+                  <Space size='middle' direction='vertical'>
+                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+
+                    <Wordpressicon registration_key={registration_key} />
+                    <Cpanelicon registration_key={registration_key} />
+
+                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
+                  </Space>
+                }
+                trigger='click'
+              >
+                <Tooltip title='Login'>
+                  <a>
+                    <KeyOutlined style={{ fontSize: '18px' }} />
+                  </a>
+                </Tooltip>
+              </Popover>
+
+
               <Tooltip title='Details'>
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
@@ -586,11 +617,20 @@ export const MembershipsTable = ({ filter = '' }) => {
                 </a>
               </Tooltip>
               <EditMemberhipIcon registration_key={registration_key} />
-              <Tooltip title='Delete'>
+
+              <SendMembershipicon registration_key={registration_key} />
+
+              <Requesticon registration_key={registration_key} />
+
+              <Tooltip title='Onb'>
                 <a>
-                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                  <BookOutlined style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
+
+              <Deleteicon registration_key={registration_key} />
+
+
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
