@@ -11,6 +11,7 @@ import {
   Divider,
   Input,
   Popover,
+  Select,
   Space,
   Table,
   Tooltip,
@@ -137,6 +138,10 @@ export const MembershipsTable = ({ filter = '' }) => {
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
+
+  const handleChangeSelect = (value) => {
+    console.log(`selected ${value}`);
+  };
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -279,6 +284,8 @@ export const MembershipsTable = ({ filter = '' }) => {
       ellipsis: true,
     }
   }
+
+  console.log(memberships)
   const launch_website_columns = [
     {
       ...getColumnProps({
@@ -310,6 +317,30 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
+      render: (status) => (
+        <Select
+          defaultValue={status}
+          style={{
+            width: "100%",
+          }}
+          bordered={false}
+          onChange={handleChangeSelect}
+          options={[
+            {
+              value: 'Pending_client_change_DNS',
+              label: 'Pending Client Change DNS',
+            },
+            {
+              value: 'Pending_Apply_Domain_to_Host',
+              label: 'Pending Apply Domain to Host',
+            },
+            {
+              value: 'DNS_Error',
+              label: 'DNS Error',
+            },
+          ]}
+        />
+      )
     },
     {
       title: 'Product/Service',
