@@ -285,25 +285,64 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         initialFormat: 'YYYY-MM-DD',
         finalFormat: 'YYYY-MM-DD',
       }),
-      render: date =>
+      render: (date, record) =>
         date ? (
           moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment()) ? (
-            moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
+            <Tooltip
+              placement='topLeft'
+              title={
+                <>
+                  Trial Date:{' '}
+                  {moment(record.created_at_date_time).format(
+                    'MM-DD-YYYY hh:mm:ss a',
+                  )}
+                  <br />
+                  Ending Date:{' '}
+                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                </>
+              }
+            >
+              {moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'}
+            </Tooltip>
           ) : (
-            <span style={{ color: 'red' }}>
-              {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
-            </span>
+            <Tooltip
+              placement='topLeft'
+              title={
+                <>
+                  Trial Date:{' '}
+                  {moment(record.created_at_date_time).format(
+                    'MM-DD-YYYY hh:mm:ss a',
+                  )}
+                  <br />
+                  Ending Date:{' '}
+                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                </>
+              }
+            >
+              <span style={{ color: 'red' }}>
+                {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+              </span>
+            </Tooltip>
           )
         ) : (
           stringFallback()
         ),
       ...getColumnSortPropsExport({
         dataIndex: 'trial_due',
-        // sorter: () => {},
-        type: 'date',
-        format: 'YYYY-MM-DD',
+        sorter: (a, b) => {
+          if (
+            moment(moment(a['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(moment())
+          )
+            return moment().diff(moment(b['trial_due'], 'YYYY-MM-DD'))
+          return moment(moment(a['trial_due'], 'YYYY-MM-DD')).diff(
+            moment(b['trial_due'], 'YYYY-MM-DD'),
+          )
+        },
+        ellipsis: {
+          showTitle: false,
+        },
       }),
-      defaultSortOrder: 'ascend',
+      defaultSortOrder: 'descend',
       width: 120,
       fixed: 'left',
     },
