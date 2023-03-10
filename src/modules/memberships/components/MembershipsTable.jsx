@@ -11,17 +11,25 @@ import {
   Divider,
   Input,
   Popover,
+  Select,
   Space,
   Table,
   Tooltip,
   Typography,
 } from 'antd'
 import {
+  ArrowUpOutlined,
+  BookOutlined,
   DeleteTwoTone,
   DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
+  FormOutlined,
+  KeyOutlined,
+  PullRequestOutlined,
   SearchOutlined,
+  SendOutlined,
+  SettingOutlined,
   ToolOutlined,
 } from '@ant-design/icons'
 import {
@@ -34,7 +42,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { MembershipEdit, LastActionCell, EditMemberhipIcon } from '.'
+import { MembershipEdit, LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon, Wordpressicon, Cpanelicon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -94,7 +102,6 @@ export const MembershipsTable = ({ filter = '' }) => {
   const totalMonthly = items
     ?.map(item => currency(item.amount || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
-  console.log({ memberships })
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -130,6 +137,10 @@ export const MembershipsTable = ({ filter = '' }) => {
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
+
+  const handleChangeSelect = (value) => {
+    console.log(`selected ${value}`);
+  };
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -272,6 +283,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ellipsis: true,
     }
   }
+
   const launch_website_columns = [
     {
       ...getColumnProps({
@@ -303,6 +315,30 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
+      render: (status) => (
+        <Select
+          defaultValue={status}
+          style={{
+            width: "100%",
+          }}
+          bordered={false}
+          onChange={handleChangeSelect}
+          options={[
+            {
+              value: 'Pending_client_change_DNS',
+              label: 'Pending Client Change DNS',
+            },
+            {
+              value: 'Pending_Apply_Domain_to_Host',
+              label: 'Pending Apply Domain to Host',
+            },
+            {
+              value: 'DNS_Error',
+              label: 'DNS Error',
+            },
+          ]}
+        />
+      )
     },
     {
       title: 'Product/Service',
@@ -481,6 +517,13 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 150,
     },
     {
+      title: 'Project Name',
+      dataIndex: 'projectName',
+      key: 'projectName',
+      ...getColumnSearchProps('project_name'),
+      ...getColumnSortProps('project_name'),
+    },
+    {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
@@ -582,6 +625,30 @@ export const MembershipsTable = ({ filter = '' }) => {
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
+
+              <Popover
+                placement='bottom'
+                title={text}
+                content={
+                  <Space size='middle' direction='vertical'>
+                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+
+                    <Wordpressicon registration_key={registration_key} />
+                    <Cpanelicon registration_key={registration_key} />
+
+                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
+                  </Space>
+                }
+                trigger='click'
+              >
+                <Tooltip title='Login'>
+                  <a>
+                    <KeyOutlined style={{ fontSize: '18px' }} />
+                  </a>
+                </Tooltip>
+              </Popover>
+
+
               <Tooltip title='Details'>
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
@@ -590,11 +657,20 @@ export const MembershipsTable = ({ filter = '' }) => {
                 </a>
               </Tooltip>
               <EditMemberhipIcon registration_key={registration_key} />
-              <Tooltip title='Delete'>
+
+              <SendMembershipicon registration_key={registration_key} />
+
+              <Requesticon registration_key={registration_key} />
+
+              <Tooltip title='Onb'>
                 <a>
-                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                  <BookOutlined style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
+
+              <Deleteicon registration_key={registration_key} />
+
+
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
@@ -653,9 +729,9 @@ export const MembershipsTable = ({ filter = '' }) => {
           Memberships{' '}
           {filter
             ? filter
-                .split('_')
-                .map(word => capitalize(word))
-                .join(' ')
+              .split('_')
+              .map(word => capitalize(word))
+              .join(' ')
             : 'Active'}{' '}
           ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
         </Typography.Title>
@@ -675,6 +751,7 @@ export const MembershipsTable = ({ filter = '' }) => {
             <DollarOutlined spin />
           )}
         </Typography.Title>
+
         {/* <Link to='/new-quote'>
           <Button
             type='primary'
@@ -689,6 +766,9 @@ export const MembershipsTable = ({ filter = '' }) => {
           </Button>
         </Link> */}
       </div>
+      <Typography.Title level={5} style={{ margin: 0 }}>
+        We gonna show the last 30 days launch websites
+      </Typography.Title>
       <Divider dashed />
       <Button
         type='default'

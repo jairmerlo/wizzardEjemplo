@@ -19,12 +19,32 @@ export const MembershipDetails = () => {
 
   const [tialCount, setTrialCount] = useState(0)
 
+  let options = [
+    'Billing Information',
+    'Billing History',
+    'Authorization Forms',
+    'Agreements',
+    'Team',
+    // 'Agents',
+    // 'Membership Trial',
+  ]
+
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
     {
       skip: !membershipRegKey,
     },
   )
+
+  const crm = membershipData?.hasCrm
+  const trial = membershipData?.hasTrial
+
+  console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
+
+  if (crm == 1) options.push("Agents")
+
+  if (trial == 1) options.push("Membership Trial")
+
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
     useGetAuthorizationFormsQuery(
@@ -108,7 +128,7 @@ export const MembershipDetails = () => {
             width: 'calc(100% - 200px)',
             margin: '10px',
           }}
-          // extra={<Button type='primary'>Edit</Button>}
+        // extra={<Button type='primary'>Edit</Button>}
         >
           <Descriptions.Item label='URL' span={2}>
             <a
@@ -188,15 +208,7 @@ export const MembershipDetails = () => {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <Segmented
-          options={[
-            'Billing Information',
-            'Billing History',
-            'Authorization Forms',
-            'Agreements',
-            'Team',
-            'Agents',
-            'Membership Trial',
-          ]}
+          options={options}
           size='large'
           style={{
             alignSelf: 'flex-start',

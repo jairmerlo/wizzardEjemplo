@@ -23,6 +23,9 @@ export const LastActionCell = ({
       skip: !registration_key || !open,
     },
   )
+
+  console.log({ data })
+
   const table = useCss({
     borderRadius: '8px',
     width: '100%',
@@ -82,7 +85,7 @@ export const LastActionCell = ({
               {data.map(item => (
                 <>
                   <tr>
-                    <td>{item.created_at.substring(0, 12)}</td>
+                    <td>{item.created_at}</td>
                     <td>{item.action}</td>
                   </tr>
                 </>
