@@ -755,9 +755,12 @@ export const MembershipsTable = ({ filter = '' }) => {
           </Button>
         </Link> */}
       </div>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        We gonna show the last 30 days launch websites
-      </Typography.Title>
+      {
+        (filter == "launch_website") && (
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            We gonna show the last 30 days launch websites
+          </Typography.Title>)
+      }
       <Divider dashed />
       <Button
         type='default'
