@@ -39,7 +39,7 @@ export const MembershipDetails = () => {
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
 
-  console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
+  // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
 
   if (crm == 1) options.push("Agents")
 
