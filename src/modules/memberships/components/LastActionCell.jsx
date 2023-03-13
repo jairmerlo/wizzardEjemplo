@@ -24,7 +24,7 @@ export const LastActionCell = ({
     },
   )
 
-  console.log({ data })
+  // console.log({ data })
 
   const table = useCss({
     borderRadius: '8px',

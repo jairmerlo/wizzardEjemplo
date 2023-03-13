@@ -40,7 +40,7 @@ import {
   USD,
 } from '../../../helpers'
 import moment from 'moment/moment'
-import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
+import { useEditMembershipMutation, useGetAllMembershipsQuery, useGetMembershipQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
 import { MembershipEdit, LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon, Wordpressicon, Cpanelicon } from '.'
 import numbro from 'numbro'
@@ -85,6 +85,8 @@ export const MembershipsTable = ({ filter = '' }) => {
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
   })
+
+  console.log(data, "data")
 
   const { data: memberships, total } = data
   useEffect(() => {
@@ -139,6 +141,7 @@ export const MembershipsTable = ({ filter = '' }) => {
   }
 
   const handleChangeSelect = (value) => {
+    // useEditMembershipMutation([{ id, username: getConfig().userId }, body])
     console.log(`selected ${value}`);
   };
 
@@ -284,6 +287,18 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
 
+  // const { data2 = {}, isLoading2 } = useGetMembershipQuery(
+  //   { registration_key },
+  // )
+
+  // console.log({ data2 })
+
+  // const [
+  //   editMembership,
+  //   { isLoading: isLoadingEdit, isSuccess, data: response2 },
+  // ] = useEditMembershipMutation()
+  // console.log({ response2 })
+
   const launch_website_columns = [
     {
       ...getColumnProps({
@@ -412,7 +427,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSortProps('published'),
     },
     {
-      title: 'Price',
+      title: '$ Price',
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
@@ -462,6 +477,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ),
     },
   ]
+
   const columns = [
     {
       title: 'Last Action',
@@ -564,7 +580,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       }),
     },
     {
-      title: 'Price',
+      title: '$ Price',
       dataIndex: 'price',
       key: 'price',
       ...getColumnSearchProps('price'),
@@ -576,6 +592,12 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+    },
+    {
+      title: '$ Setup Fee',
+      dataIndex: 'setUpFee',
+      key: 'setUpFee',
+      ...getColumnSearchProps('setUpFee'),
     },
     {
       title: 'Periods',
@@ -651,7 +673,7 @@ export const MembershipsTable = ({ filter = '' }) => {
 
               <Requesticon registration_key={registration_key} />
 
-              <Tooltip title='Onb'>
+              <Tooltip title='ONB'>
                 <a>
                   <BookOutlined style={{ fontSize: '18px' }} />
                 </a>

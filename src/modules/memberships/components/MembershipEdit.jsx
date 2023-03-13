@@ -169,14 +169,14 @@ export const MembershipEdit = ({
     profile_marketing = [],
     profile_project_manager = [],
   } = theamProfiles
-  console.log({ theamProfiles })
+  // console.log({ theamProfiles })
   const { data: customers = [] } = useGetAllCustomersQuery(
     {},
     {
       skip: !open,
     },
   )
-  console.log({ customers })
+  // console.log({ customers })
   const customersOptions = useMemo(
     () =>
       customers.map(({ user_name, email_contact, uuid }) => ({
@@ -186,6 +186,8 @@ export const MembershipEdit = ({
     [customers.length],
   )
 
+  // console.log({ registration_key })
+
   const { data = {}, isLoading } = useGetMembershipQuery(
     { registration_key },
     {
@@ -193,11 +195,12 @@ export const MembershipEdit = ({
     },
   )
   const noData = 'No data'
-  console.log({ data })
+  // console.log({ data })
   const [
     editMembership,
     { isLoading: isLoadingEdit, isSuccess, data: response },
   ] = useEditMembershipMutation()
+  console.log({ data })
   useEffect(() => {
     if (isSuccess) {
       onClose()
@@ -323,7 +326,7 @@ export const MembershipEdit = ({
               } else {
                 delete body.cpanelPassword
                 editMembership([{ id, username: getConfig().userId }, body])
-                console.log({ body })
+                console.log({ body, publicationDate })
               }
             }}
             initialValues={{
@@ -380,8 +383,8 @@ export const MembershipEdit = ({
             validationSchema={Yup.object({
               cpanelPassword: editPassword
                 ? Yup.string()
-                    .required('Password is required')
-                    .min(8, 'Password must contain 8 or more characters')
+                  .required('Password is required')
+                  .min(8, 'Password must contain 8 or more characters')
                 : undefined,
               ipConfig: Yup.string().matches(
                 /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,

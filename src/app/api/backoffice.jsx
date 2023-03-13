@@ -30,7 +30,7 @@ export const backoffice = createApi({
               customerId,
             }),
           }).then(res => res.json())
-          console.log({ data })
+          // console.log({ data })
           return {
             data,
           }
