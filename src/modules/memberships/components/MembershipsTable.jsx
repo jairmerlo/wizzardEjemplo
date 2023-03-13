@@ -24,9 +24,11 @@ import {
   DollarOutlined,
   EditTwoTone,
   EyeTwoTone,
+  FileWordOutlined,
   FormOutlined,
   KeyOutlined,
   PullRequestOutlined,
+  RocketOutlined,
   SearchOutlined,
   SendOutlined,
   SettingOutlined,
@@ -629,7 +631,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'actions',
       key: 'actions',
       width: 90,
-      render: (text, { registration_key }) => (
+      render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
           title={text}
@@ -643,9 +645,20 @@ export const MembershipsTable = ({ filter = '' }) => {
                 content={
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
+                    <Tooltip title='Wordpress'>
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/wordpress/${id}`} target="_blank">
+                        <FileWordOutlined style={{ fontSize: '18px' }} />
+                      </a>
+                    </Tooltip>
 
-                    <Wordpressicon registration_key={registration_key} />
-                    <Cpanelicon registration_key={registration_key} />
+                    <Tooltip title='CPanel'>
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/cpanel/${id}`} target="_blank">
+                        <RocketOutlined style={{ fontSize: '18px' }} />
+                      </a>
+                    </Tooltip>
+
+
+                    {/* <Cpanelicon registration_key={registration_key} /> */}
 
                     {/* eslint-enable jsx-a11y/anchor-is-valid */}
                   </Space>
