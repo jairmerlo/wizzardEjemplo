@@ -38,6 +38,7 @@ export const MembershipDetails = () => {
 
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
+  console.log(trial, "trial")
 
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
 
@@ -72,6 +73,8 @@ export const MembershipDetails = () => {
   const [section, setSection] = useState('Billing Information')
   const fullName = membershipData?.firstName + ' ' + membershipData?.lastName
   if (isLoadingM) return <Loader />
+
+  console.log({ membershipData })
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>
@@ -130,7 +133,7 @@ export const MembershipDetails = () => {
           }}
         // extra={<Button type='primary'>Edit</Button>}
         >
-          <Descriptions.Item label='URL' span={2}>
+          <Descriptions.Item label='URL'>
             <a
               href={membershipData?.wordpressInstallUrl}
               target='_blank'
@@ -139,26 +142,57 @@ export const MembershipDetails = () => {
               {membershipData?.wordpressInstallUrl}
             </a>
           </Descriptions.Item>
-          <Descriptions.Item label='Service/Product' span={2}>
+          <Descriptions.Item label='Published'>
+            {stringFallback(membershipData?.activatedAt)}
+          </Descriptions.Item>
+          <Descriptions.Item label='Service/Product'>
             {stringFallback(membershipData?.classAccountingName)}
           </Descriptions.Item>
-          <Descriptions.Item label='Customer' span={2}>
+          <Descriptions.Item label='Board'>
+            {stringFallback(membershipData.boardName)}
+          </Descriptions.Item>
+          <Descriptions.Item label='Customer'>
             {stringFallback(fullName)}
+          </Descriptions.Item>
+          <Descriptions.Item label='IDX'>
+            {stringFallback(membershipData.idx)}
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
             {stringFallback(
               date(membershipData?.createdAt, 'MM/DD/YYYY', 'll'),
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='Published'>
-            {stringFallback(membershipData?.activatedAt)}
+          <Descriptions.Item label='Premium Date'>
+            {stringFallback(membershipData.premium)}
+          </Descriptions.Item>
+          <Descriptions.Item label='$ Setup Fee/ 1st Payment'>
+            {stringFallback(membershipData?.setUpFee)}
+          </Descriptions.Item>
+          <Descriptions.Item label='Premium'>
+            {stringFallback(
+              membershipData.hasPremium === true ? 'Yes' : 'No',
+            )}
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
             {stringFallback(membershipData?.price)}
           </Descriptions.Item>
+          <Descriptions.Item label='IDX Requested' span={2}>
+            {stringFallback(
+              date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label='$ Lifetime'>
             {stringFallback(membershipData?.amount)}
           </Descriptions.Item>
+          {(trial != undefined && trial != 0) && (
+            <>
+              <Descriptions.Item label='Trial Due'>
+                {stringFallback(
+                  date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
+                )}
+              </Descriptions.Item>
+            </>
+          )}
 
           {!membershipData?.hasTrial && (
             <>
@@ -171,38 +205,11 @@ export const MembershipDetails = () => {
             </>
           )}
 
-          {/* trial information */}
-          {membershipData?.hasTrial && (
-            <>
-              <Descriptions.Item label='Trial Due'>
-                {stringFallback(
-                  date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item label='Board'>
-                {stringFallback(membershipData.boardName)}
-              </Descriptions.Item>
-              <Descriptions.Item label='IDX Requested'>
-                {stringFallback(
-                  date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
-                )}
-              </Descriptions.Item>
-              {/* <Descriptions.Item label='Balance'>
+          {/* <Descriptions.Item label='Balance'>
                 -------
               </Descriptions.Item> */}
-              <Descriptions.Item label='IDX'>
-                {stringFallback(membershipData.idx)}
-              </Descriptions.Item>
-              <Descriptions.Item label='Premium'>
-                {stringFallback(
-                  membershipData.hasPremium === true ? 'Yes' : 'No',
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item label='Premium Date'>
-                {stringFallback(membershipData.premium)}
-              </Descriptions.Item>
-            </>
-          )}
+
+
         </Descriptions>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
