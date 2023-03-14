@@ -16,9 +16,10 @@ import {
   useCreateProspectMutation,
   useCreateQuoteMutation,
   useGetCustomerQuery,
+  useGetCustomerV1Query,
   useGetNewQuotesOptionsQuery,
 } from '../../../app/api/billing'
-import { ErrorHandler } from '../../../components'
+import { ErrorHandler, Loader } from '../../../components'
 import {
   capitalize,
   getConfig,
@@ -80,12 +81,13 @@ export const NewQuote = () => {
     states = [],
   } = data
 
-  const { data: customer, isError: isErrorGetCustomer } = useGetCustomerQuery(
-    customerId,
-    {
-      skip: hasProspect,
-    },
-  )
+  const {
+    data: customer,
+    isError: isErrorGetCustomer,
+    isLoading: isLoadingGetCustomer,
+  } = useGetCustomerV1Query(customerId, {
+    skip: hasProspect,
+  })
   const [hasIdx, setHasIdx] = useState()
   console.log({ openModal, customerId })
   const form = useCss({
@@ -114,6 +116,7 @@ export const NewQuote = () => {
   const handleCloseProspect = () => {
     setSearchParams({})
   }
+  if (isLoadingGetCustomer) return <Loader />
   if (isErrorGetCustomer)
     return <ErrorHandler description='The customer does not exist.' />
   return (
