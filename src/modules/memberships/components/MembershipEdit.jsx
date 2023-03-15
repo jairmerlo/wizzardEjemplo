@@ -319,8 +319,6 @@ export const MembershipEdit = ({
                 ...rest,
                 activatedAt:
                   publicationDate !== 'Invalid date' ? publicationDate : null,
-                status:
-                  publicationDate !== 'Invalid date' ? 'Web published' : status,
               }
               if (editPassword) {
                 editMembership([{ id, username: getConfig().userId }, body])
