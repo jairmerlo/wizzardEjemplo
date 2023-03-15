@@ -90,31 +90,31 @@ const treeLeadGeneration = [
   },
 ]
 
-const data = [
-  'hasCmsTeam',
-  'hasSpw',
-  'hasCmsBlog',
-  'isSearchFilter',
-  'displayFilters',
-  'hasBuilding',
-  'hasCommercialListing',
-  'hasDynamicRemarketing',
-  'listingAgent',
-  'hasRentalsQuickSearch',
-  'hasRegistrationSettings',
-  'smartPropertyAlert',
-  'boostBox',
-  'hasCmsForm',
-  'userShowQuizz',
-  'hasSms',
-  'leadAutoCreated',
-  'hasAlerts',
-  'hasGenerateSchema',
-  'hasCms',
-  'marketing',
-  'hasBasicIdx',
-  'hasVacationRentals',
-]
+// const data = [
+//   'hasCmsTeam',
+//   'hasSpw',
+//   'hasCmsBlog',
+//   'isSearchFilter',
+//   'displayFilters',
+//   'hasBuilding',
+//   'hasCommercialListing',
+//   'hasDynamicRemarketing',
+//   'listingAgent',
+//   'hasRentalsQuickSearch',
+//   'hasRegistrationSettings',
+//   'smartPropertyAlert',
+//   'boostBox',
+//   'hasCmsForm',
+//   'userShowQuizz',
+//   'hasSms',
+//   'leadAutoCreated',
+//   'hasAlerts',
+//   'hasGenerateSchema',
+//   'hasCms',
+//   'marketing',
+//   'hasBasicIdx',
+//   'hasVacationRentals',
+// ]
 
 const treeOthers = [
   {
@@ -195,12 +195,11 @@ export const MembershipEdit = ({
     },
   )
   const noData = 'No data'
-  // console.log({ data })
+  console.log({ data }, "data")
   const [
     editMembership,
     { isLoading: isLoadingEdit, isSuccess, data: response },
   ] = useEditMembershipMutation()
-  console.log({ data })
   useEffect(() => {
     if (isSuccess) {
       onClose()
@@ -261,6 +260,7 @@ export const MembershipEdit = ({
     hasBasicIdx = '0',
     hasVacationRentals = '0',
     id,
+    status = 'Request Publish'
   } = data
   const [editPassword, setEditPassword] = useState(false)
   const onCheck = (checkedKeys, setFieldValue) => {
@@ -319,6 +319,8 @@ export const MembershipEdit = ({
                 ...rest,
                 activatedAt:
                   publicationDate !== 'Invalid date' ? publicationDate : null,
+                status:
+                  publicationDate !== 'Invalid date' ? 'Web published' : status,
               }
               if (editPassword) {
                 editMembership([{ id, username: getConfig().userId }, body])
@@ -379,6 +381,7 @@ export const MembershipEdit = ({
               hasBasicIdx: boolean(hasBasicIdx),
               hasVacationRentals: boolean(hasVacationRentals),
               cpanelPassword: '',
+              status
             }}
             validationSchema={Yup.object({
               cpanelPassword: editPassword
@@ -599,6 +602,17 @@ export const MembershipEdit = ({
                           value: `${value + 1}`,
                         }))}
                         {...getSelectSearchProps()}
+                      />
+                    </Form.Item>
+                    <Form.Item label='Status'>
+                      <Select
+                        name='status'
+                        placeholder='Select status'
+                        options={[
+                          { label: 'Pending Client Change DNS', value: 'Pending_Client_Change_DNS' },
+                          { label: 'Pending Apply Domain to Host', value: 'Pending_Apply_Domain_to_Host' },
+                          { label: 'DNS Error', value: 'DNS_Error' },
+                        ]}
                       />
                     </Form.Item>
                   </div>

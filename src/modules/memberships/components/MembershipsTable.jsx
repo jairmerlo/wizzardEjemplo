@@ -11,27 +11,19 @@ import {
   Divider,
   Input,
   Popover,
-  Select,
   Space,
   Table,
   Tooltip,
   Typography,
 } from 'antd'
 import {
-  ArrowUpOutlined,
   BookOutlined,
-  DeleteTwoTone,
   DollarOutlined,
-  EditTwoTone,
   EyeTwoTone,
   FileWordOutlined,
-  FormOutlined,
   KeyOutlined,
-  PullRequestOutlined,
   RocketOutlined,
   SearchOutlined,
-  SendOutlined,
-  SettingOutlined,
   ToolOutlined,
 } from '@ant-design/icons'
 import {
@@ -42,9 +34,9 @@ import {
   USD,
 } from '../../../helpers'
 import moment from 'moment/moment'
-import { useEditMembershipMutation, useGetAllMembershipsQuery, useGetMembershipQuery } from '../../../app/api/backoffice'
+import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { MembershipEdit, LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon, Wordpressicon, Cpanelicon } from '.'
+import { LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -89,6 +81,7 @@ export const MembershipsTable = ({ filter = '' }) => {
   })
 
   console.log(data, "data")
+
 
   const { data: memberships, total } = data
   useEffect(() => {
@@ -141,11 +134,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
-
-  const handleChangeSelect = (value) => {
-    // useEditMembershipMutation([{ id, username: getConfig().userId }, body])
-    console.log(`selected ${value}`);
-  };
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -289,18 +277,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
 
-  // const { data2 = {}, isLoading2 } = useGetMembershipQuery(
-  //   { registration_key },
-  // )
-
-  // console.log({ data2 })
-
-  // const [
-  //   editMembership,
-  //   { isLoading: isLoadingEdit, isSuccess, data: response2 },
-  // ] = useEditMembershipMutation()
-  // console.log({ response2 })
-
   const launch_website_columns = [
     {
       ...getColumnProps({
@@ -332,30 +308,6 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
-      render: (status) => (
-        <Select
-          defaultValue={status}
-          style={{
-            width: "100%",
-          }}
-          bordered={false}
-          onChange={handleChangeSelect}
-          options={[
-            {
-              value: 'Pending_client_change_DNS',
-              label: 'Pending Client Change DNS',
-            },
-            {
-              value: 'Pending_Apply_Domain_to_Host',
-              label: 'Pending Apply Domain to Host',
-            },
-            {
-              value: 'DNS_Error',
-              label: 'DNS Error',
-            },
-          ]}
-        />
-      )
     },
     {
       title: 'Product/Service',
@@ -447,13 +399,46 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'actions',
       key: 'actions',
       width: 90,
-      render: (text, { registration_key }) => (
+      render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
           title={text}
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
+              <Popover
+                placement='bottom'
+                title={text}
+                content={
+                  <Space size='middle' direction='vertical'>
+                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+                    <Tooltip title='Wordpress'>
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" >
+                        <FileWordOutlined style={{ fontSize: '18px' }} />
+                      </a>
+                    </Tooltip>
+
+                    <Tooltip title='CPanel'>
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" >
+                        <RocketOutlined style={{ fontSize: '18px' }} />
+                      </a>
+                    </Tooltip>
+
+
+                    {/* <Cpanelicon registration_key={registration_key} /> */}
+
+                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
+                  </Space>
+                }
+                trigger='click'
+              >
+                <Tooltip title='Login'>
+                  <a>
+                    <KeyOutlined style={{ fontSize: '18px' }} />
+                  </a>
+                </Tooltip>
+              </Popover>
+
               <Tooltip title='Details'>
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
@@ -461,12 +446,19 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
-              <MembershipEdit registration_key={registration_key} />
-              <Tooltip title='Delete'>
+              <EditMemberhipIcon registration_key={registration_key} />
+
+              <SendMembershipicon registration_key={registration_key} />
+
+              <Requesticon registration_key={registration_key} />
+
+              <Tooltip title='ONB'>
                 <a>
-                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                  <BookOutlined style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
+
+              <Deleteicon registration_key={registration_key} />
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
@@ -646,13 +638,13 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='Wordpress'>
-                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/wordpress/${id}`} target="_blank">
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" >
                         <FileWordOutlined style={{ fontSize: '18px' }} />
                       </a>
                     </Tooltip>
 
                     <Tooltip title='CPanel'>
-                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/cpanel/${id}`} target="_blank">
+                      <a href={`https://backoffice.idxboost.dev/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" >
                         <RocketOutlined style={{ fontSize: '18px' }} />
                       </a>
                     </Tooltip>
@@ -791,7 +783,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </Link> */}
       </div>
       {
-        (filter == "launch_website") && (
+        (filter === "launch_website") && (
           <Typography.Title level={5} style={{ margin: 0 }}>
             We gonna show the last 30 days launch websites
           </Typography.Title>)

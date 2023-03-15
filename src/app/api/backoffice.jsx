@@ -152,6 +152,7 @@ export const backoffice = createApi({
       //   method: 'POST',
       // }),
       queryFn: async ([{ id, username }, body]) => {
+        console.log(id, username, { body }, "edit")
         try {
           const res = await fetch(
             API._BACKOFFICE + `/memberships/v2/edit/${id}/${username}`,
