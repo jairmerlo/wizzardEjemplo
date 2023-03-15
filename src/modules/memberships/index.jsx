@@ -51,6 +51,14 @@ const Memberships = () => {
           forceRender: true,
         },
         {
+          label: `Dominate`,
+          key: 'dominate',
+          children: filter === 'dominate' && (
+            <MembershipsTable filter='dominate' />
+          ),
+          forceRender: true,
+        },
+        {
           label: `Onnmipresence`,
           key: 'omnipresence',
           children: filter === 'omnipresence' && (
@@ -65,30 +73,6 @@ const Memberships = () => {
           forceRender: true,
         },
         {
-          label: `Dominate`,
-          key: 'dominate',
-          children: filter === 'dominate' && (
-            <MembershipsTable filter='dominate' />
-          ),
-          forceRender: true,
-        },
-        // {
-        //   label: `Pending`,
-        //   key: 'pending',
-        //   children: filter === 'pending' && (
-        //     <MembershipsTable filter='pending' />
-        //   ),
-        //   forceRender: true,
-        // },
-        {
-          label: `Cancelled`,
-          key: 'cancelled',
-          children: filter === 'cancelled' && (
-            <MembershipsTable filter='cancelled' />
-          ),
-          forceRender: true,
-        },
-        {
           label: `Trial`,
           key: 'trial',
           children: filter === 'trial' && <MembershipsTableTrial />,
@@ -99,6 +83,22 @@ const Memberships = () => {
           key: 'idx_requested',
           children: filter === 'idx_requested' && (
             <MembershipsTable filter='idx_requested' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Pending`,
+          key: 'pending',
+          children: filter === 'pending' && (
+            <MembershipsTable filter='pending' />
+          ),
+          forceRender: true,
+        },
+        {
+          label: `Cancelled`,
+          key: 'cancelled',
+          children: filter === 'cancelled' && (
+            <MembershipsTable filter='cancelled' />
           ),
           forceRender: true,
         },

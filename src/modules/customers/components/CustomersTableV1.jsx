@@ -392,7 +392,7 @@ export const CustomersTableV1 = ({ filter }) => {
               </Tooltip>
               <Tooltip title='Details'>
                 <Link
-                  to={`/customer-view/${uuid}`}
+                  to={`/customer-view/${id}`}
                   onClick={() => saveSelectedRow(id)}
                 >
                   <EyeTwoTone style={{ fontSize: '18px' }} />

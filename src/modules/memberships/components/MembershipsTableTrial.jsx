@@ -19,6 +19,10 @@ import {
   ToolOutlined,
 } from '@ant-design/icons'
 import {
+  getDateColumnSearchProps as getDateColumnSearchPropsExport,
+  getColumnSortProps as getColumnSortPropsExport,
+} from '../../../helpers'
+import {
   renderTextHighlighter,
   showTotal,
   stringFallback,
@@ -30,6 +34,7 @@ import currency from 'currency.js'
 import { useScroll } from '../../../hooks/useScroll'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
 import { useSearchParams } from 'react-router-dom'
+import { EditMemberhipIcon } from '.'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -40,6 +45,7 @@ const SEARCH_TEXT_INITIAL_STATE = {
   memberships: null,
   monthly_amount: null,
   created_on: null,
+  trial_due: null,
 }
 
 const SEARCHED_COLUMN_INITIAL_STATE = {
@@ -50,6 +56,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   memberships: null,
   monthly_amount: null,
   created_on: null,
+  trial_due: null,
 }
 
 export const MembershipsTableTrial = ({ filter = 'trial' }) => {
@@ -242,12 +249,13 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     width: 200,
   })
 
-  const getColumnSortProps = dataIndex => {
+  const getColumnSortProps = (dataIndex, opts) => {
     return {
       sorter: (a, b) => {
         return (a[dataIndex] || '').localeCompare(b[dataIndex] || '')
       },
       ellipsis: true,
+      ...opts,
     }
   }
 
@@ -267,12 +275,85 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   }
   const columns = [
     {
+      title: 'Trial Due',
+      key: 'trial_due',
+      dataIndex: 'trial_due',
+      ...getDateColumnSearchPropsExport({
+        dataIndex: 'trial_due',
+        onSearch: handleSearch,
+        onReset: handleReset,
+        initialFormat: 'YYYY-MM-DD',
+        finalFormat: 'YYYY-MM-DD',
+      }),
+      render: (date, record) =>
+        date ? (
+          moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment()) ? (
+            <Tooltip
+              placement='topLeft'
+              title={
+                <>
+                  Trial Date:{' '}
+                  {moment(record.created_at_date_time).format(
+                    'MM-DD-YYYY hh:mm:ss a',
+                  )}
+                  <br />
+                  Ending Date:{' '}
+                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                </>
+              }
+            >
+              {moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'}
+            </Tooltip>
+          ) : (
+            <Tooltip
+              placement='topLeft'
+              title={
+                <>
+                  Trial Date:{' '}
+                  {moment(record.created_at_date_time).format(
+                    'MM-DD-YYYY hh:mm:ss a',
+                  )}
+                  <br />
+                  Ending Date:{' '}
+                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                </>
+              }
+            >
+              <span style={{ color: 'red' }}>
+                {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+              </span>
+            </Tooltip>
+          )
+        ) : (
+          stringFallback()
+        ),
+      ...getColumnSortPropsExport({
+        dataIndex: 'trial_due',
+        sorter: (a, b) => {
+          if (
+            moment(moment(a['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(moment())
+          )
+            return moment().diff(moment(b['trial_due'], 'YYYY-MM-DD'))
+          return moment(moment(a['trial_due'], 'YYYY-MM-DD')).diff(
+            moment(b['trial_due'], 'YYYY-MM-DD'),
+          )
+        },
+        ellipsis: {
+          showTitle: false,
+        },
+      }),
+      defaultSortOrder: 'descend',
+      width: 120,
+      fixed: 'left',
+    },
+    {
       title: 'Last Action',
       dataIndex: 'lastAction',
       key: 'lastAction',
       ...getColumnSearchProps('lastAction'),
       ...getColumnSortProps('lastAction'),
       fixed: 'left',
+      width: 150,
     },
     {
       title: 'Status',
@@ -281,6 +362,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
       fixed: 'left',
+      width: 120,
     },
     {
       title: 'Product/Service',
@@ -289,39 +371,16 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('class_accounting_name'),
       ...getColumnSortProps('class_accounting_name'),
       fixed: 'left',
+      width: 150,
     },
-    {
-      title: 'Trial Due',
-      key: 'trial_due',
-      dataIndex: 'trial_due',
-      ...getColumnSearchProps('trial_due'),
-      render: date =>
-        date
-          ? moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment())
-            ? moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
-            : stringFallback(null, { fallback: 'Timed out' })
-          : stringFallback(),
-      onFilter: (value, record) => {
-        const text = record['trial_due']
-          ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
-              moment(),
-            )
-            ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
-              ' left'
-            : ''
-          : ''
-        return text.toString().toLowerCase().includes(value.toLowerCase())
-      },
-      ...getColumnSortProps('trial_due'),
-      width: 120,
-      fixed: 'left',
-    },
+
     {
       title: 'Membership ID',
       dataIndex: 'memberships_id',
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
+      width: 150,
     },
     {
       title: 'Client Name',
@@ -341,6 +400,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         </a>
       ),
       ...getColumnSortProps('client_name'),
+      width: 150,
     },
     // {
     //   title: 'Email',
@@ -492,7 +552,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           placement='bottom'
           title={text}
           content={
-            <Space size='middle'>
+            <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
               <Tooltip title='Details'>
                 <a
@@ -502,11 +562,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                   <EyeTwoTone style={{ fontSize: '18px' }} />
                 </a>
               </Tooltip>
-              <Tooltip title='Edit'>
-                <a>
-                  <EditTwoTone style={{ fontSize: '18px' }} />
-                </a>
-              </Tooltip>
+              <EditMemberhipIcon registration_key={registration_key} />
               <Tooltip title='Delete'>
                 <a>
                   <DeleteTwoTone style={{ fontSize: '18px' }} />

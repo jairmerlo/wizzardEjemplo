@@ -488,6 +488,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         />
       ),
       ...getColumnSortProps('lastAction'),
+      width: 170,
     },
     {
       title: 'Status',
@@ -495,6 +496,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
+      width: 110,
     },
     {
       title: 'Membership ID',
@@ -502,6 +504,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
+      width: 120,
     },
     {
       title: 'Client Name',
@@ -521,6 +524,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </a>
       ),
       ...getColumnSortProps('client_name'),
+      width: 150,
     },
     {
       title: 'Project Name',
@@ -535,6 +539,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'email',
       ...getColumnSearchProps('email'),
       ...getColumnSortProps('email'),
+      width: 200,
     },
     {
       title: 'URL',
@@ -551,6 +556,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </a>
       ),
       ...getColumnSortProps('wordpress_install_url'),
+      width: 200,
     },
     {
       title: 'Product/Service',
@@ -558,6 +564,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'class_accounting_name',
       ...getColumnSearchProps('class_accounting_name'),
       ...getColumnSortProps('class_accounting_name'),
+      width: 150,
     },
     {
       title: 'Created',
@@ -572,6 +579,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      width: 120,
     },
     {
       title: '$ Price',
@@ -586,6 +594,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      width: 100,
     },
     {
       title: '$ Setup Fee',
@@ -603,6 +612,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
         },
       }),
+      width: 120,
     },
     {
       title: '$ Lifetime',
@@ -617,6 +627,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      width: 120,
     },
     {
       title: 'Actions',
@@ -820,6 +831,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           },
           showTotal,
         }}
+        scroll={{ x: '100%' }}
       />
     </div>
   )

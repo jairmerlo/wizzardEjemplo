@@ -39,6 +39,9 @@ export const billing = createApi({
     getCustomer: builder.query({
       query: id => `/get-customer-v2/${id}`,
     }),
+    getCustomerV1: builder.query({
+      query: uuid => `/get-customer/${uuid}`,
+    }),
     getNewQuotesOptions: builder.query({
       async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
         try {
@@ -430,6 +433,31 @@ export const billing = createApi({
         }
       },
     }),
+    billingInformation: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/billing-information', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -453,4 +481,6 @@ export const {
   useListAccountInvoiceByRegkeyQuery,
   useGetPdfInvoiceQuery,
   useListAgreementByRegkeyQuery,
+  useBillingInformationQuery,
+  useGetCustomerV1Query,
 } = billing

@@ -1,3 +1,50 @@
 #root {
   padding: 8px;
 }
+
+.ant-table-thead th {
+  background-color: #fafafa !important;
+}
+
+.ant-table-tbody td {
+  background-color: #fff !important;
+}
+
+.ms-wrapper-signature {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  padding-right: 15px;
+}
+
+.ms-wrapper-signature .ms-siganture-text {
+  font-family: 'Parisienne', cursive;
+  font-size: 40px;
+}
+
+.ms-wrapper-signature .ms-info-client {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  padding-left: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 30px;
+  border-left: 1px solid #ddd;
+}
