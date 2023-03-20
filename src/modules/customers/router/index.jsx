@@ -7,6 +7,7 @@ import {
 import Customers from '..'
 import App from '../../../App'
 import {
+  CustomerEdit,
   CustomerView,
   CustomerViewChild,
   Document,
@@ -25,6 +26,7 @@ const customersRouter = createHashRouter(
       <Route path='customer-view/:customerId' element={<CustomerView />}>
         <Route index element={<CustomerViewChild />} />
       </Route>
+      <Route path='customer-edit/:customerId' element={<CustomerEdit />} />
       <Route
         path='membership-details/:membershipRegKey'
         element={<CustomerView />}

@@ -10,7 +10,7 @@ export const EditMemberhipIcon = ({ registration_key }) => {
   return (
     <>
       <Tooltip title='Edit'>
-        <a onClick={handleOpen}>
+        <a onClick={handleOpen} href>
           <EditTwoTone style={{ fontSize: '18px' }} />
         </a>
       </Tooltip>

@@ -11,7 +11,7 @@ export const CustomerView = () => {
       registration_key: membershipRegKey,
     }),
   )
-  console.log({ customerId })
+  console.log({ membershipRegKey })
   return (
     <div
       style={{

@@ -38,7 +38,7 @@ export const MembershipDetails = () => {
 
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
-  console.log(trial, "trial")
+  // console.log(trial, "trial")
 
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
 
@@ -74,7 +74,7 @@ export const MembershipDetails = () => {
   const fullName = membershipData?.firstName + ' ' + membershipData?.lastName
   if (isLoadingM) return <Loader />
 
-  console.log({ membershipData })
+  // console.log(window.isAch, "isAch")
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>
@@ -221,7 +221,7 @@ export const MembershipDetails = () => {
           }}
           value={section}
           onChange={section => {
-            console.log(section)
+            // console.log(section)
             setSection(section)
             if (
               section === 'Authorization Forms' ||

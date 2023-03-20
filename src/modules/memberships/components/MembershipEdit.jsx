@@ -4,13 +4,12 @@ import {
   Divider,
   Modal,
   Spin,
-  Tooltip,
-  Tree,
   Typography,
   Form,
   Input,
   Select as AntdSelect,
   notification,
+  Checkbox as AntdCheckbox
 } from 'antd'
 import { Input as FormikInput, Select, Checkbox } from 'formik-antd'
 import { ErrorMessage, Formik } from 'formik'
@@ -158,6 +157,16 @@ export const MembershipEdit = ({
     },
   })
 
+  const [openData, setOpenData] = useState(false)
+  const handleOpenDate = () => setOpenData(true)
+  const handleCloseDate = () => setOpenData(false)
+
+  const [dnsCorrect, setDnsCorrect] = useState(false)
+  const onChangeDNS = (e) => {
+    console.log(`checked = ${e.target.checked}`);
+    setDnsCorrect(!dnsCorrect)
+  }
+
   const { data: { data: theamProfiles = {} } = {} } = useGetTheamProfilesQuery(
     undefined,
     {
@@ -260,16 +269,17 @@ export const MembershipEdit = ({
     hasBasicIdx = '0',
     hasVacationRentals = '0',
     id,
-    status = 'Request Publish'
+    status = 'Request Publish',
   } = data
+  const WordpressUrl = originalWordpressInstallUrl.split('https://')
   const [editPassword, setEditPassword] = useState(false)
-  const onCheck = (checkedKeys, setFieldValue) => {
-    const keys = Object.fromEntries(checkedKeys.map(item => [item, true]))
-    for (const property in keys) {
-      setFieldValue(property, keys[property])
-    }
-    console.log('onCheck', keys)
-  }
+  // const onCheck = (checkedKeys, setFieldValue) => {
+  //   const keys = Object.fromEntries(checkedKeys.map(item => [item, true]))
+  //   for (const property in keys) {
+  //     setFieldValue(property, keys[property])
+  //   }
+  //   console.log('onCheck', keys)
+  // }
 
   return (
     <>
@@ -308,7 +318,7 @@ export const MembershipEdit = ({
                 wordpressUsername,
                 wordpressInstallName,
                 originalWordpressInstallUrl,
-                cpanelRegistrationKey,
+                // cpanelRegistrationKey,
                 ...rest
               } = values
               const publicationDate = moment(
@@ -515,15 +525,69 @@ export const MembershipEdit = ({
                       />
                     </Form.Item>
                     <Form.Item label='Publication Date'>
-                      <FormikInput
-                        name='activatedAt'
-                        placeholder='Publication Date'
-                        type='date'
-                      />
+                      <Button onClick={handleOpenDate} block>Edit date</Button>
+                      {openData &&
+                        <Modal
+                          title={`Verify DNS`}
+                          open={openData}
+                          //   onOk={handleOk}
+                          okButtonProps={{
+                            style: {
+                              display: 'none',
+                            },
+                          }}
+                          cancelButtonProps={{
+                            style: {
+                              display: 'none',
+                            },
+                          }}
+                          onCancel={handleCloseDate}
+                          width={450}
+                          centered
+                          destroyOnClose
+                        >
+                          <a href={`https://www.whatsmydns.net/#A/${WordpressUrl[1]}`} target="_blank" rel='noreferrer'>
+                            https://www.whatsmydns.net/#A/{WordpressUrl[1]}
+                          </a>
+                          <br />
+                          <div style={{ margin: '15px 0', display: 'flex', justifyContent: 'space-between' }}>
+                            Did the DNS propagate conrrectly?
+                            <AntdCheckbox onChange={onChangeDNS}>
+                            </AntdCheckbox>
+                          </div>
+                          {dnsCorrect &&
+                            <FormikInput
+                              style={{
+                                margin: '15px 0',
+                              }}
+                              name='activatedAt'
+                              placeholder='Publication Date'
+                              type='date'
+                            />
+                          }
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              gap: '16px',
+                              justifyContent: 'flex-end',
+                              paddingTop: '8px',
+                            }}
+                          >
+                            <Button onClick={handleCloseDate}>Cancel</Button>
+                            <Button
+                              type='primary'
+                              onClick={handleCloseDate}
+                            >
+                              Save
+                            </Button>
+                          </div>
+                        </Modal>
+                      }
                       <Checkbox name='isProductionMode'>
                         <span
                           style={{
-                            whiteSpace: 'nowrap',
+                            whiteSpace: 'wrap',
                           }}
                         >
                           Production Mode

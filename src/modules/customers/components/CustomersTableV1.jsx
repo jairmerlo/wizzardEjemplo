@@ -399,9 +399,12 @@ export const CustomersTableV1 = ({ filter }) => {
                 </Link>
               </Tooltip>
               <Tooltip title='Edit'>
-                <a>
+                <Link
+                  to={`/customer-edit/${id}`}
+                  onClick={() => saveSelectedRow(id)}
+                >
                   <EditTwoTone style={{ fontSize: '18px' }} />
-                </a>
+                </Link>
               </Tooltip>
               <Tooltip title='Delete'>
                 <a>
