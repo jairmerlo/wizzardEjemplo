@@ -272,6 +272,8 @@ export const MembershipEdit = ({
     status = 'Request Publish',
   } = data
   const WordpressUrl = originalWordpressInstallUrl.split('https://')
+  const statusOld = status
+  console.log({ statusOld })
   const [editPassword, setEditPassword] = useState(false)
   // const onCheck = (checkedKeys, setFieldValue) => {
   //   const keys = Object.fromEntries(checkedKeys.map(item => [item, true]))
@@ -333,6 +335,11 @@ export const MembershipEdit = ({
               if (editPassword) {
                 editMembership([{ id, username: getConfig().userId }, body])
                 console.log({ body })
+              } else if (statusOld === body.status) {
+                delete body.cpanelPassword
+                delete body.status
+                editMembership([{ id, username: getConfig().userId }, body])
+                console.log({ body, publicationDate })
               } else {
                 delete body.cpanelPassword
                 editMembership([{ id, username: getConfig().userId }, body])
