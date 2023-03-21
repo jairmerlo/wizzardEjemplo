@@ -488,7 +488,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         />
       ),
       ...getColumnSortProps('lastAction'),
-      width: 170,
+      width: 150,
     },
     {
       title: 'Status',
@@ -532,6 +532,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'projectName',
       ...getColumnSearchProps('project_name'),
       ...getColumnSortProps('project_name'),
+      width: 155,
     },
     {
       title: 'Email',
@@ -594,13 +595,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
-      width: 100,
+      width: 120,
     },
     {
       title: '$ Setup Fee',
       dataIndex: 'setUpFee',
       key: 'setUpFee',
       ...getColumnSearchProps('setUpFee'),
+      width: 100,
     },
     {
       title: 'Periods',
@@ -633,7 +635,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      width: 90,
+      width: 85,
       render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
