@@ -488,7 +488,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         />
       ),
       ...getColumnSortProps('lastAction'),
-      width: 150,
+      // width: 150,
     },
     {
       title: 'Status',
@@ -496,7 +496,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
-      width: 110,
+      // width: 110,
     },
     {
       title: 'Membership ID',
@@ -504,7 +504,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
-      width: 120,
+      // width: 120,
     },
     {
       title: 'Client Name',
@@ -524,7 +524,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </a>
       ),
       ...getColumnSortProps('client_name'),
-      width: 150,
+      // width: 150,
     },
     {
       title: 'Project Name',
@@ -532,7 +532,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'projectName',
       ...getColumnSearchProps('project_name'),
       ...getColumnSortProps('project_name'),
-      width: 155,
+      // width: 155,
     },
     {
       title: 'Email',
@@ -540,7 +540,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'email',
       ...getColumnSearchProps('email'),
       ...getColumnSortProps('email'),
-      width: 200,
+      // width: 200,
     },
     {
       title: 'URL',
@@ -557,7 +557,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </a>
       ),
       ...getColumnSortProps('wordpress_install_url'),
-      width: 200,
+      // width: 200,
     },
     {
       title: 'Product/Service',
@@ -565,7 +565,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'class_accounting_name',
       ...getColumnSearchProps('class_accounting_name'),
       ...getColumnSortProps('class_accounting_name'),
-      width: 150,
+      // width: 150,
     },
     {
       title: 'Created',
@@ -580,7 +580,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
-      width: 120,
+      // width: 120,
     },
     {
       title: '$ Price',
@@ -595,14 +595,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
-      width: 120,
+      // width: 120,
     },
     {
       title: '$ Setup Fee',
       dataIndex: 'setUpFee',
       key: 'setUpFee',
       ...getColumnSearchProps('setUpFee'),
-      width: 100,
+      // width: 100,
     },
     {
       title: 'Periods',
@@ -614,7 +614,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
         },
       }),
-      width: 120,
+      // width: 120,
     },
     {
       title: '$ Lifetime',
@@ -629,13 +629,13 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
-      width: 120,
+      // width: 120,
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      width: 85,
+      // width: 85,
       render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
@@ -687,9 +687,9 @@ export const MembershipsTable = ({ filter = '' }) => {
               </Tooltip>
               <EditMemberhipIcon registration_key={registration_key} />
 
-              <SendMembershipicon registration_key={registration_key} />
+              {/* <SendMembershipicon registration_key={registration_key} /> */}
 
-              <Requesticon registration_key={registration_key} />
+              <Requesticon registration_key={registration_key} id={id} />
 
               <Tooltip title='ONB'>
                 <a href>

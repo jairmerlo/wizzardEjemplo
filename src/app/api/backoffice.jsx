@@ -67,6 +67,26 @@ export const backoffice = createApi({
         }
       },
     }),
+    getIdxRequest: builder.query({
+      useErrorBoundary: true,
+      queryFn: async (
+        { idRequest },
+      ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + `/memberships/v2/membership_aprove/${idRequest}`, {
+            method: 'post',
+          }).then(res => res.json())
+          const data = res
+          return {
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getLastActionsMembership: builder.query({
       queryFn: async (
         { registration_key },
@@ -200,6 +220,7 @@ export default backoffice
 export const {
   useGetAllMembershipsQuery,
   useGetMembershipQuery,
+  useGetIdxRequestQuery,
   useGetTheamMembershipQuery,
   useGetAgentsMembershipQuery,
   useGetLastActionsMembershipQuery,

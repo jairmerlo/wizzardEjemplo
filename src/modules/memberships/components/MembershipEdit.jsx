@@ -273,7 +273,7 @@ export const MembershipEdit = ({
   } = data
   const WordpressUrl = originalWordpressInstallUrl.split('https://')
   const statusOld = status
-  console.log({ statusOld })
+  // console.log({ statusOld })
   const [editPassword, setEditPassword] = useState(false)
   // const onCheck = (checkedKeys, setFieldValue) => {
   //   const keys = Object.fromEntries(checkedKeys.map(item => [item, true]))
