@@ -163,7 +163,6 @@ export const MembershipEdit = ({
 
   const [dnsCorrect, setDnsCorrect] = useState(false)
   const onChangeDNS = (e) => {
-    console.log(`checked = ${e.target.checked}`);
     setDnsCorrect(!dnsCorrect)
   }
 
@@ -204,7 +203,7 @@ export const MembershipEdit = ({
     },
   )
   const noData = 'No data'
-  console.log({ data }, "data")
+  // console.log({ data }, "data")
   const [
     editMembership,
     { isLoading: isLoadingEdit, isSuccess, data: response },
@@ -244,7 +243,7 @@ export const MembershipEdit = ({
     sinUpLeftClick = noData,
     membershipId = noData,
     activatedAt = noData,
-    isProductionMode = noData,
+    // isProductionMode = noData,
     hasCmsTeam = '0',
     hasSpw = '0',
     hasCmsBlog = '0',
@@ -271,10 +270,12 @@ export const MembershipEdit = ({
     id,
     status = 'Request Publish',
   } = data
+
+  // console.log({ activatedAt })
   const WordpressUrl = originalWordpressInstallUrl.split('https://')
   const statusOld = status
-  // console.log({ statusOld })
   const [editPassword, setEditPassword] = useState(false)
+
   // const onCheck = (checkedKeys, setFieldValue) => {
   //   const keys = Object.fromEntries(checkedKeys.map(item => [item, true]))
   //   for (const property in keys) {
@@ -365,7 +366,7 @@ export const MembershipEdit = ({
               profileProjectManager,
               dataStudioUrl,
               validateRegistration: boolean(validateRegistration),
-              isProductionMode: boolean(isProductionMode),
+              // isProductionMode: boolean(isProductionMode),
               forceRegistration: boolean(forceRegistration),
               forceRegistrationForced,
               sinUpLeftClick,
@@ -532,7 +533,18 @@ export const MembershipEdit = ({
                       />
                     </Form.Item>
                     <Form.Item label='Publication Date'>
-                      <Button onClick={handleOpenDate} block>Edit date</Button>
+                      <div
+                        style={{
+                          display: 'flex'
+                        }}
+                      >
+                        <FormikInput
+                          name='activatedAt'
+                          disabled
+                          type='date'
+                        />
+                        <Button onClick={handleOpenDate} >Edit date</Button>
+                      </div>
                       {openData &&
                         <Modal
                           title={`Verify DNS`}
@@ -562,6 +574,7 @@ export const MembershipEdit = ({
                             <AntdCheckbox onChange={onChangeDNS}>
                             </AntdCheckbox>
                           </div>
+                          {console.log({ dnsCorrect })}
                           {dnsCorrect &&
                             <FormikInput
                               style={{
@@ -581,25 +594,33 @@ export const MembershipEdit = ({
                               paddingTop: '8px',
                             }}
                           >
-                            <Button onClick={handleCloseDate}>Cancel</Button>
+                            <Button onClick={() => {
+                              handleCloseDate()
+                              setDnsCorrect(false)
+                            }}>Cancel</Button>
                             <Button
                               type='primary'
-                              onClick={handleCloseDate}
+                              onClick={() => {
+                                handleCloseDate()
+                                if (dnsCorrect === false) {
+                                  values.activatedAt = null
+                                }
+                                setDnsCorrect(false)
+                              }}
+
+                            // disabled={(values.activatedAt === 'Invalid date' || !dnsCorrect) ? true : false}
                             >
                               Save
                             </Button>
                           </div>
                         </Modal>
                       }
-                      <Checkbox name='isProductionMode'>
-                        <span
-                          style={{
-                            whiteSpace: 'wrap',
-                          }}
-                        >
-                          Production Mode
-                        </span>
-                      </Checkbox>
+                      <AntdCheckbox
+                        checked={values.activatedAt === null ? false : true}
+                        disabled
+                      >
+                        Production Mode
+                      </AntdCheckbox>
                     </Form.Item>
                     <Form.Item label='Google Recaptcha Public Key'>
                       <FormikInput
@@ -673,7 +694,7 @@ export const MembershipEdit = ({
                         {...getSelectSearchProps()}
                       />
                     </Form.Item>
-                    <Form.Item label='Status'>
+                    <Form.Item label='Domain Status'>
                       <Select
                         name='status'
                         placeholder='Select status'
