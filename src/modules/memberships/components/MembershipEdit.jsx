@@ -603,7 +603,7 @@ export const MembershipEdit = ({
                               onClick={() => {
                                 handleCloseDate()
                                 if (dnsCorrect === false) {
-                                  values.activatedAt = null
+                                  values.activatedAt = 'Invalid date'
                                 }
                                 setDnsCorrect(false)
                               }}
@@ -616,7 +616,7 @@ export const MembershipEdit = ({
                         </Modal>
                       }
                       <AntdCheckbox
-                        checked={values.activatedAt === null ? false : true}
+                        checked={(values.activatedAt === 'Invalid date' || values.activatedAt === null) ? false : true}
                         disabled
                       >
                         Production Mode
