@@ -1,41 +1,21 @@
 import {
-  CopyOutlined,
-  DotChartOutlined,
-  ExclamationCircleFilled,
-  EyeTwoTone,
   FilePdfOutlined,
-  RetweetOutlined,
-  SendOutlined,
 } from '@ant-design/icons'
 import {
-  Button,
   Modal,
-  notification,
   Skeleton,
-  Space,
   Table,
-  Tooltip,
 } from 'antd'
-import { Checkbox, Form, Input } from 'antd'
 
 import moment from 'moment'
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { useCss } from 'react-use'
+import { useState } from 'react'
 import {
-  useGetPdfInvoiceQuery,
   useListAccountInvoiceByRegkeyQuery,
-  useReplaceAuthorizationFormMutation,
-  useResendAuthorizationFormMutation,
-  useSendAuthorizationFormMutation,
 } from '../../../app/api/billing'
 import {
   getColumnProps,
-  getColumnSearchProps,
   showTotal,
 } from '../../../helpers'
-import { AFTimeLine } from './AFTimeLine'
-import * as Yup from 'yup'
 import { API } from '../../../api'
 
 export const BillinHistory = ({
@@ -45,7 +25,6 @@ export const BillinHistory = ({
   registrationKey,
   onSuccess = f => f,
 }) => {
-  const [id, setId] = useState(null)
 
   const { data: billinHistoryData = [], isLoading: isLoadingH } =
     useListAccountInvoiceByRegkeyQuery(
@@ -70,10 +49,6 @@ export const BillinHistory = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
-
   const handleViewPdf = async ({ id }) => {
     setPdfS([])
     setIsModalOpen(true)
@@ -84,7 +59,7 @@ export const BillinHistory = ({
     setPdfS(res)
   }
 
-  console.log({ pdfs })
+  // console.log({ pdfs })
   // useEffect(()=>{
   //   setPdfS(pdfData)
   // },[pdfData])
@@ -97,31 +72,31 @@ export const BillinHistory = ({
     setIsModalOpen(false)
   }
 
-  const form = useCss({
-    display: 'grid',
-    gridTemplateColumns: '49% 49%',
-    columnGap: '16px',
-    rowGap: '30px',
-    '& > .ant-form-item': {
-      margin: '0px',
-    },
-    '@media only screen and (max-width: 745px)': {
-      gridTemplateColumns: '1fr',
-    },
-  })
+  // const form = useCss({
+  //   display: 'grid',
+  //   gridTemplateColumns: '49% 49%',
+  //   columnGap: '16px',
+  //   rowGap: '30px',
+  //   '& > .ant-form-item': {
+  //     margin: '0px',
+  //   },
+  //   '@media only screen and (max-width: 745px)': {
+  //     gridTemplateColumns: '1fr',
+  //   },
+  // })
 
-  const form3 = useCss({
-    display: 'grid',
-    gridTemplateColumns: '23.7% 23.7% 49%',
-    columnGap: '16px',
-    rowGap: '30px',
-    '& > .ant-form-item': {
-      margin: '0px',
-    },
-    '@media only screen and (max-width: 745px)': {
-      gridTemplateColumns: '1fr',
-    },
-  })
+  // const form3 = useCss({
+  //   display: 'grid',
+  //   gridTemplateColumns: '23.7% 23.7% 49%',
+  //   columnGap: '16px',
+  //   rowGap: '30px',
+  //   '& > .ant-form-item': {
+  //     margin: '0px',
+  //   },
+  //   '@media only screen and (max-width: 745px)': {
+  //     gridTemplateColumns: '1fr',
+  //   },
+  // })
 
   const columns = [
     {

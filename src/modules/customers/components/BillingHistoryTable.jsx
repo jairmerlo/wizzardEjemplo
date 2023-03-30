@@ -1,5 +1,4 @@
-import { EyeTwoTone } from '@ant-design/icons'
-import { Space, Table, Tooltip } from 'antd'
+import { Table } from 'antd'
 import currency from 'currency.js'
 import { API } from '../../../api'
 import {
@@ -83,7 +82,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
         onSearch: handleSearch,
       }),
       render: (text, record) => (
-        <a onClick={() => handleOpenPDF(record.id)}>{text}</a>
+        <a href onClick={() => handleOpenPDF(record.id)}>{text}</a>
       ),
       ...getColumnSortProps({
         dataIndex: 'name',

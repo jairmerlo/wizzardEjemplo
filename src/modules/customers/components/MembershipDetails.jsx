@@ -1,10 +1,9 @@
 import { Descriptions, Segmented, Typography } from 'antd'
-import moment from 'moment'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms, LaunchWebsite } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
-import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
+import { useGetAuthorizationFormsQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
 import { getConfig, stringAvatar, stringFallback, date } from '../../../helpers'
 import { AgentsMembership } from './AgentsMembership'
@@ -27,6 +26,16 @@ export const MembershipDetails = () => {
     // 'Agents',
     // 'Membership Trial',
   ]
+
+  const { data: billinHistoryData = [] } = useListAccountInvoiceByRegkeyQuery(
+    { registration_key: membershipRegKey },
+    {
+      skip: !membershipRegKey,
+    },
+  )
+
+  const periods = billinHistoryData.length
+
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
     {
@@ -146,6 +155,15 @@ export const MembershipDetails = () => {
               {membershipData?.wordpressInstallUrl}
             </a>
           </Descriptions.Item>
+          <Descriptions.Item label='Periods'>
+            {stringFallback(periods)}
+          </Descriptions.Item>
+
+          <Descriptions.Item label='Premium'>
+            {stringFallback(
+              membershipData.hasPremium === true ? 'Yes' : 'No',
+            )}
+          </Descriptions.Item>
           <Descriptions.Item label='Published'>
             {stringFallback(membershipData?.activatedAt)}
           </Descriptions.Item>
@@ -172,23 +190,21 @@ export const MembershipDetails = () => {
           <Descriptions.Item label='$ Setup Fee/ 1st Payment'>
             {stringFallback(membershipData?.setUpFee)}
           </Descriptions.Item>
-          <Descriptions.Item label='Premium'>
-            {stringFallback(
-              membershipData.hasPremium === true ? 'Yes' : 'No',
-            )}
-          </Descriptions.Item>
+
           <Descriptions.Item label='$ Price'>
             {stringFallback(membershipData?.price)}
           </Descriptions.Item>
-          <Descriptions.Item label='IDX Requested' span={2}>
-            {stringFallback(
-              date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
-            )}
-          </Descriptions.Item>
+          {(membershipData?.idxRequestedDate !== null) && (
+            <Descriptions.Item label='IDX Requested' span={2}>
+              {stringFallback(
+                date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
+              )}
+            </Descriptions.Item>
+          )}
           <Descriptions.Item label='$ Lifetime'>
             {stringFallback(membershipData?.amount)}
           </Descriptions.Item>
-          {(trial != undefined && trial != 0) && (
+          {(trial !== '0') && (
             <>
               <Descriptions.Item label='Trial Due'>
                 {stringFallback(
@@ -243,7 +259,7 @@ export const MembershipDetails = () => {
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
             onSuccess={() => {
-              console.log('llama')
+              // console.log('llama')
               refetchACH()
               refetchCard()
             }}
@@ -256,7 +272,7 @@ export const MembershipDetails = () => {
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
             onSuccess={() => {
-              console.log('llama')
+              // console.log('llama')
               refetchACH()
               refetchCard()
             }}
@@ -269,7 +285,7 @@ export const MembershipDetails = () => {
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
             onSuccess={() => {
-              console.log('llama')
+              // console.log('llama')
               refetchACH()
               refetchCard()
             }}
