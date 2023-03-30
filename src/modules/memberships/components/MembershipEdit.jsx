@@ -496,7 +496,6 @@ export const MembershipEdit = ({
                       <FormikInput
                         name='wordpressInstallUrl'
                         placeholder='WordPress URL'
-                        disabled
                       />
                     </Form.Item>
                   </div>

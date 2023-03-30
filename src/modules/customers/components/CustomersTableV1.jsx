@@ -39,6 +39,7 @@ import { API } from '../../../api'
 import numbro from 'numbro'
 import { useEvent } from 'react-use'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
+import '../../../icons/style.css'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -387,7 +388,18 @@ export const CustomersTableV1 = ({ filter }) => {
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
               <Tooltip title='Add Membership'>
                 <Link to={`/new-quote?customerId=${id}`}>
-                  <UserAddOutlined style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    ADD USER
+                  </div>
                 </Link>
               </Tooltip>
               <Tooltip title='Details'>
@@ -395,7 +407,18 @@ export const CustomersTableV1 = ({ filter }) => {
                   to={`/customer-view/${id}`}
                   onClick={() => saveSelectedRow(id)}
                 >
-                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
+                    DETAILS
+                  </div>
                 </Link>
               </Tooltip>
               <Tooltip title='Edit'>
@@ -403,20 +426,53 @@ export const CustomersTableV1 = ({ filter }) => {
                   to={`/customer-edit/${id}`}
                   onClick={() => saveSelectedRow(id)}
                 >
-                  <EditTwoTone style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-edit' style={{ fontSize: '20px' }}></span>
+                    EDIT
+                  </div>
                 </Link>
               </Tooltip>
               <Tooltip title='Delete'>
-                <a>
-                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+                <a href>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-delete' style={{ fontSize: '20px' }}></span>
+                    DELETE
+                  </div>
                 </a>
               </Tooltip>
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
         >
-          <a>
-            <ToolOutlined style={{ fontSize: '24px' }} />
+          <a href>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: '#858faf',
+                fontSize: '10px'
+              }}
+            >
+              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+              TOOLBOX
+            </div>
           </a>
         </Popover>
       ),

@@ -2,11 +2,13 @@ import {
   CopyOutlined,
   ExclamationCircleFilled,
   EyeTwoTone,
+  FileProtectOutlined,
   RetweetOutlined,
   SendOutlined,
 } from '@ant-design/icons'
-import { Modal, notification, Space, Table, Tooltip } from 'antd'
+import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
 import moment from 'moment'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   useReplaceAuthorizationFormMutation,
@@ -16,6 +18,8 @@ import {
 import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 import { DocumentPDF } from './DocumentPDF'
+import { FormAuth } from './FormAuth'
+import { FormReSend } from './FormReSend'
 
 export const AuthorizationForms = ({
   achData = [],
@@ -37,19 +41,19 @@ export const AuthorizationForms = ({
   const rows = [
     achData.length === 0
       ? {
-          id: '-1',
-          authorization_form_type: 'ACH',
-          status: '',
-          document: null,
-        }
+        id: '-1',
+        authorization_form_type: 'ACH',
+        status: '',
+        document: null,
+      }
       : achData[0],
     cardData.length === 0
       ? {
-          id: '-2',
-          authorization_form_type: 'Card',
-          status: '',
-          document: null,
-        }
+        id: '-2',
+        authorization_form_type: 'Card',
+        status: '',
+        document: null,
+      }
       : cardData[0],
   ]
   const principalACH = achData.find(item => item.is_principal === '1')
@@ -60,43 +64,63 @@ export const AuthorizationForms = ({
   const [resendAuthorizationForm] = useResendAuthorizationFormMutation()
   const [replaceAuthorizationForm] = useReplaceAuthorizationFormMutation()
 
-  const handleSend = ({
-    authorization_form_type,
-    registration_key,
-    user_id,
-  }) => {
-    confirm({
-      title: `Are you sure you want to send the ${authorization_form_type}?`,
-      icon: <ExclamationCircleFilled />,
-      // content: 'Some descriptions',
-      async onOk() {
-        try {
-          const res = await sendAuthorizationForm({
-            authorization_form_type,
-            registration_key,
-            user_id,
-          }).unwrap()
-          onSuccess()
-          console.log({ res })
-          notification.success({
-            message: `The ${authorization_form_type} form has been sent succesfully.`,
-            placement: 'bottomRight',
-            // description: '',
-          })
-        } catch (error) {
-          console.log({ error })
-          notification.error({
-            message: error.data?.message || 'Error',
-            placement: 'bottomRight',
-            // description: '',
-          })
-        }
-      },
-      onCancel() {
-        console.log('Cancel')
-      },
-    })
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  const [openReSend, setOpenReSend] = useState(false)
+  const handleOpenReSend = () => setOpenReSend(true)
+  const handleCloseReSend = () => setOpenReSend(false)
+
+  const [values, setValues] = useState([])
+  const handleSubmitDinamic = (data) => {
+    setValues(values.push(data))
   }
+
+  // const handleSend = ({
+  //   authorization_form_type,
+  //   registration_key,
+  //   user_id,
+  // }) => {
+  //   confirm({
+  //     title: `Are you sure you want to send the ${authorization_form_type}?`,
+  //     icon: <ExclamationCircleFilled />,
+  //     content: <FormAuth 
+  //     handleSubmitDinamic={handleSubmitDinamic} 
+  //     authorization_form_type={authorization_form_type}
+  //     registration_key={registration_key}
+  //     user_id={user_id}
+  //     />,
+  //     // content: 'Some descriptions',
+  //     async onOk() {
+  //       try {
+  //         const res = await sendAuthorizationForm({
+  //           authorization_form_type,
+  //           registration_key,
+  //           user_id,
+  //           labels_prices: values[0]
+  //         }).unwrap()
+  //         onSuccess()
+  //         console.log({ res })
+  //         notification.success({
+  //           message: `The ${authorization_form_type} form has been sent succesfully.`,
+  //           placement: 'bottomRight',
+  //           // description: '',
+  //         })
+  //       } catch (error) {
+  //         console.log({ error })
+  //         notification.error({
+  //           message: error.data?.message || 'Error',
+  //           placement: 'bottomRight',
+  //           // description: '',
+  //         })
+  //       }
+  //     },
+  //     onCancel() {
+  //       console.log('Cancel')
+  //     },
+  //   })
+  // }
   const handleResend = ({
     authorization_form_type,
     registration_key,
@@ -105,6 +129,7 @@ export const AuthorizationForms = ({
     confirm({
       title: `Are you sure you want to re-send the ${authorization_form_type}?`,
       icon: <ExclamationCircleFilled />,
+      content: <FormAuth handleSubmitDinamic={handleSubmitDinamic} />,
       // content: 'Some descriptions',
       async onOk() {
         try {
@@ -142,6 +167,7 @@ export const AuthorizationForms = ({
     confirm({
       title: `Are you sure you want to replace the ${authorization_form_type}?`,
       icon: <ExclamationCircleFilled />,
+      content: <FormAuth handleSubmitDinamic={handleSubmitDinamic} />,
       // content: 'Some descriptions',
       async onOk() {
         try {
@@ -222,55 +248,79 @@ export const AuthorizationForms = ({
         <Space size='middle'>
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {/* //TODO: remplazar por pdf */}
-          {(status === 'Waiting for client' || status === 'Completed') &&
-            (authorization_form_type === 'ACH'
-              ? !!principalACH?.document
-              : !!principalCard?.document) && (
-              // <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
-              //   <Link
-              //     to={`/${customerId}/${authorization_form_type}/${membershipId}`}
-              //     target='_blank'
-              //   >
-              //     <EyeTwoTone style={{ fontSize: '18px' }} />
-              //   </Link>
-              // </Tooltip>
-              <DocumentPDF id={id} />
-            )}
+          {
+            (window.isAch && window.isAch === '1') && (
+              (status === 'Waiting for client' || status === 'Completed') &&
+              (authorization_form_type === 'ACH'
+                ? !!principalACH?.document
+                : !!principalCard?.document) && (
+                // <Tooltip title='Details' overlayStyle={{ zIndex: 10000 }}>
+                //   <Link
+                //     to={`/${customerId}/${authorization_form_type}/${membershipId}`}
+                //     target='_blank'
+                //   >
+                //     <EyeTwoTone style={{ fontSize: '18px' }} />
+                //   </Link>
+                // </Tooltip>
+                <DocumentPDF id={authorization_form_type === 'ACH' ? principalACH.id : principalCard.id} />
+              )
+            )
+          }
           {status === 'Waiting for client' || status === 'Completed' || (
             <Tooltip title='Send' overlayStyle={{ zIndex: 10000 }}>
-              <a>
+              <a onClick={handleOpen} href>
                 <SendOutlined
                   style={{ fontSize: '18px' }}
-                  onClick={() =>
-                    handleSend({
-                      authorization_form_type,
-                      registration_key: registrationKey,
-                      user_id: userId,
-                    })
-                  }
+                // onClick={() =>
+                //   handleSend({
+                //     authorization_form_type,
+                //     registration_key: registrationKey,
+                //     user_id: userId,
+                //   })
+                // }
                 />
               </a>
+              {open && (
+                <FormAuth
+                  authorization_form_type={authorization_form_type}
+                  registration_key={registrationKey}
+                  user_id={userId}
+                  open={open}
+                  onClose={handleClose}
+                  onSuccess={onSuccess}
+                />
+              )}
             </Tooltip>
           )}
           {status === 'Waiting for client' && (
             <Tooltip title='Re-Send' overlayStyle={{ zIndex: 10000 }}>
-              <a>
+              <a href onClick={handleOpenReSend}>
                 <RetweetOutlined
                   style={{ fontSize: '18px' }}
-                  onClick={() =>
-                    handleResend({
-                      authorization_form_type,
-                      registration_key: registrationKey,
-                      user_id: userId,
-                    })
-                  }
+                // onClick={() =>
+                //   handleResend({
+                //     authorization_form_type,
+                //     registration_key: registrationKey,
+                //     user_id: userId,
+                //   })
+                // }
                 />
               </a>
+              {openReSend && (
+                <FormReSend
+                  authorization_form_type={authorization_form_type}
+                  registration_key={registrationKey}
+                  user_id={userId}
+                  open={openReSend}
+                  onClose={handleCloseReSend}
+                  onSuccess={onSuccess}
+                />
+              )}
             </Tooltip>
           )}
           {status === 'Completed' && (
             <Tooltip title='Replace' overlayStyle={{ zIndex: 10000 }}>
-              <a>
+              <a href>
                 <CopyOutlined
                   style={{ fontSize: '18px' }}
                   onClick={() =>

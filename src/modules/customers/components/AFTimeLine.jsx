@@ -10,7 +10,7 @@ export const AFTimeLine = ({
   authorization_form_type,
   history = [],
 }) => {
-  console.log({ history })
+  // console.log({ history })
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -32,11 +32,10 @@ export const AFTimeLine = ({
   })
   return (
     <>
-      <a onClick={handleOpen}>{completed_at || create_at}</a>
+      <a href onClick={handleOpen}>{completed_at || create_at}</a>
       <Modal
-        title={`Timeline. Authorization Form: ${
-          authorization_form_type === 'ACH' ? 'ACH' : 'Credit Card'
-        }`}
+        title={`Timeline. Authorization Form: ${authorization_form_type === 'ACH' ? 'ACH' : 'Credit Card'
+          }`}
         open={open}
         okButtonProps={{ style: { display: 'none' } }}
         cancelButtonProps={{ style: { display: 'none' } }}

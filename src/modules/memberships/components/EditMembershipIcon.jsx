@@ -2,6 +2,7 @@ import { EditTwoTone } from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import { useState } from 'react'
 import { MembershipEdit } from './MembershipEdit'
+import '../../../icons/style.css'
 
 export const EditMemberhipIcon = ({ registration_key }) => {
   const [open, setOpen] = useState(false)
@@ -11,7 +12,18 @@ export const EditMemberhipIcon = ({ registration_key }) => {
     <>
       <Tooltip title='Edit'>
         <a onClick={handleOpen} href>
-          <EditTwoTone style={{ fontSize: '18px' }} />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              color: '#858faf',
+              fontSize: '10px'
+            }}
+          >
+            <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+            EDIT
+          </div>
         </a>
       </Tooltip>
       {open && (

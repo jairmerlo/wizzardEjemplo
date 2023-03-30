@@ -289,10 +289,10 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       onFilter: (value, record) => {
         const text = record['trial_due']
           ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
-              moment(),
-            )
+            moment(),
+          )
             ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
-              ' left'
+            ' left'
             : ''
           : ''
         return text.toString().toLowerCase().includes(value.toLowerCase())
@@ -549,14 +549,14 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
           </Button>
         </Link> */}
         <Button
-        type='default'
-        style={{ marginBottom: 8, marginLeft: 'auto' }}
-        onClick={resetFilters}
-      >
-        Reset
-      </Button>
+          type='default'
+          style={{ marginBottom: 8, marginLeft: 'auto' }}
+          onClick={resetFilters}
+        >
+          Reset
+        </Button>
       </div>
-      
+
       <Table
         key={tableKey}
         rowKey='id'

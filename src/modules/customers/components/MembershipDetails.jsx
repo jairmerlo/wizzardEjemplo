@@ -2,7 +2,7 @@ import { Descriptions, Segmented, Typography } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { AuthorizationForms } from '.'
+import { AuthorizationForms, LaunchWebsite } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
@@ -17,18 +17,16 @@ import { TheamMembership } from './TheamMembership'
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
 
-  const [tialCount, setTrialCount] = useState(0)
-
   let options = [
     'Billing Information',
     'Billing History',
     'Authorization Forms',
     'Agreements',
     'Team',
+    // 'Launch Website'
     // 'Agents',
     // 'Membership Trial',
   ]
-
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
     {
@@ -36,15 +34,18 @@ export const MembershipDetails = () => {
     },
   )
 
+  console.log({ membershipData })
+
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
+  const launch = membershipData?.hasLaunch
   // console.log(trial, "trial")
 
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
+  if (crm === 1) options.push("Agents")
 
-  if (crm == 1) options.push("Agents")
-
-  if (trial == 1) options.push("Membership Trial")
+  if (trial === 1) options.push("Membership Trial")
+  if (launch === 1) options.push("Launch Website")
 
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
@@ -71,7 +72,10 @@ export const MembershipDetails = () => {
       },
     )
   const [section, setSection] = useState('Billing Information')
-  const fullName = membershipData?.firstName + ' ' + membershipData?.lastName
+  let fullName = membershipData?.firstName
+  if (membershipData?.lastName !== null) {
+    fullName = fullName + membershipData?.lastName
+  }
   if (isLoadingM) return <Loader />
 
   // console.log(window.isAch, "isAch")
@@ -293,6 +297,11 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+          />
+        )}
+        {section === 'Launch Website' && (
+          <LaunchWebsite
+            registrationKey={membershipRegKey}
           />
         )}
         {section === 'Membership Trial' && (

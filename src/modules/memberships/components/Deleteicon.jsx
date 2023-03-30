@@ -2,6 +2,7 @@ import { DeleteTwoTone } from "@ant-design/icons"
 import { Tooltip } from "antd"
 import { useState } from "react"
 import { Delete } from "./Delete"
+import '../../../icons/style.css'
 
 export const Deleteicon = ({ registration_key }) => {
     const [open, setOpen] = useState(false)
@@ -10,8 +11,19 @@ export const Deleteicon = ({ registration_key }) => {
     return (
         <>
             <Tooltip title='Delete'>
-                <a onClick={handleOpen}>
-                    <DeleteTwoTone style={{ fontSize: '18px' }} />
+                <a onClick={handleOpen} href>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            color: '#858faf',
+                            fontSize: '10px'
+                        }}
+                    >
+                        <span className='back-office-delete' style={{ fontSize: '20px' }}></span>
+                        DELETE
+                    </div>
                 </a>
             </Tooltip>
             {open && (

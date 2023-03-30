@@ -11,7 +11,9 @@ export const CustomerView = () => {
       registration_key: membershipRegKey,
     }),
   )
-  console.log({ membershipRegKey })
+  // const id = customerId.slice('IDX00')
+  // console.log({ id })
+  // console.log({ customerId })
   return (
     <div
       style={{

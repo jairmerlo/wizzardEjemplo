@@ -74,9 +74,10 @@ export const BillinHistory = ({
     setIsModalOpen(true)
   }
 
-  const handleViewPdf = async id => {
+  const handleViewPdf = async ({ id }) => {
     setPdfS([])
     setIsModalOpen(true)
+    console.log({ id })
     const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
       method: 'get',
     }).then(res => res.json())
@@ -128,7 +129,7 @@ export const BillinHistory = ({
         title: 'INVOICE #',
         dataIndex: 'invoice_number',
       }),
-      render: text => <a onClick={() => handleViewPdf(id)}>{text}</a>,
+      render: (text, id) => <a href onClick={() => handleViewPdf(id)}>{text}</a>,
     },
     {
       ...getColumnProps({

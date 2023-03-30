@@ -67,6 +67,32 @@ export const backoffice = createApi({
         }
       },
     }),
+    getLaunchWebsite: builder.query({
+      useErrorBoundary: true,
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getLaunchWebsite', {
+            method: 'post',
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then(res => res.json())
+          const { data } = res
+          return {
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getIdxRequest: builder.query({
       useErrorBoundary: true,
       queryFn: async (
@@ -220,6 +246,7 @@ export default backoffice
 export const {
   useGetAllMembershipsQuery,
   useGetMembershipQuery,
+  useGetLaunchWebsiteQuery,
   useGetIdxRequestQuery,
   useGetTheamMembershipQuery,
   useGetAgentsMembershipQuery,

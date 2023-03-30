@@ -40,6 +40,7 @@ import { LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Del
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
+import '../../../icons/style.css'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -80,8 +81,9 @@ export const MembershipsTable = ({ filter = '' }) => {
     filter,
   })
 
-  console.log(data, "data")
-
+  // console.log(data, "data")
+  // const idx = 'IDX00915'
+  // console.log(idx.split('0').slice(-1))
 
   const { data: memberships, total } = data
   useEffect(() => {
@@ -513,7 +515,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSearchProps('client_name'),
       render: (clientName, record) => (
         <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          href={`${window.location.origin}/customers/v2/customers/#/customer-view/${record.customer_id.split('0').slice(-1)}`}
           rel='noreferrer'
         >
           {renderTextHighlighter({
@@ -652,13 +654,35 @@ export const MembershipsTable = ({ filter = '' }) => {
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='Wordpress'>
                       <a href={`https://backoffice.idxboost.dev/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" >
-                        <FileWordOutlined style={{ fontSize: '18px' }} />
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
+                          CPanel
+                        </div>
                       </a>
                     </Tooltip>
 
                     <Tooltip title='CPanel'>
                       <a href={`https://backoffice.idxboost.dev/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" >
-                        <RocketOutlined style={{ fontSize: '18px' }} />
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
+                          Wordpress
+                        </div>
                       </a>
                     </Tooltip>
 
@@ -672,7 +696,18 @@ export const MembershipsTable = ({ filter = '' }) => {
               >
                 <Tooltip title='Login'>
                   <a href>
-                    <KeyOutlined style={{ fontSize: '18px' }} />
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        color: '#858faf',
+                        fontSize: '10px'
+                      }}
+                    >
+                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                      LOGIN
+                    </div>
                   </a>
                 </Tooltip>
               </Popover>
@@ -682,7 +717,18 @@ export const MembershipsTable = ({ filter = '' }) => {
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
                 >
-                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
+                    VIEW
+                  </div>
                 </a>
               </Tooltip>
               <EditMemberhipIcon registration_key={registration_key} />
@@ -693,7 +739,18 @@ export const MembershipsTable = ({ filter = '' }) => {
 
               <Tooltip title='ONB'>
                 <a href>
-                  <BookOutlined style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                    ONB
+                  </div>
                 </a>
               </Tooltip>
 
@@ -706,7 +763,18 @@ export const MembershipsTable = ({ filter = '' }) => {
           trigger='click'
         >
           <a href>
-            <ToolOutlined style={{ fontSize: '24px' }} />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: '#858faf',
+                fontSize: '10px'
+              }}
+            >
+              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+              TOOLBOX
+            </div>
           </a>
         </Popover>
       ),

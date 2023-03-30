@@ -268,13 +268,14 @@ export const billing = createApi({
       }),
     }),
     sendAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id }) => ({
+      query: ({ authorization_form_type, registration_key, user_id, labels_prices }) => ({
         url: '/authorization-form-send',
         method: 'POST',
         body: {
           authorization_form_type,
           registration_key,
           user_id,
+          labels_prices
         },
       }),
     }),

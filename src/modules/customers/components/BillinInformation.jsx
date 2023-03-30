@@ -23,7 +23,7 @@ export const BillinInformation = ({
         skip: !registrationKey,
       },
     )
-
+  // console.log({ billinInformation })
   const rows = []
 
   rows.push(billinInformation)
@@ -44,8 +44,8 @@ export const BillinInformation = ({
         text,
         { completed_at, create_at, payment_method, account_number, number },
       ) {
-        if (payment_method === 'ACH') return <td>{account_number}</td>
-        return <td>{number}</td>
+        if (payment_method === 'ACH') return <td>******{account_number}</td>
+        return <td>******{number}</td>
       },
     },
   ]

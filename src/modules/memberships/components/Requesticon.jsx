@@ -2,6 +2,7 @@ import { PullRequestOutlined } from "@ant-design/icons"
 import { Tooltip } from "antd"
 import { useState } from "react"
 import { Request } from "./Request"
+import '../../../icons/style.css'
 
 export const Requesticon = ({ registration_key, id }) => {
     const [open, setOpen] = useState(false)
@@ -12,7 +13,18 @@ export const Requesticon = ({ registration_key, id }) => {
         <>
             <Tooltip title='Request'>
                 <a onClick={handleOpen} href>
-                    <PullRequestOutlined style={{ fontSize: '18px' }} />
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            color: '#858faf',
+                            fontSize: '10px'
+                        }}
+                    >
+                        <span className='back-office-requests' style={{ fontSize: '20px' }}></span>
+                        REQUEST
+                    </div>
                 </a>
             </Tooltip>
             {open && (

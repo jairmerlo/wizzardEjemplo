@@ -1,0 +1,97 @@
+@font-face {
+  font-family: 'back-office';
+    src: url('fonts/back-office.eot?gy8iv3');
+    src: url('fonts/back-office.eot?gy8iv3#iefix') format('embedded-opentype'),
+    url('fonts/back-office.ttf?gy8iv3') format('truetype'),
+    url('fonts/back-office.woff?gy8iv3') format('woff'),
+    url('fonts/back-office.svg?gy8iv3#back-office') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="back-office-"], [class*=" back-office-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'back-office' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.back-office-agreement:before {
+    content: "\e916";
+}
+.back-office-tools:before {
+  content: "\e915";
+}
+.back-office-toolbox:before {
+  content: "\e914";
+}
+.back-office-rocket:before {
+  content: "\e912";
+}
+.back-office-wordpress:before {
+  content: "\e913";
+}
+.back-office-user-key:before {
+  content: "\e911";
+}
+.back-office-merchant-list:before {
+  content: "\e90f";
+}
+.back-office-merchant:before {
+  content: "\e910";
+}
+.back-office-delete-user:before {
+  content: "\e90d";
+}
+.back-office-add-user:before {
+  content: "\e90e";
+}
+.back-office-requests:before {
+  content: "\e90c";
+}
+.back-office-config:before {
+  content: "\e90b";
+}
+.back-office-key:before {
+  content: "\e90a";
+}
+.back-office-delete:before {
+  content: "\e908";
+}
+.back-office-user:before {
+  content: "\e909";
+}
+.back-office-arrow:before {
+  content: "\e907";
+}
+.back-office-command:before {
+  content: "\e900";
+}
+.back-office-edit:before {
+  content: "\e901";
+  color: #4a4949;
+}
+.back-office-eye:before {
+  content: "\e902";
+}
+.back-office-lock:before {
+  content: "\e903";
+}
+.back-office-menu:before {
+  content: "\e904";
+}
+.back-office-pdf:before {
+  content: "\e905";
+}
+.back-office-send:before {
+  content: "\e906";
+}
