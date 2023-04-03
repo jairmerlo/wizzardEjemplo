@@ -10,6 +10,8 @@ export const LaunchWebsite = ({ registrationKey }) => {
 
     const { data: launchWebsite } = useGetLaunchWebsiteQuery({ registration_key: registrationKey })
 
+    console.log({ launchWebsite })
+
     const columns = [
         {
             ...getColumnProps({

@@ -1,12 +1,17 @@
 import { Button, Divider, Modal, Typography } from "antd"
 import { useGetIdxRequestQuery } from "../../../app/api/backoffice"
 import { editRequest } from "../helpers/editRequest"
+import { useState } from "react"
 
 export const Request = ({ registration_key, idRequest, open, onClose }) => {
 
     let boardName = ""
 
-    const { data = {} } = useGetIdxRequestQuery(
+    const [openConfirm, setOpenConfirm] = useState()
+    const hanleOpenCofirm = () => setOpenConfirm(true)
+    const handleCloseConfirm = () => setOpenConfirm(false)
+
+    const { data = {}, isLoading } = useGetIdxRequestQuery(
         { idRequest },
         {
             skip: !open,
@@ -36,8 +41,8 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
 
     const HandleClick = () => {
         console.log("hello")
-        editRequest({ id, user_id, board, product_type, username })
-        onClose()
+        // editRequest({ id, user_id, board, product_type, username })
+        // onClose()
     }
 
     return (
@@ -61,19 +66,26 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                 destroyOnClose
             >
                 <Divider />
-                {(ixd_status.length === 0) && (
-                    <div
-                        style={{
-                            textAlign: 'center'
-                        }}
-                    >
-                        <Typography.Title level={5} >
-                            There Is No Request To Process.
-                        </Typography.Title>
-                    </div>
+                {(ixd_status.length !== 0) && (
+                    <>
+                        <div
+                            style={{
+                                textAlign: 'center'
+                            }}
+                        >
+                            <Typography.Title level={5} >
+                                There Is No Request To Process.
+                            </Typography.Title>
+                        </div>
+                        <Divider />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button onClick={onClose} >Close</Button>
+                        </div>
+                    </>
+
                 )}
 
-                {(ixd_status.length !== 0) && (
+                {(ixd_status.length === 0) && (
                     <div
                         style={{
                             display: 'flex',
@@ -104,11 +116,11 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                             >
                                 Board Name:
                             </Typography.Title>
-                            <Typography.Title
+                            {/* <Typography.Title
                                 level={5}
                             >
                                 {boardName}
-                            </Typography.Title>
+                            </Typography.Title> */}
                             <div
                                 style={{
                                     display: 'flex',
@@ -121,9 +133,47 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                                 <Button onClick={onClose} >Close</Button>
                                 <Button
                                     type='primary'
-                                    onClick={HandleClick}
+                                    onClick={hanleOpenCofirm}
                                 >
                                     Accept
+                                    {openConfirm && (
+                                        <Modal
+                                            title={`Do you really want to approve?`}
+                                            open={openConfirm}
+                                            okButtonProps={{
+                                                style: {
+                                                    display: 'none',
+                                                },
+                                            }}
+                                            cancelButtonProps={{
+                                                style: {
+                                                    display: 'none',
+                                                },
+                                            }}
+                                            onCancel={handleCloseConfirm}
+                                            width={500}
+                                            centered
+                                            destroyOnClose
+                                        >
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    gap: '16px',
+                                                    justifyContent: 'flex-end',
+                                                    paddingTop: '8px',
+                                                }}
+                                            >
+                                                <Button onClick={onClose} >Cancel</Button>
+                                                <Button
+                                                    type='primary'
+                                                    onClick={HandleClick}
+                                                >
+                                                    Ok
+                                                </Button>
+                                            </div>
+                                        </Modal>
+                                    )}
                                 </Button>
                             </div>
                         </div>
@@ -131,10 +181,7 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                 )}
 
 
-                <Divider />
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <Button onClick={onClose} >Close</Button>
-                </div>
+
             </Modal>
         </>
     )

@@ -13,7 +13,7 @@ export const CustomerView = () => {
   )
   // const id = customerId.slice('IDX00')
   // console.log({ id })
-  // console.log({ customerId })
+  console.log(customerId?.split('0').slice(-1))
   return (
     <div
       style={{
@@ -30,7 +30,7 @@ export const CustomerView = () => {
       >
         <Typography.Title level={5} style={{ margin: 0 }}>
           {customerId ? (
-            <Link to={`/customer-view/${customerId}`}>Customer View</Link>
+            <Link to={`/customer-view/${customerId?.split('0').slice(-1)}`}>Customer View</Link>
           ) : (
             'Customer View'
           )}{' '}

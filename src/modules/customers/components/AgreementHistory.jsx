@@ -1,4 +1,4 @@
-import { EyeTwoTone } from '@ant-design/icons'
+import { EyeTwoTone, RetweetOutlined } from '@ant-design/icons'
 import { Modal, Space, Table, Tooltip } from 'antd'
 
 import moment from 'moment'
@@ -22,6 +22,12 @@ export const AgreementHistory = ({
         skip: !registrationKey,
       },
     )
+  console.log({ agreementHistoryData })
+
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
 
   // let {
   //   data: pdfData = [],
@@ -125,6 +131,16 @@ export const AgreementHistory = ({
             onClick={() => handleViewPdf(id)}
           >
             <EyeTwoTone style={{ fontSize: '18px' }} />
+          </Tooltip>
+          <Tooltip
+            title='Resend'
+            overlayStyle={{ zIndex: 10000 }}
+            onClick={() => handleViewPdf(id)}
+          >
+            <RetweetOutlined style={{ fontSize: '18px' }} />
+            {/* {open && (
+              // <Modle
+            )} */}
           </Tooltip>
         </Space>
       ),

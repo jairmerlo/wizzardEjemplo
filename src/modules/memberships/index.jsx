@@ -86,14 +86,14 @@ const Memberships = () => {
           ),
           forceRender: true,
         },
-        // {
-        //   label: `Pending`,
-        //   key: 'pending',
-        //   children: filter === 'pending' && (
-        //     <MembershipsTable filter='pending' />
-        //   ),
-        //   forceRender: true,
-        // },
+        {
+          label: `Pending`,
+          key: 'pending',
+          children: filter === 'pending' && (
+            <MembershipsTable filter='pending' />
+          ),
+          forceRender: true,
+        },
         {
           label: `Cancelled`,
           key: 'cancelled',
