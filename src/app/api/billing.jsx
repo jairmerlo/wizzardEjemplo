@@ -413,7 +413,7 @@ export const billing = createApi({
     }),
     getRequestByregKey: builder.query({
       queryFn: async (
-        { registration_key },
+        { registration_key = '5dec29bb-3015-4c49-81ef-e51a640474cc' },
       ) => {
         try {
           const res = await fetch(

@@ -24,7 +24,7 @@ export const MembershipDetails = () => {
     'Authorization Forms',
     'Agreements',
     'Team',
-    // 'IDX Request'
+    'IDX Request'
     // 'Launch Website'
     // 'Agents',
     // 'Membership Trial',
@@ -53,7 +53,7 @@ export const MembershipDetails = () => {
   if (crm === 1) options.push("Agents")
   if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
-  if (idxrequest === 1) options.push("IDX Request")
+  // if (idxrequest === 1) options.push("IDX Request")
   const idUser = membershipData?.customerId?.split('0').slice(-1)
 
 
