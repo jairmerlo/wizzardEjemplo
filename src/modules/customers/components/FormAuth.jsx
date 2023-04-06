@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Space } from 'antd'
+import { Button, Form, Input, Modal, Space, Typography } from 'antd'
 import { Input as FormikInput } from 'formik-antd'
 import { Formik } from 'formik';
 import { useSendAuthorizationFormMutation } from '../../../app/api/billing';
@@ -8,7 +8,7 @@ export const FormAuth = ({ authorization_form_type, registration_key, user_id, o
     const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
     return (
         <Modal
-            title={`Are you sure you want to send the ${authorization_form_type}?`}
+            title={`${authorization_form_type} Authorization Form`}
             open={open}
             okButtonProps={{
                 style: {
@@ -25,6 +25,23 @@ export const FormAuth = ({ authorization_form_type, registration_key, user_id, o
             width={500}
             centered
         >
+            <p style={{
+                paddingRight: '30px'
+            }}>
+                Please provide a list of all the items along with their corresponding prices that are intended to be used on this authorization form.
+            </p>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    fontSize: '17px',
+                    fontWeight: 'bold'
+                }}
+            >
+                <p> Item Name</p>
+                <p>Item Price</p>
+            </div>
             <Formik
                 enableReinitialize
                 onSubmit={async (values) => {
@@ -147,7 +164,7 @@ export const FormAuth = ({ authorization_form_type, registration_key, user_id, o
                                         onClose()
                                     }}
                                 >
-                                    Ok
+                                    Save
                                 </Button>
                             </div>
                         </Form.Item>

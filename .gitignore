@@ -13,7 +13,6 @@ dist-ssr
 *.local
 *.development
 *.production
-.env
 .gitignore
 
 # Editor directories and files

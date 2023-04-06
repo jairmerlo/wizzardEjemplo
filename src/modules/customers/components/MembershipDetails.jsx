@@ -1,4 +1,4 @@
-import { Descriptions, Segmented, Typography } from 'antd'
+import { Descriptions, Popover, Segmented, Space, Tooltip, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms, IdxRequest, LaunchWebsite } from '.'
@@ -12,6 +12,8 @@ import { BillinHistory } from './BillinHistory'
 import { BillinInformation } from './BillinInformation'
 import { MembershipsTableTrialCustomer } from './MembershipsTableTrialCustomer'
 import { TheamMembership } from './TheamMembership'
+import '../../../icons/style.css'
+import { Deleteicon, EditMemberhipIcon, Requesticon } from '../../memberships/components'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
@@ -52,7 +54,7 @@ export const MembershipDetails = () => {
   if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
   if (idxrequest === 1) options.push("IDX Request")
-
+  const idUser = membershipData?.customerId?.split('0').slice(-1)
 
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
@@ -88,9 +90,169 @@ export const MembershipDetails = () => {
   // console.log(window.isAch, "isAch")
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <Typography.Title level={5} style={{ margin: 0 }}>
-        Membership View
-      </Typography.Title>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          Membership View
+        </Typography.Title>
+        <Popover
+          placement='bottom'
+          content={
+            <Space size='middle' direction='vertical'>
+              <Popover
+                placement='bottom'
+                // title={text}
+                content={
+                  <Space size='middle' direction='vertical'>
+                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+                    <Tooltip title='CPanel'>
+                      <a href={`${window.location.origin}/customers/memberships/login/cpanel/${idUser}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
+                          CPanel
+                        </div>
+                      </a>
+                    </Tooltip>
+
+                    <Tooltip title='Wordpress'>
+                      <a href={`${window.location.origin}/customers/memberships/login/wordpress/${idUser}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
+                          Wordpress
+                        </div>
+                      </a>
+                    </Tooltip>
+
+
+                    {/* <Cpanelicon registration_key={registration_key} /> */}
+
+                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
+                  </Space>
+                }
+                trigger='click'
+              >
+                <Tooltip title='Login'>
+                  <a href>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        color: '#858faf',
+                        fontSize: '10px'
+                      }}
+                    >
+                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                      LOGIN
+                    </div>
+                  </a>
+                </Tooltip>
+              </Popover>
+
+              <Tooltip title='Details'>
+                <a
+                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${membershipData?.cpanelRegistrationKey}`}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
+                    VIEW
+                  </div>
+                </a>
+              </Tooltip>
+              <EditMemberhipIcon registration_key={membershipData?.cpanelRegistrationKey} />
+
+              {/* <SendMembershipicon registration_key={registration_key} /> */}
+
+              <Requesticon registration_key={membershipData?.cpanelRegistrationKey} />
+
+              <Tooltip title='ONB'>
+                <a href>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                    ONB
+                  </div>
+                </a>
+              </Tooltip>
+
+              <Tooltip title='Accounting classifications'>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${idUser}`}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <p style={{ textAlign: 'center' }}>ACCOUNTING
+                      <br /> CLASSIFICATIONS</p>
+                  </div>
+                </a>
+              </Tooltip>
+
+
+              <Deleteicon registration_key={membershipData?.cpanelRegistrationKey} />
+              {/* eslint-enable jsx-a11y/anchor-is-valid */}
+            </Space>
+          }
+          trigger='click'
+        >
+          <a href>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: '#858faf',
+                fontSize: '10px'
+              }}
+            >
+              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+              TOOLBOX
+            </div>
+          </a>
+        </Popover>
+      </div>
       <div
         style={{
           display: 'flex',
@@ -229,6 +391,7 @@ export const MembershipDetails = () => {
 
         </Descriptions>
       </div>
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <Segmented
           options={options}

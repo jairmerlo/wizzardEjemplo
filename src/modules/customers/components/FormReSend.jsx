@@ -47,7 +47,7 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
 
     return (
         <Modal
-            title={`Are you sure you want to send the ${authorization_form_type}?`}
+            title={`${authorization_form_type} Authorization Form`}
             open={open}
             //   onOk={handleOk}
             okButtonProps={{
@@ -65,6 +65,23 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
             width={500}
             centered
         >
+            <p style={{
+                paddingRight: '30px'
+            }}>
+                Please provide a list of all the items along with their corresponding prices that are intended to be used on this authorization form.
+            </p>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    fontSize: '17px',
+                    fontWeight: 'bold'
+                }}
+            >
+                <p> Item Name</p>
+                <p>Item Price</p>
+            </div>
             <Formik
                 enableReinitialize
                 onSubmit={async (values) => {
@@ -90,6 +107,7 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
                         send_email: sentEmail,
                         id: data[0].id
                     }).unwrap()
+                    onClose()
                     onSuccess()
                 }}
                 initialValues={{
@@ -175,7 +193,7 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
                             >
                                 <div>
                                     <Checkbox onChange={() => setsentEmail(true)}>
-                                        Send to Email
+                                        Send Email
                                     </Checkbox>
                                 </div>
                                 <div>
@@ -188,7 +206,7 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
                                         Cancel
                                     </Button>
                                     <Button type="primary" onClick={handleSubmit}>
-                                        Ok
+                                        Save
                                     </Button>
                                 </div>
                             </div>

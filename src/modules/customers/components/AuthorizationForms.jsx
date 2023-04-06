@@ -1,5 +1,6 @@
 import {
   CopyOutlined,
+  EditOutlined,
   ExclamationCircleFilled,
   EyeTwoTone,
   FileProtectOutlined,
@@ -265,7 +266,7 @@ export const AuthorizationForms = ({
               )
             }
             {status === 'Waiting for client' || status === 'Completed' || (
-              <Tooltip title={`${authorization_form_type}`} overlayStyle={{ zIndex: 10000 }}>
+              <Tooltip title={'Send'} overlayStyle={{ zIndex: 10000 }}>
                 <a  >
                   <SendOutlined
                     onClick={() => handleSend({ authorization_form_type })}
@@ -276,9 +277,9 @@ export const AuthorizationForms = ({
               </Tooltip>
             )}
             {status === 'Waiting for client' && (
-              <Tooltip title='Re-Send' overlayStyle={{ zIndex: 10000 }}>
+              <Tooltip title='Edit' overlayStyle={{ zIndex: 10000 }}>
                 <a onClick={handleOpenReSend}>
-                  <RetweetOutlined
+                  <EditOutlined
                     onClick={() => handleResend({ authorization_form_type })}
                     style={{ fontSize: '18px' }}
                   />
