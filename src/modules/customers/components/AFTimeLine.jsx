@@ -32,7 +32,7 @@ export const AFTimeLine = ({
   })
   return (
     <>
-      <a href onClick={handleOpen}>{completed_at || create_at}</a>
+      <a onClick={handleOpen}>{completed_at || create_at}</a>
       <Modal
         title={`Timeline. Authorization Form: ${authorization_form_type === 'ACH' ? 'ACH' : 'Credit Card'
           }`}

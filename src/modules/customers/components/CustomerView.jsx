@@ -13,7 +13,6 @@ export const CustomerView = () => {
   )
   // const id = customerId.slice('IDX00')
   // console.log({ id })
-  console.log(customerId?.split('0').slice(-1))
   return (
     <div
       style={{

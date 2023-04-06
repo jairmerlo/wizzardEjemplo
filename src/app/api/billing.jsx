@@ -280,13 +280,26 @@ export const billing = createApi({
       }),
     }),
     resendAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id }) => ({
+      query: ({ authorization_form_type, registration_key, user_id, labels_prices, send_email, id }) => ({
         url: '/authorization-form-re-send',
         method: 'POST',
         body: {
           authorization_form_type,
           registration_key,
           user_id,
+          labels_prices,
+          send_email,
+          id
+        },
+      }),
+    }),
+    idxResendAgreementEmail: builder.mutation({
+      query: ({ registration_key, program_name }) => ({
+        url: '/idx-resend-agreement-email',
+        method: 'POST',
+        body: {
+          registration_key,
+          program_name
         },
       }),
     }),
@@ -298,6 +311,18 @@ export const billing = createApi({
           authorization_form_type,
           registration_key,
           user_id,
+        },
+      }),
+    }),
+    websitePublishedEmail: builder.mutation({
+      query: ({ registration_key, domain_name, ip, date }) => ({
+        url: '/website-published-email',
+        method: 'POST',
+        body: {
+          registration_key,
+          domain_name,
+          ip,
+          date
         },
       }),
     }),
@@ -368,6 +393,31 @@ export const billing = createApi({
         try {
           const res = await fetch(
             API._BILLING_HOST + '/list-account-invoice-byregkey',
+            {
+              method: 'post',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getRequestByregKey: builder.query({
+      queryFn: async (
+        { registration_key },
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/get-request-byreg-key',
             {
               method: 'post',
               body: JSON.stringify({
@@ -477,9 +527,12 @@ export const {
   useGetAuthorizationFormsQuery,
   useSendAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
+  useIdxResendAgreementEmailMutation,
   useReplaceAuthorizationFormMutation,
+  useWebsitePublishedEmailMutation,
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
+  useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
   useListAgreementByRegkeyQuery,
   useBillingInformationQuery,

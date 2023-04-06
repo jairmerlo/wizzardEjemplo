@@ -1,7 +1,8 @@
-import { Button, Divider, Modal, Typography } from "antd"
+import { Button, Divider, Modal, Typography, notification } from "antd"
 import { useGetIdxRequestQuery } from "../../../app/api/backoffice"
 import { editRequest } from "../helpers/editRequest"
 import { useState } from "react"
+import '../../../icons/style.css'
 
 export const Request = ({ registration_key, idRequest, open, onClose }) => {
 
@@ -10,6 +11,10 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
     const [openConfirm, setOpenConfirm] = useState()
     const hanleOpenCofirm = () => setOpenConfirm(true)
     const handleCloseConfirm = () => setOpenConfirm(false)
+
+    const [rocket, setRocket] = useState(false)
+    const RocketOpen = () => setRocket(true)
+    const RocketClose = () => setRocket(false)
 
     const { data = {}, isLoading } = useGetIdxRequestQuery(
         { idRequest },
@@ -39,10 +44,19 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
         boardName = board[0]?.name
     }
 
-    const HandleClick = () => {
+    const HandleClick = async () => {
         console.log("hello")
-        // editRequest({ id, user_id, board, product_type, username })
-        // onClose()
+        RocketOpen()
+        setTimeout(() => {
+            RocketClose()
+            onClose()
+            notification.success({
+                message: `The request was send succesfully.`,
+                placement: 'bottomRight',
+                // description: '',
+            })
+        }, 2000);
+        editRequest({ id, user_id, board, product_type, username })
     }
 
     return (
@@ -66,7 +80,7 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                 destroyOnClose
             >
                 <Divider />
-                {(ixd_status.length !== 0) && (
+                {(ixd_status.length === 0) && (
                     <>
                         <div
                             style={{
@@ -85,7 +99,7 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
 
                 )}
 
-                {(ixd_status.length === 0) && (
+                {(ixd_status.length !== 0) && (
                     <div
                         style={{
                             display: 'flex',
@@ -116,11 +130,11 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                             >
                                 Board Name:
                             </Typography.Title>
-                            {/* <Typography.Title
+                            <Typography.Title
                                 level={5}
                             >
                                 {boardName}
-                            </Typography.Title> */}
+                            </Typography.Title>
                             <div
                                 style={{
                                     display: 'flex',
@@ -170,6 +184,40 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                                                     onClick={HandleClick}
                                                 >
                                                     Ok
+                                                    {rocket && (
+                                                        <div className="ms-modal-lg">
+                                                            <div className="ms-modal-wrapper">
+                                                                <div className="ms-loader">
+                                                                    <div className="ms-wrapper-loader">
+                                                                        <span style={{ "--i": 1 }}></span>
+                                                                        <span style={{ "--i": 2 }}></span>
+                                                                        <span style={{ "--i": 3 }}></span>
+                                                                        <span style={{ "--i": 4 }}></span>
+                                                                        <span style={{ "--i": 5 }}></span>
+                                                                        <span style={{ "--i": 6 }}></span>
+                                                                        <span style={{ "--i": 7 }}></span>
+                                                                        <span style={{ "--i": 8 }}></span>
+                                                                        <span style={{ "--i": 9 }}></span>
+                                                                        <span style={{ "--i": 10 }}></span>
+                                                                        <span style={{ "--i": 11 }}></span>
+                                                                        <span style={{ "--i": 12 }}></span>
+                                                                        <span style={{ "--i": 13 }}></span>
+                                                                        <span style={{ "--i": 14 }}></span>
+                                                                        <span style={{ "--i": 15 }}></span>
+                                                                        <span style={{ "--i": 16 }}></span>
+                                                                        <span style={{ "--i": 17 }}></span>
+                                                                        <span style={{ "--i": 18 }}></span>
+                                                                        <span style={{ "--i": 19 }}></span>
+                                                                        <span style={{ "--i": 20 }}></span>
+                                                                        <div className="ms-rocket-loader">
+                                                                            <i className="back-office-rocket"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <span className="ms-title">Please wait, the process may take a while</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </Button>
                                             </div>
                                         </Modal>

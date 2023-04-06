@@ -1,7 +1,7 @@
 import { Descriptions, Segmented, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { AuthorizationForms, LaunchWebsite } from '.'
+import { AuthorizationForms, IdxRequest, LaunchWebsite } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
@@ -22,6 +22,7 @@ export const MembershipDetails = () => {
     'Authorization Forms',
     'Agreements',
     'Team',
+    // 'IDX Request'
     // 'Launch Website'
     // 'Agents',
     // 'Membership Trial',
@@ -34,8 +35,6 @@ export const MembershipDetails = () => {
     },
   )
 
-  const periods = billinHistoryData.length
-
   const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
     {
@@ -43,18 +42,17 @@ export const MembershipDetails = () => {
     },
   )
 
-  console.log({ membershipData })
-
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
   const launch = membershipData?.hasLaunch
-  // console.log(trial, "trial")
-
+  const idxrequest = membershipData?.idx === 'Active' ? 1 : 0
+  console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
   if (crm === 1) options.push("Agents")
-
   if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
+  if (idxrequest === 1) options.push("IDX Request")
+
 
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
@@ -83,7 +81,7 @@ export const MembershipDetails = () => {
   const [section, setSection] = useState('Billing Information')
   let fullName = membershipData?.firstName
   if (membershipData?.lastName !== null) {
-    fullName = fullName + membershipData?.lastName
+    fullName = fullName + ' ' + membershipData?.lastName
   }
   if (isLoadingM) return <Loader />
 
@@ -156,7 +154,7 @@ export const MembershipDetails = () => {
             </a>
           </Descriptions.Item>
           <Descriptions.Item label='Periods'>
-            {stringFallback(periods)}
+            {stringFallback(membershipData?.periods)}
           </Descriptions.Item>
 
           <Descriptions.Item label='Premium'>
@@ -179,10 +177,8 @@ export const MembershipDetails = () => {
           <Descriptions.Item label='IDX'>
             {stringFallback(membershipData.idx)}
           </Descriptions.Item>
-          <Descriptions.Item label='Created'>
-            {stringFallback(
-              date(membershipData?.createdAt, 'MM/DD/YYYY', 'll'),
-            )}
+          <Descriptions.Item label='$ Price'>
+            {stringFallback(membershipData?.price)}
           </Descriptions.Item>
           <Descriptions.Item label='Premium Date'>
             {stringFallback(membershipData.premium)}
@@ -190,9 +186,10 @@ export const MembershipDetails = () => {
           <Descriptions.Item label='$ Setup Fee/ 1st Payment'>
             {stringFallback(membershipData?.setUpFee)}
           </Descriptions.Item>
-
-          <Descriptions.Item label='$ Price'>
-            {stringFallback(membershipData?.price)}
+          <Descriptions.Item label='Created'>
+            {stringFallback(
+              date(membershipData?.createdAt, 'MM/DD/YYYY', 'll'),
+            )}
           </Descriptions.Item>
           {(membershipData?.idxRequestedDate !== null) && (
             <Descriptions.Item label='IDX Requested' span={2}>
@@ -323,6 +320,11 @@ export const MembershipDetails = () => {
         {section === 'Membership Trial' && (
           <MembershipsTableTrialCustomer
             customerId={membershipData.customerId}
+          />
+        )}
+        {section === 'IDX Request' && (
+          <IdxRequest
+            registration_key={membershipData.cpanelRegistrationKey}
           />
         )}
       </div>

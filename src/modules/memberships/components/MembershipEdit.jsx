@@ -20,7 +20,7 @@ import {
   useGetMembershipQuery,
   useGetTheamProfilesQuery,
 } from '../../../app/api/backoffice'
-import { useGetAllCustomersQuery } from '../../../app/api/billing'
+import { useGetAllCustomersQuery, useWebsitePublishedEmailMutation } from '../../../app/api/billing'
 import { boolean, getConfig, getSelectSearchProps } from '../../../helpers'
 import moment from 'moment'
 import * as Yup from 'yup'
@@ -157,9 +157,14 @@ export const MembershipEdit = ({
     },
   })
 
+  const [websitePublishedEmail] = useWebsitePublishedEmailMutation()
+
   const [openData, setOpenData] = useState(false)
   const handleOpenDate = () => setOpenData(true)
-  const handleCloseDate = () => setOpenData(false)
+  const handleCloseDate = () => {
+    setOpenData(false)
+    setDnsCorrect(false)
+  }
 
   const [dnsCorrect, setDnsCorrect] = useState(false)
   const onChangeDNS = (e) => {
@@ -203,7 +208,7 @@ export const MembershipEdit = ({
     },
   )
   const noData = 'No data'
-  // console.log({ data }, "data")
+  console.log({ data }, "data")
   const [
     editMembership,
     { isLoading: isLoadingEdit, isSuccess, data: response },
@@ -274,6 +279,7 @@ export const MembershipEdit = ({
   // console.log({ activatedAt })
   const WordpressUrl = originalWordpressInstallUrl.split('https://')
   const statusOld = status
+  const activatedAtOld = activatedAt
   const [editPassword, setEditPassword] = useState(false)
 
   // const onCheck = (checkedKeys, setFieldValue) => {
@@ -340,12 +346,27 @@ export const MembershipEdit = ({
                 delete body.cpanelPassword
                 delete body.status
                 editMembership([{ id, username: getConfig().userId }, body])
-                console.log({ body, publicationDate })
+                // console.log({ body, publicationDate })
               } else {
                 delete body.cpanelPassword
                 editMembership([{ id, username: getConfig().userId }, body])
-                console.log({ body, publicationDate })
+                // console.log({ body, publicationDate })
               }
+
+              if (activatedAtOld !== body.activatedAt) {
+                const date = moment(body.activatedAt).format('ll')
+                // const ip = rest.ipConfig
+                // const domainname = WordpressUrl[1]
+                // const key = cpanelRegistrationKey
+                websitePublishedEmail({
+                  registration_key: cpanelRegistrationKey,
+                  domain_name: WordpressUrl[1],
+                  ip: rest.ipConfig,
+                  date
+                })
+                // console.log({ date, ip, domainname, key })
+              }
+
             }}
             initialValues={{
               customerId,
@@ -546,7 +567,7 @@ export const MembershipEdit = ({
                       </div>
                       {openData &&
                         <Modal
-                          title={`Verify DNS`}
+                          title={``}
                           open={openData}
                           //   onOk={handleOk}
                           okButtonProps={{
@@ -564,9 +585,13 @@ export const MembershipEdit = ({
                           centered
                           destroyOnClose
                         >
-                          <a href={`https://www.whatsmydns.net/#A/${WordpressUrl[1]}`} target="_blank" rel='noreferrer'>
-                            https://www.whatsmydns.net/#A/{WordpressUrl[1]}
-                          </a>
+                          <Typography.Title level={4}>
+                            Verify DNS
+                            <a href={`https://www.whatsmydns.net/#A/${WordpressUrl[1]}`} target="_blank" rel='noreferrer' style={{ margin: '5px' }}>
+                              Here!
+                            </a>
+                          </Typography.Title>
+
                           <br />
                           <div style={{ margin: '15px 0', display: 'flex', justifyContent: 'space-between' }}>
                             Did the DNS propagate conrrectly?

@@ -17,14 +17,8 @@ import {
   Typography,
 } from 'antd'
 import {
-  BookOutlined,
   DollarOutlined,
-  EyeTwoTone,
-  FileWordOutlined,
-  KeyOutlined,
-  RocketOutlined,
   SearchOutlined,
-  ToolOutlined,
 } from '@ant-design/icons'
 import {
   capitalize,
@@ -36,7 +30,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { LastActionCell, EditMemberhipIcon, SendMembershipicon, Requesticon, Deleteicon } from '.'
+import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -325,7 +319,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSearchProps('client_name'),
       render: (clientName, record) => (
         <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id?.split('0').slice(-1)}`}
           rel='noreferrer'
         >
           {renderTextHighlighter({
@@ -515,6 +509,26 @@ export const MembershipsTable = ({ filter = '' }) => {
                 </a>
               </Tooltip>
 
+              <Tooltip title='Accounting classifications'>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <p style={{ textAlign: 'center' }}>ACCOUNTING
+                      <br /> CLASSIFICATIONS</p>
+                  </div>
+                </a>
+              </Tooltip>
+
+
               <Deleteicon registration_key={registration_key} />
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
@@ -580,16 +594,18 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'client_name',
       ...getColumnSearchProps('client_name'),
       render: (clientName, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id.split('0').slice(-1)}`}
-          rel='noreferrer'
-        >
-          {renderTextHighlighter({
-            text: clientName,
-            isHighlighted: searchedColumn['client_name'],
-            highlightedText: searchText['client_name'],
-          })}
-        </a>
+        <>
+          <a
+            href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id?.split('0').slice(-1)}`}
+            rel='noreferrer'
+          >
+            {renderTextHighlighter({
+              text: clientName,
+              isHighlighted: searchedColumn['client_name'],
+              highlightedText: searchText['client_name'],
+            })}
+          </a>
+        </>
       ),
       ...getColumnSortProps('client_name'),
       // width: 150,
@@ -804,7 +820,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               <Requesticon registration_key={registration_key} id={id} />
 
               <Tooltip title='ONB'>
-                <a href>
+                <a >
                   <div
                     style={{
                       display: 'flex',
@@ -820,6 +836,25 @@ export const MembershipsTable = ({ filter = '' }) => {
                 </a>
               </Tooltip>
 
+              <Tooltip title='Accounting classifications'>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <p style={{ textAlign: 'center' }}>ACCOUNTING
+                      <br /> CLASSIFICATIONS</p>
+                  </div>
+                </a>
+              </Tooltip>
+
               <Deleteicon registration_key={registration_key} />
 
 
@@ -828,7 +863,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           }
           trigger='click'
         >
-          <a href>
+          <a>
             <div
               style={{
                 display: 'flex',

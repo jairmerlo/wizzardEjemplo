@@ -5,9 +5,7 @@ import { Formik } from 'formik';
 import { useSendAuthorizationFormMutation } from '../../../app/api/billing';
 
 export const FormAuth = ({ authorization_form_type, registration_key, user_id, open, onClose, onSuccess }) => {
-
     const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
-
     return (
         <Modal
             title={`Are you sure you want to send the ${authorization_form_type}?`}

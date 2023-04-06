@@ -1,9 +1,9 @@
-import { EyeTwoTone, RetweetOutlined } from '@ant-design/icons'
-import { Modal, Space, Table, Tooltip } from 'antd'
+import { ExclamationCircleFilled, EyeTwoTone, RetweetOutlined } from '@ant-design/icons'
+import { Modal, Space, Table, Tooltip, notification } from 'antd'
 
 import moment from 'moment'
 import { useLayoutEffect, useState } from 'react'
-import { useListAgreementByRegkeyQuery } from '../../../app/api/billing'
+import { useIdxResendAgreementEmailMutation, useListAgreementByRegkeyQuery } from '../../../app/api/billing'
 import { getColumnProps, showTotal } from '../../../helpers'
 
 import '../../../../src/index.css'
@@ -24,10 +24,7 @@ export const AgreementHistory = ({
     )
   console.log({ agreementHistoryData })
 
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
-
+  const { confirm } = Modal
 
   // let {
   //   data: pdfData = [],
@@ -39,6 +36,8 @@ export const AgreementHistory = ({
   //     skip: !id,
   //   },
   // )
+  const [idxResendAgreementEmail] = useIdxResendAgreementEmailMutation()
+
 
   const [pdfs, setPdfS] = useState([])
 
@@ -64,6 +63,52 @@ export const AgreementHistory = ({
 
     setIsModalOpen(true)
   }
+
+  // {openModal && (
+  //   <Modal
+  //     title='Are you sure you want to forward?'
+  //     width='50%'
+  //     open={openModal}
+  //     // footer={[]}
+  //     onOk={() => onOkReSend(id, registration_key, program_name)}
+  //     onCancel={handleCloseModal}
+  //   >
+  //   </Modal>
+  // )}
+
+  const handleReSend = (registration_key, program_name) => {
+    confirm({
+      title: `Are you sure you want to forward?`,
+      icon: <ExclamationCircleFilled />,
+      // content: <FormAuth handleSubmitDinamic={handleSubmitDinamic} />,
+      // content: 'Some descriptions',
+      async onOk() {
+        try {
+          const res = await idxResendAgreementEmail({
+            registration_key,
+            program_name
+          }).unwrap()
+          notification.success({
+            message: `The resend has been successfully.`,
+            placement: 'bottomRight',
+            // description: '',
+          })
+        } catch (error) {
+          console.log({ error })
+          notification.error({
+            message: error.data?.message || 'Error',
+            placement: 'bottomRight',
+            // description: '',
+          })
+        }
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
+  }
+
+
 
   useLayoutEffect(() => {
     let elemento = document.getElementsByClassName('content')
@@ -123,7 +168,7 @@ export const AgreementHistory = ({
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, { id }) => (
+      render: (text, { id, registration_key, program_name }) => (
         <Space size='middle'>
           <Tooltip
             title='Details'
@@ -135,12 +180,8 @@ export const AgreementHistory = ({
           <Tooltip
             title='Resend'
             overlayStyle={{ zIndex: 10000 }}
-            onClick={() => handleViewPdf(id)}
           >
-            <RetweetOutlined style={{ fontSize: '18px' }} />
-            {/* {open && (
-              // <Modle
-            )} */}
+            <RetweetOutlined style={{ fontSize: '18px' }} onClick={() => handleReSend(registration_key, program_name)} />
           </Tooltip>
         </Space>
       ),
@@ -159,7 +200,6 @@ export const AgreementHistory = ({
         }}
         loading={isLoadingH}
       />
-
       <Modal
         title=''
         width='50%'

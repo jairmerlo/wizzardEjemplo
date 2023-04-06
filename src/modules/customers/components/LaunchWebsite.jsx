@@ -18,8 +18,8 @@ export const LaunchWebsite = ({ registrationKey }) => {
                 title: 'Date',
                 dataIndex: 'date',
             }),
-            render(text, { date }) {
-                return <td>{moment(date).format('ll')}</td>
+            render(text, { created_at }) {
+                return <td>{moment(created_at.date).format('lll')}</td>
             }
         },
         {

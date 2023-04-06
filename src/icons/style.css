@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'back-office';
-    src: url('fonts/back-office.eot?gy8iv3');
-    src: url('fonts/back-office.eot?gy8iv3#iefix') format('embedded-opentype'),
+  src: url('fonts/back-office.eot?gy8iv3');
+  src: url('fonts/back-office.eot?gy8iv3#iefix') format('embedded-opentype'),
     url('fonts/back-office.ttf?gy8iv3') format('truetype'),
     url('fonts/back-office.woff?gy8iv3') format('woff'),
     url('fonts/back-office.svg?gy8iv3#back-office') format('svg');
@@ -10,7 +10,8 @@
   font-display: block;
 }
 
-[class^="back-office-"], [class*=" back-office-"] {
+[class^="back-office-"],
+[class*=" back-office-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'back-office' !important;
   speak: never;
@@ -26,72 +27,205 @@
 }
 
 .back-office-agreement:before {
-    content: "\e916";
+  content: "\e916";
 }
+
 .back-office-tools:before {
   content: "\e915";
 }
+
 .back-office-toolbox:before {
   content: "\e914";
 }
+
 .back-office-rocket:before {
   content: "\e912";
 }
+
 .back-office-wordpress:before {
   content: "\e913";
 }
+
 .back-office-user-key:before {
   content: "\e911";
 }
+
 .back-office-merchant-list:before {
   content: "\e90f";
 }
+
 .back-office-merchant:before {
   content: "\e910";
 }
+
 .back-office-delete-user:before {
   content: "\e90d";
 }
+
 .back-office-add-user:before {
   content: "\e90e";
 }
+
 .back-office-requests:before {
   content: "\e90c";
 }
+
 .back-office-config:before {
   content: "\e90b";
 }
+
 .back-office-key:before {
   content: "\e90a";
 }
+
 .back-office-delete:before {
   content: "\e908";
 }
+
 .back-office-user:before {
   content: "\e909";
 }
+
 .back-office-arrow:before {
   content: "\e907";
 }
+
 .back-office-command:before {
   content: "\e900";
 }
+
 .back-office-edit:before {
   content: "\e901";
   color: #4a4949;
 }
+
 .back-office-eye:before {
   content: "\e902";
 }
+
 .back-office-lock:before {
   content: "\e903";
 }
+
 .back-office-menu:before {
   content: "\e904";
 }
+
 .back-office-pdf:before {
   content: "\e905";
 }
+
 .back-office-send:before {
   content: "\e906";
+}
+
+
+/* LOADING */
+
+.ms-wrapper-loader {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  margin-bottom: 40px;
+  zoom: 0.7;
+}
+
+.ms-wrapper-loader span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(0);
+  transform: rotate(calc(18deg * var(--i)));
+}
+
+.ms-wrapper-loader span:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  background: #FFF;
+  border-radius: 50%;
+  animation: RocketAnimate 2s linear infinite;
+  animation-delay: calc(0.1s * var(--i));
+  opacity: 0;
+}
+
+.ms-rocket-loader {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 110px;
+  height: 110px;
+  animation: Rocketrotating 2s linear infinite;
+  animation-delay: -1s;
+}
+
+.ms-rocket-loader .back-office-rocket {
+  position: absolute;
+  top: 89px;
+  left: 85px;
+  font-size: 60px;
+  transform: rotate(223deg);
+  width: auto;
+  height: auto;
+  border: 0;
+  margin: 0;
+  color: #FFF;
+}
+
+@keyframes RocketAnimate {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  10% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 1;
+  }
+}
+
+@keyframes Rocketrotating {
+  0% {
+    transform: rotate(10deg);
+  }
+
+  100% {
+    transform: rotate(370deg);
+  }
+}
+
+.ms-modal-lg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.ms-modal-lg .ms-modal-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.ms-modal-lg .ms-modal-wrapper .ms-title {
+  color: #FFF;
+  font-weight: 600;
+  font-family: "Open Sans", sans-serif;
 }
