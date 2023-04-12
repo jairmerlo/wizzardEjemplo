@@ -4,11 +4,12 @@ import { getColumnProps, showTotal } from '../../../helpers'
 
 export const IdxRequest = ({ registration_key }) => {
     // console.log({ registration_key })
-    const { currentData = [], isLoading } = useGetRequestByregKeyQuery({
-        // registration_key
+    const { data = [], isLoading } = useGetRequestByregKeyQuery({
+        registration_key
     })
 
-    // console.log(currentData)
+    const rows = []
+    rows.push(data[0])
 
     const columns = [
         {
@@ -17,24 +18,24 @@ export const IdxRequest = ({ registration_key }) => {
                 dataIndex: 'status',
             }),
         },
-        // {
-        //     ...getColumnProps({
-        //         title: 'Real State Agent',
-        //         dataIndex: 'agent_first_name',
-        //     }),
-        //     render(text, { agent_first_name, agent_last_name }) {
-        //         return <td>{agent_first_name} {agent_last_name}</td>
-        //     },
-        // },
-        // {
-        //     ...getColumnProps({
-        //         title: 'Broker Name',
-        //         dataIndex: 'broker_first_name',
-        //     }),
-        //     render(text, { broker_first_name, broker_last_name }) {
-        //         return <td>{broker_first_name} {broker_last_name}</td>
-        //     },
-        // },
+        {
+            ...getColumnProps({
+                title: 'Real State Agent',
+                dataIndex: 'agent_first_name',
+            }),
+            render(text, data) {
+                return <td>{data?.agent_first_name} {data?.agent_last_name}</td>
+            },
+        },
+        {
+            ...getColumnProps({
+                title: 'Broker Name',
+                dataIndex: 'broker_first_name',
+            }),
+            render(text, data) {
+                return <td>{data?.broker_first_name} {data?.broker_last_name}</td>
+            },
+        },
         {
             ...getColumnProps({
                 title: 'Broker Phone',
@@ -68,8 +69,6 @@ export const IdxRequest = ({ registration_key }) => {
     ]
 
 
-    const rows = []
-    rows.push(currentData[0])
     return (
         <>
             <Table

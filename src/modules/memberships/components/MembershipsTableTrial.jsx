@@ -298,11 +298,11 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                   )}
                   <br />
                   Ending Date:{' '}
-                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                  {moment(moment(date)).format('MM-DD-YYYY')}
                 </>
               }
             >
-              {moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'}
+              {moment(date).fromNow(true) + ' left'}
             </Tooltip>
           ) : (
             <Tooltip
@@ -315,13 +315,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                   )}
                   <br />
                   Ending Date:{' '}
-                  {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                  {moment(moment(date)).format('MM-DD-YYYY')}
                 </>
               }
             >
               <span style={{ color: 'red' }}>
-                {moment(moment(date, 'YYYY-MM-DD')).format('MM-DD-YYYY')}
+                {date}
               </span>
+              {console.log(date)}
             </Tooltip>
           )
         ) : (

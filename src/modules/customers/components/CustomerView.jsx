@@ -11,6 +11,7 @@ export const CustomerView = () => {
       registration_key: membershipRegKey,
     }),
   )
+  // console.log({ data })
   // const id = customerId.slice('IDX00')
   // console.log({ id })
   return (
@@ -29,7 +30,7 @@ export const CustomerView = () => {
       >
         <Typography.Title level={5} style={{ margin: 0 }}>
           {customerId ? (
-            <Link to={`/customer-view/${customerId?.split('0').slice(-1)}`}>Customer View</Link>
+            <Link to={`/customer-view/${customerId}`}>Customer View</Link>
           ) : (
             'Customer View'
           )}{' '}

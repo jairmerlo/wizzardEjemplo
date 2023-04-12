@@ -6,6 +6,8 @@ import '../../../icons/style.css'
 
 export const Request = ({ registration_key, idRequest, open, onClose }) => {
 
+    console.log({ idRequest })
+
     let boardName = ""
 
     const [openConfirm, setOpenConfirm] = useState()

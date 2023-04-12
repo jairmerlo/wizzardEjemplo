@@ -23,6 +23,7 @@ export const backoffice = createApi({
         fetchWithBQ,
       ) => {
         try {
+          console.log({ filter, customerId })
           const data = await fetch(API._BACKOFFICE + '/listActiveMemberships', {
             method: 'post',
             body: JSON.stringify({

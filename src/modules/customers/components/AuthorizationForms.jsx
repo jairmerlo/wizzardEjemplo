@@ -21,6 +21,7 @@ import { AFTimeLine } from './AFTimeLine'
 import { DocumentPDF } from './DocumentPDF'
 import { FormAuth } from './FormAuth'
 import { FormReSend } from './FormReSend'
+import { ReplaceForm } from './ReplaceForm'
 
 export const AuthorizationForms = ({
   achData = [],
@@ -75,6 +76,10 @@ export const AuthorizationForms = ({
   const handleOpenReSend = () => setOpenReSend(true)
   const handleCloseReSend = () => setOpenReSend(false)
 
+  const [openReplace, setOpenReplace] = useState(false)
+  const handleOpenReplace = () => setOpenReplace(true)
+  const handleCloseReplace = () => setOpenReplace(false)
+
   const [values, setValues] = useState([])
   const handleSubmitDinamic = (data) => {
     setValues(values.push(data))
@@ -88,6 +93,11 @@ export const AuthorizationForms = ({
   const handleResend = ({ authorization_form_type }) => {
     setAutorization(authorization_form_type)
     handleOpenReSend()
+  }
+
+  const handleReplace = ({ authorization_form_type }) => {
+    setAutorization(authorization_form_type)
+    handleOpenReplace()
   }
 
   // confirm({
@@ -167,43 +177,43 @@ export const AuthorizationForms = ({
   //     },
   //   })
   // }
-  const handleReplace = ({
-    authorization_form_type,
-    registration_key,
-    user_id,
-  }) => {
-    confirm({
-      title: `Are you sure you want to replace the ${authorization_form_type}?`,
-      icon: <ExclamationCircleFilled />,
-      content: <FormAuth handleSubmitDinamic={handleSubmitDinamic} />,
-      // content: 'Some descriptions',
-      async onOk() {
-        try {
-          const res = await replaceAuthorizationForm({
-            authorization_form_type,
-            registration_key,
-            user_id,
-          }).unwrap()
-          onSuccess()
-          console.log({ res })
-          notification.success({
-            message: `The ${authorization_form_type} form has been replaced succesfully.`,
-            placement: 'bottomRight',
-            // description: '',
-          })
-        } catch (error) {
-          notification.error({
-            message: error.data?.message || 'Error',
-            placement: 'bottomRight',
-            // description: '',
-          })
-        }
-      },
-      onCancel() {
-        console.log('Cancel')
-      },
-    })
-  }
+  // const handleReplace = ({
+  //   authorization_form_type,
+  //   registration_key,
+  //   user_id,
+  // }) => {
+  //   confirm({
+  //     title: `Are you sure you want to replace the ${authorization_form_type}?`,
+  //     icon: <ExclamationCircleFilled />,
+  //     content: <FormAuth handleSubmitDinamic={handleSubmitDinamic} />,
+  //     // content: 'Some descriptions',
+  //     async onOk() {
+  //       try {
+  //         const res = await replaceAuthorizationForm({
+  //           authorization_form_type,
+  //           registration_key,
+  //           user_id,
+  //         }).unwrap()
+  //         onSuccess()
+  //         console.log({ res })
+  //         notification.success({
+  //           message: `The ${authorization_form_type} form has been replaced succesfully.`,
+  //           placement: 'bottomRight',
+  //           // description: '',
+  //         })
+  //       } catch (error) {
+  //         notification.error({
+  //           message: error.data?.message || 'Error',
+  //           placement: 'bottomRight',
+  //           // description: '',
+  //         })
+  //       }
+  //     },
+  //     onCancel() {
+  //       console.log('Cancel')
+  //     },
+  //   })
+  // }
   const columns = [
     {
       ...getColumnProps({
@@ -278,7 +288,7 @@ export const AuthorizationForms = ({
             )}
             {status === 'Waiting for client' && (
               <Tooltip title='Edit' overlayStyle={{ zIndex: 10000 }}>
-                <a onClick={handleOpenReSend}>
+                <a>
                   <EditOutlined
                     onClick={() => handleResend({ authorization_form_type })}
                     style={{ fontSize: '18px' }}
@@ -288,16 +298,10 @@ export const AuthorizationForms = ({
             )}
             {status === 'Completed' && (
               <Tooltip title='Replace' overlayStyle={{ zIndex: 10000 }}>
-                <a >
+                <a>
                   <CopyOutlined
                     style={{ fontSize: '18px' }}
-                    onClick={() =>
-                      handleReplace({
-                        authorization_form_type,
-                        registration_key: registrationKey,
-                        user_id: userId,
-                      })
-                    }
+                    onClick={() => handleReplace({ authorization_form_type })}
                   />
                 </a>
               </Tooltip>
@@ -336,6 +340,16 @@ export const AuthorizationForms = ({
           user_id={userId}
           open={openReSend}
           onClose={handleCloseReSend}
+          onSuccess={onSuccess}
+        />
+      )}
+      {openReplace && (
+        <ReplaceForm
+          authorization_form_type={autorization}
+          registration_key={registrationKey}
+          user_id={userId}
+          open={openReplace}
+          onClose={handleCloseReplace}
           onSuccess={onSuccess}
         />
       )}

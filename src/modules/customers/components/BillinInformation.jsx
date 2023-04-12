@@ -23,7 +23,7 @@ export const BillinInformation = ({
         skip: !registrationKey,
       },
     )
-  // console.log({ billinInformation })
+  console.log({ billinInformation })
   const rows = []
 
   rows.push(billinInformation)

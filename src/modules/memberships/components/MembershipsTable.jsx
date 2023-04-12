@@ -75,7 +75,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     filter,
   })
 
-  // console.log(data, "data")
+  console.log(data, "data")
   // const idx = 'IDX00915'
   // console.log(idx.split('0').slice(-1))
 
@@ -319,7 +319,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSearchProps('client_name'),
       render: (clientName, record) => (
         <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id?.split('0').slice(-1)}`}
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
           rel='noreferrer'
         >
           {renderTextHighlighter({
@@ -409,7 +409,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='CPanel'>
-                      <a href={`${window.location.origin}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -426,7 +426,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                     </Tooltip>
 
                     <Tooltip title='Wordpress'>
-                      <a href={`${window.location.origin}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -510,7 +510,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`}>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`} target='_blank' rel='noreferrer'>
                   <div
                     style={{
                       display: 'flex',
@@ -596,7 +596,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (clientName, record) => (
         <>
           <a
-            href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id?.split('0').slice(-1)}`}
+            href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
             rel='noreferrer'
           >
             {renderTextHighlighter({
@@ -735,7 +735,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='CPanel'>
-                      <a href={`${window.location.origin}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -752,7 +752,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                     </Tooltip>
 
                     <Tooltip title='Wordpress'>
-                      <a href={`${window.location.origin}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -837,7 +837,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`}>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`} target='_blank' rel='noreferrer'>
                   <div
                     style={{
                       display: 'flex',

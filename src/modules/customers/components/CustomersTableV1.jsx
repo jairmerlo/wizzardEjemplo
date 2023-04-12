@@ -404,8 +404,8 @@ export const CustomersTableV1 = ({ filter }) => {
               </Tooltip>
               <Tooltip title='Details'>
                 <Link
-                  to={`/customer-view/${id}`}
-                  onClick={() => saveSelectedRow(id)}
+                  to={`/customer-view/${uuid}`}
+                  onClick={() => saveSelectedRow(uuid)}
                 >
                   <div
                     style={{

@@ -24,7 +24,7 @@ export const MembershipDetails = () => {
     'Authorization Forms',
     'Agreements',
     'Team',
-    'IDX Request'
+    // 'IDX Request'
     // 'Launch Website'
     // 'Agents',
     // 'Membership Trial',
@@ -53,8 +53,9 @@ export const MembershipDetails = () => {
   if (crm === 1) options.push("Agents")
   if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
-  // if (idxrequest === 1) options.push("IDX Request")
-  const idUser = membershipData?.customerId?.split('0').slice(-1)
+  if (idxrequest === 1) options.push("IDX Request")
+  // const idUser = membershipData?.customerId.split('0').slice(-1)
+  console.log({ membershipData })
 
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
@@ -102,16 +103,22 @@ export const MembershipDetails = () => {
         </Typography.Title>
         <Popover
           placement='bottom'
+          style={{
+            cursor: 'pointer'
+          }}
+          // trigger="hover"
           content={
             <Space size='middle' direction='vertical'>
               <Popover
+                // trigger="hover"
                 placement='bottom'
+
                 // title={text}
                 content={
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='CPanel'>
-                      <a href={`${window.location.origin}/customers/memberships/login/cpanel/${idUser}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${membershipData.cpanelId}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -128,7 +135,7 @@ export const MembershipDetails = () => {
                     </Tooltip>
 
                     <Tooltip title='Wordpress'>
-                      <a href={`${window.location.origin}/customers/memberships/login/wordpress/${idUser}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${membershipData.cpanelId}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -192,7 +199,7 @@ export const MembershipDetails = () => {
 
               {/* <SendMembershipicon registration_key={registration_key} /> */}
 
-              <Requesticon registration_key={membershipData?.cpanelRegistrationKey} />
+              <Requesticon registration_key={membershipData?.cpanelRegistrationKey} id={membershipData.cpanelId} />
 
               <Tooltip title='ONB'>
                 <a href>
@@ -212,7 +219,7 @@ export const MembershipDetails = () => {
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${idUser}`}>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${membershipData.cpanelId}`} target='_blank' rel="noreferrer">
                   <div
                     style={{
                       display: 'flex',
@@ -235,7 +242,7 @@ export const MembershipDetails = () => {
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
-          trigger='click'
+          trigger='hover'
         >
           <a href>
             <div

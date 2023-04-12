@@ -1,10 +1,12 @@
 import { Button, Form, Input, Modal, Space, Typography } from 'antd'
 import { Input as FormikInput } from 'formik-antd'
 import { Formik } from 'formik';
-import { useSendAuthorizationFormMutation } from '../../../app/api/billing';
+import { useReplaceAuthorizationFormMutation } from '../../../app/api/billing';
 
-export const FormAuth = ({ authorization_form_type, registration_key, user_id, open, onClose, onSuccess }) => {
-    const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
+export const ReplaceForm = ({ authorization_form_type, registration_key, user_id, open, onClose, onSuccess }) => {
+
+    const [replaceAuthorizationForm] = useReplaceAuthorizationFormMutation()
+
     return (
         <Modal
             title={`${authorization_form_type} Authorization Form`}
@@ -55,12 +57,12 @@ export const FormAuth = ({ authorization_form_type, registration_key, user_id, o
                         { label7: values.label7, value7: values.value7 },
                     ]
 
-                    const res = await sendAuthorizationForm({
-                        authorization_form_type,
-                        registration_key,
-                        user_id,
-                        labels_prices: data
-                    }).unwrap()
+                    // const res = await replaceAuthorizationForm({
+                    //     authorization_form_type,
+                    //     registration_key,
+                    //     user_id,
+                    //     labels_prices: data
+                    // }).unwrap()
                     onSuccess()
                 }}
                 initialValues={{
