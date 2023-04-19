@@ -1,7 +1,7 @@
 import { Descriptions, Popover, Segmented, Space, Tooltip, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { AuthorizationForms, IdxRequest, LaunchWebsite } from '.'
+import { AuthorizationForms, IdxRequest, LaunchWebsite, ProductPurchasedTimeline } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
 import { useGetAuthorizationFormsQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
@@ -24,6 +24,7 @@ export const MembershipDetails = () => {
     'Authorization Forms',
     'Agreements',
     'Team',
+    'Product Purchased Timeline'
     // 'IDX Request'
     // 'Launch Website'
     // 'Agents',
@@ -44,18 +45,20 @@ export const MembershipDetails = () => {
     },
   )
 
+  console.log({ membershipData })
+
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
   const launch = membershipData?.hasLaunch
   const idxrequest = membershipData?.idx === 'Active' ? 1 : 0
   console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
-  if (crm === 1) options.push("Agents")
-  if (trial === 1) options.push("Membership Trial")
+  if (crm === "1") options.push("Agents")
+  if (trial === "1") options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
   if (idxrequest === 1) options.push("IDX Request")
   // const idUser = membershipData?.customerId.split('0').slice(-1)
-  console.log({ membershipData })
+  // console.log({ membershipData })
 
 
   const { data: authorizationFormsACH = [], refetch: refetchACH } =
@@ -494,6 +497,11 @@ export const MembershipDetails = () => {
         )}
         {section === 'IDX Request' && (
           <IdxRequest
+            registration_key={membershipData.cpanelRegistrationKey}
+          />
+        )}
+        {section === 'Product Purchased Timeline' && (
+          <ProductPurchasedTimeline
             registration_key={membershipData.cpanelRegistrationKey}
           />
         )}

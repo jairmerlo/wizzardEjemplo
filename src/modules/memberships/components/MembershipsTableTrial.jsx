@@ -13,7 +13,6 @@ import {
 import {
   DeleteTwoTone,
   DollarOutlined,
-  EditTwoTone,
   EyeTwoTone,
   SearchOutlined,
   ToolOutlined,
@@ -34,7 +33,7 @@ import currency from 'currency.js'
 import { useScroll } from '../../../hooks/useScroll'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
 import { useSearchParams } from 'react-router-dom'
-import { EditMemberhipIcon } from '.'
+import { Deleteicon, EditMemberhipIcon, Requesticon } from '.'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -322,7 +321,6 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               <span style={{ color: 'red' }}>
                 {date}
               </span>
-              {console.log(date)}
             </Tooltip>
           )
         ) : (
@@ -346,6 +344,31 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       defaultSortOrder: 'descend',
       width: 120,
       fixed: 'left',
+    },
+    {
+      title: 'Created',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      ...getColumnSearchProps('lastAction'),
+      ...getColumnSortProps('lastAction'),
+      render: (date, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={
+            <>
+              {moment(record.created_at_date_time).format(
+                'MMM DD, YYYY HH:mm:ss UTC-0',
+              )}
+            </>
+          }
+        >
+          {moment(record.created_at).format('MMM DD, YYYY')}
+          {console.log({ record })}
+        </Tooltip>
+      ),
+
+      fixed: 'left',
+      width: 120,
     },
     {
       title: 'Last Action',
@@ -555,26 +578,155 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
+
+              <Popover
+                placement='bottom'
+                title={text}
+                content={
+                  <Space size='middle' direction='vertical'>
+                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
+                    <Tooltip title='CPanel'>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
+                          CPanel
+                        </div>
+                      </a>
+                    </Tooltip>
+
+                    <Tooltip title='Wordpress'>
+                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            color: '#000',
+                            fontSize: '15px'
+                          }}
+                        >
+                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
+                          Wordpress
+                        </div>
+                      </a>
+                    </Tooltip>
+
+
+                    {/* <Cpanelicon registration_key={registration_key} /> */}
+
+                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
+                  </Space>
+                }
+                trigger='click'
+              >
+                <Tooltip title='Login'>
+                  <a href>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        color: '#858faf',
+                        fontSize: '10px'
+                      }}
+                    >
+                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                      LOGIN
+                    </div>
+                  </a>
+                </Tooltip>
+              </Popover>
+
+
               <Tooltip title='Details'>
                 <a
                   href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
-                  onClick={() => saveSelectedRow(id)}
                 >
-                  <EyeTwoTone style={{ fontSize: '18px' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
+                    VIEW
+                  </div>
                 </a>
               </Tooltip>
               <EditMemberhipIcon registration_key={registration_key} />
-              <Tooltip title='Delete'>
-                <a>
-                  <DeleteTwoTone style={{ fontSize: '18px' }} />
+
+              {/* <SendMembershipicon registration_key={registration_key} /> */}
+
+              <Requesticon registration_key={registration_key} id={id} />
+
+              <Tooltip title='ONB'>
+                <a >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                    ONB
+                  </div>
                 </a>
               </Tooltip>
+
+              <Tooltip title='Accounting classifications'>
+                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`} target='_blank' rel='noreferrer'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <p style={{ textAlign: 'center' }}>ACCOUNTING
+                      <br /> CLASSIFICATIONS</p>
+                  </div>
+                </a>
+              </Tooltip>
+
+              <Deleteicon registration_key={registration_key} />
+
+
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
+          trigger='hover'
         >
           <a>
-            <ToolOutlined style={{ fontSize: '24px' }} />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                color: '#858faf',
+                fontSize: '10px'
+              }}
+            >
+              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+              TOOLBOX
+            </div>
           </a>
         </Popover>
       ),

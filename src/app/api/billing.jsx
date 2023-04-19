@@ -42,6 +42,7 @@ export const billing = createApi({
     getCustomerV1: builder.query({
       query: uuid => `/get-customer/${uuid}`,
     }),
+
     getNewQuotesOptions: builder.query({
       async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
         try {
@@ -255,6 +256,12 @@ export const billing = createApi({
         },
       }),
     }),
+    getStates: builder.query({
+      query: () => ({
+        url: `/list-state`,
+        method: 'POST'
+      }),
+    }),
     getAuthorizationForms: builder.query({
       query: ({ id, registration_key, authorization_form_type, order }) => ({
         url: '/list-authorization-form',
@@ -304,13 +311,14 @@ export const billing = createApi({
       }),
     }),
     replaceAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id }) => ({
+      query: ({ authorization_form_type, registration_key, user_id, labels_prices }) => ({
         url: '/authorization-form-replace',
         method: 'POST',
         body: {
           authorization_form_type,
           registration_key,
           user_id,
+          labels_prices
         },
       }),
     }),
@@ -464,6 +472,34 @@ export const billing = createApi({
         }
       },
     }),
+    getHtmlWizard: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/get-html-wizard',
+            {
+              method: 'post',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getPdfInvoice: builder.query({
       queryFn: async ({ id }, _api, _extraOptions, fetchWithBQ) => {
         try {
@@ -535,6 +571,8 @@ export const {
   useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
   useListAgreementByRegkeyQuery,
+  useGetHtmlWizardQuery,
   useBillingInformationQuery,
   useGetCustomerV1Query,
+  useGetStatesQuery,
 } = billing

@@ -359,7 +359,24 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'created_at',
       key: 'created_at',
       ...getDateColumnSearchProps('created_at'),
-      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      render: (date, record) => (
+        // moment(moment(date, 'MM-DD-YYYY')).format('ll')
+
+        <Tooltip
+          placement='topLeft'
+          title={
+            <>
+              {moment(record.created_at_date_time).format(
+                'MMM DD, YYYY HH:mm:ss UTC-0',
+              )}
+            </>
+          }
+        >
+          {moment(record.created_at).format('MMM DD, YYYY')}
+        </Tooltip>
+
+      )
+      ,
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
@@ -656,7 +673,21 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'created_at',
       key: 'created_at',
       ...getDateColumnSearchProps('created_at'),
-      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      render: (date, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={
+            <>
+              {moment(record.created_at_date_time).format(
+                'MMM DD, YYYY HH:mm:ss UTC-0',
+              )}
+            </>
+          }
+        >
+          {moment(record.created_at).format('MMM DD, YYYY')}
+        </Tooltip>
+      )
+      ,
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
@@ -664,6 +695,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+
       // width: 120,
     },
     {
@@ -861,7 +893,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
-          trigger='click'
+          trigger='hover'
         >
           <a>
             <div

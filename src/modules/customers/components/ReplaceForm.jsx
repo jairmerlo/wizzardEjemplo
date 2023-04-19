@@ -57,12 +57,12 @@ export const ReplaceForm = ({ authorization_form_type, registration_key, user_id
                         { label7: values.label7, value7: values.value7 },
                     ]
 
-                    // const res = await replaceAuthorizationForm({
-                    //     authorization_form_type,
-                    //     registration_key,
-                    //     user_id,
-                    //     labels_prices: data
-                    // }).unwrap()
+                    const res = await replaceAuthorizationForm({
+                        authorization_form_type,
+                        registration_key,
+                        user_id,
+                        labels_prices: data
+                    }).unwrap()
                     onSuccess()
                 }}
                 initialValues={{
