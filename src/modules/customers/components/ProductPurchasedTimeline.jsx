@@ -8,6 +8,8 @@ import {
 import { useLayoutEffect, useState } from "react"
 import { CopyOutlined, EyeTwoTone } from "@ant-design/icons"
 import { useGetHtmlWizardQuery, useListAgreementByRegkeyQuery } from "../../../app/api/billing"
+import { IDXWebsite } from "./IDXWebsite"
+import { MembershipCreationSuccess } from "."
 
 export const ProductPurchasedTimeline = ({ registration_key }) => {
 
@@ -15,10 +17,7 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
         { registration_key },
     )
 
-    const rows = []
-    rows.push(wizard)
-
-    console.log({ rows })
+    console.log({ wizard })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [modalView, setModalView] = useState(false)
@@ -33,8 +32,8 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
         // }).then(res => res.json())
         // setPdfS(res)
 
-        if (rows.find(data => data.id === id)) {
-            setPdfS(rows.find(data => data.id === id))
+        if (wizard.find(data => data.id === id)) {
+            setPdfS(wizard.find(data => data.id === id))
         } else {
             setPdfS([])
         }
@@ -50,14 +49,16 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
         // }).then(res => res.json())
         // setPdfS(res)
 
-        if (rows.find(data => data.id === id)) {
-            setPdfS(rows.find(data => data.id === id))
+        if (wizard.find(data => data.id === id)) {
+            setViews(wizard.find(data => data.id === id))
         } else {
-            setPdfS([])
+            setViews([])
         }
 
         setModalView(true)
     }
+    console.log({ views })
+
 
     useLayoutEffect(() => {
         let elemento = document.getElementsByClassName('content')
@@ -81,19 +82,19 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
         {
             ...getColumnProps({
                 title: 'Product/Service',
-                dataIndex: 'classAccountingName',
+                dataIndex: 'product_service',
             })
         },
         {
             ...getColumnProps({
                 title: 'Initial Price',
-                dataIndex: 'initial_price',
+                dataIndex: 'total_initial_payment',
             })
         },
         {
             ...getColumnProps({
                 title: 'Monthly Price',
-                dataIndex: 'monthly_price',
+                dataIndex: 'montlhy_dues',
             })
         },
         {
@@ -135,7 +136,7 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
                 rowKey='id'
                 size='small'
                 columns={columns}
-                dataSource={rows}
+                dataSource={wizard}
                 bordered
                 pagination={{
                     showTotal,
@@ -177,33 +178,39 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
             <Modal
                 title=''
                 width='50%'
-                style={{ height: '20px', top: '10px' }}
+                style={{ height: '20px', top: '15px' }}
                 open={modalView}
                 footer={[]}
                 onOk={() => setModalView(false)}
                 onCancel={() => setModalView(false)}
             >
-                {/* {pdfs.agreement_content && (
-                    <>
-                        <div
-                            dangerouslySetInnerHTML={{ __html: pdfs.agreement_content }}
-                        ></div>
-
-                        <div className='ms-wrapper-signature'>
-                            <span className='ms-siganture-text'>
-                                {pdfs.membership_agreement_name}
-                            </span>
-                            <div className='ms-info-client'>
-                                <span>{pdfs.token_date} </span>
-                                <span></span>
-                                <span>{pdfs.token}</span>
-                            </div>
-                        </div>
-
-                        <p>[@signature]</p>
-                    </>
-                )} */}
-                <h1>hola</h1>
+                <div
+                    style={{
+                        display: 'flex',
+                    }}
+                >
+                    <MembershipCreationSuccess
+                        name={views.full_name}
+                        email={views.email}
+                        phone={views.phone}
+                        setupFee={views.setup_program}
+                        monthlyFee={views.monthly_program}
+                        billingFrecuency={views.billing_frecuency}
+                        initialTerm={views.init_date}
+                        paymentMethod={views.payment_method}
+                        creditCardFee={views.credit_card_fee}
+                        processingSetupFee={views.processing_setup_fee}
+                        processingMonthlyFee={views.processing_montlhy_fee}
+                        totalInitialPayment={views.total_initial_payment}
+                        monthlyDues={views.montlhy_dues}
+                        addOns={views.add_ons}
+                    />
+                    <IDXWebsite
+                        title={views.program_title}
+                        subtitle={views.program_subtitle}
+                        description={views.program_description}
+                    />
+                </div>
             </Modal>
 
         </>
