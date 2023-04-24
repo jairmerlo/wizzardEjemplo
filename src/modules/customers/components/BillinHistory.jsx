@@ -17,6 +17,7 @@ import {
   showTotal,
 } from '../../../helpers'
 import { API } from '../../../api'
+import { useCss } from 'react-use'
 
 export const BillinHistory = ({
   achData = [],
@@ -59,11 +60,6 @@ export const BillinHistory = ({
     setPdfS(res)
   }
 
-  // console.log({ pdfs })
-  // useEffect(()=>{
-  //   setPdfS(pdfData)
-  // },[pdfData])
-
   const handleOk = () => {
     setIsModalOpen(false)
   }
@@ -72,39 +68,13 @@ export const BillinHistory = ({
     setIsModalOpen(false)
   }
 
-  // const form = useCss({
-  //   display: 'grid',
-  //   gridTemplateColumns: '49% 49%',
-  //   columnGap: '16px',
-  //   rowGap: '30px',
-  //   '& > .ant-form-item': {
-  //     margin: '0px',
-  //   },
-  //   '@media only screen and (max-width: 745px)': {
-  //     gridTemplateColumns: '1fr',
-  //   },
-  // })
-
-  // const form3 = useCss({
-  //   display: 'grid',
-  //   gridTemplateColumns: '23.7% 23.7% 49%',
-  //   columnGap: '16px',
-  //   rowGap: '30px',
-  //   '& > .ant-form-item': {
-  //     margin: '0px',
-  //   },
-  //   '@media only screen and (max-width: 745px)': {
-  //     gridTemplateColumns: '1fr',
-  //   },
-  // })
-
   const columns = [
     {
       ...getColumnProps({
         title: 'INVOICE #',
         dataIndex: 'invoice_number',
       }),
-      render: (text, id) => <a href onClick={() => handleViewPdf(id)}>{text}</a>,
+      render: (text, id) => <a style={{ color: 'blue' }} className='underlineHover' onClick={() => handleViewPdf(id)}>{text}</a>,
     },
     {
       ...getColumnProps({

@@ -237,7 +237,24 @@ export const backoffice = createApi({
         }
       },
     }),
-
+    getProfilesToCustomers: builder.query({
+      queryFn: async () => {
+        try {
+          const res = await fetch(API._BACKOFFICE + '/getProfilesToCustomers', {
+            method: 'POST',
+          })
+          const data = await res.json()
+          return {
+            data,
+          }
+        } catch (error) {
+          console.log({ error })
+          return {
+            error: 'Error',
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -253,4 +270,5 @@ export const {
   useGetLastActionsMembershipQuery,
   useEditMembershipMutation,
   useGetTheamProfilesQuery,
+  useGetProfilesToCustomersQuery,
 } = backoffice

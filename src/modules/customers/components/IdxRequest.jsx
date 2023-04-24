@@ -8,65 +8,145 @@ export const IdxRequest = ({ registration_key }) => {
         registration_key
     })
 
+
     const rows = []
     rows.push(data[0])
+    console.log({ rows })
 
-    const columns = [
-        {
-            ...getColumnProps({
-                title: 'Status',
-                dataIndex: 'status',
-            }),
-        },
-        {
-            ...getColumnProps({
-                title: 'Real State Agent',
-                dataIndex: 'agent_first_name',
-            }),
-            render(text, data) {
-                return <td>{data?.agent_first_name} {data?.agent_last_name}</td>
+    let columns = []
+
+    if (rows[0]?.user_type === "agent") {
+        columns = [
+            {
+                ...getColumnProps({
+                    title: 'Status',
+                    dataIndex: 'status',
+                }),
             },
-        },
-        {
-            ...getColumnProps({
-                title: 'Broker Name',
-                dataIndex: 'broker_first_name',
-            }),
-            render(text, data) {
-                return <td>{data?.broker_first_name} {data?.broker_last_name}</td>
+            {
+                ...getColumnProps({
+                    title: 'Real Estate Agent',
+                    dataIndex: 'user_type',
+                }),
             },
-        },
-        {
-            ...getColumnProps({
-                title: 'Broker Phone',
-                dataIndex: 'broker_phone_number',
-            }),
-        },
-        {
-            ...getColumnProps({
-                title: 'Broker Email',
-                dataIndex: 'broker_email',
-            }),
-        },
-        {
-            ...getColumnProps({
-                title: 'MLS Board ID',
-                dataIndex: 'board',
-            }),
-        },
-        {
-            ...getColumnProps({
-                title: 'Board Name',
-                dataIndex: 'board_name',
-            }),
-        },
-        {
-            ...getColumnProps({
-                title: 'Broker Company',
-                dataIndex: 'broker_company_name',
-            }),
-        },
-    ]
+            {
+                ...getColumnProps({
+                    title: 'Agent Name',
+                    dataIndex: 'agent_first_name',
+                }),
+                render(text, data) {
+                    return <td>{data?.agent_first_name} {data?.agent_last_name}</td>
+                },
+            },
+            {
+                ...getColumnProps({
+                    title: 'Agent Email',
+                    dataIndex: 'agent_email',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Phone Number',
+                    dataIndex: 'phone',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'MLS Board',
+                    dataIndex: 'board_name',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Agent MLS ID',
+                    dataIndex: 'board',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Company Name',
+                    dataIndex: 'broker_company_name',
+                }),
+
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Name',
+                    dataIndex: 'broker_first_name',
+                }),
+                render(text, data) {
+                    return <td>{data?.broker_first_name} {data?.broker_last_name}</td>
+                },
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Email',
+                    dataIndex: 'broker_email',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Phone Number',
+                    dataIndex: 'broker_phone_number',
+                }),
+            },
+        ]
+    } else {
+        columns = [
+            {
+                ...getColumnProps({
+                    title: 'Status',
+                    dataIndex: 'status',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Real State Agent',
+                    dataIndex: 'user_type',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'MLS Board',
+                    dataIndex: 'board_name',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Agent MLS ID',
+                    dataIndex: 'board',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Company Name',
+                    dataIndex: 'broker_company_name',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Name',
+                    dataIndex: 'broker_first_name',
+                }),
+                render(text, data) {
+                    return <td>{data?.broker_first_name} {data?.broker_last_name}</td>
+                },
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Email',
+                    dataIndex: 'broker_email',
+                }),
+            },
+            {
+                ...getColumnProps({
+                    title: 'Broker Phone Number',
+                    dataIndex: 'broker_phone_number',
+                }),
+            },
+        ]
+
+    }
 
 
     return (

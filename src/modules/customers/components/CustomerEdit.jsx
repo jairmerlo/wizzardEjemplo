@@ -1,11 +1,13 @@
 import { Button, Divider, Form, Typography } from 'antd'
 // import { useSelector } from 'react-redux'
-import { Formik } from 'formik';
+import { ErrorMessage, Formik } from 'formik';
 import { Input as FormikInput, Select, Checkbox } from 'formik-antd'
 import { Link, Outlet, useNavigate, useParams } from 'react-router-dom'
 import { useCss } from 'react-use';
-import { useGetCustomerQuery, useGetNewQuotesOptionsQuery, useGetStatesQuery } from '../../../app/api/billing'
+import { useEditCustomerMutation, useGetCustomerQuery, useGetNewQuotesOptionsQuery, useGetStatesQuery } from '../../../app/api/billing'
 import { useState } from 'react';
+import * as Yup from 'yup'
+import { useGetProfilesToCustomersQuery } from '../../../app/api/backoffice';
 // import backoffice from '../../../app/api/backoffice'
 
 export const CustomerEdit = () => {
@@ -48,24 +50,24 @@ export const CustomerEdit = () => {
     const { customerId } = useParams()
 
     const { data = {}, isLoading } = useGetCustomerQuery(customerId)
+    const [editCustomer] = useEditCustomerMutation()
+
+    const { data: profiles = {} } = useGetProfilesToCustomersQuery()
 
     const { data: states } = useGetStatesQuery()
-    console.log({ states })
-    const optionsStates = states.map(state => {
+    const optionsStates = states?.map(state => {
         return {
             value: state.name,
             label: state.name
         }
     })
-    //   const { data: { customerId } = {} } = useSelector(
-    //     backoffice.endpoints.getMembership.select({
-    //       registration_key: membershipRegKey,
-    //     }),
-    //   )
 
-    const {
+    let {
+        // company_id = '',
+        id = '',
         uuid = '',
         company_name = '',
+        brokerage_name = '',
         name = '',
         last_name = '',
         display_name_as = '',
@@ -76,12 +78,53 @@ export const CustomerEdit = () => {
         city = '',
         postal_code = '',
         state = '',
-        profile_deployment = '',
-        profile_marketing = '',
-        profile_project_manager = '',
+        profile_deployment_v2 = [],
+        profile_marketing_v2 = [],
+        profile_project_manager_v2 = [],
         principal_membership = '',
-
+        memberships = []
     } = data
+
+    profile_deployment_v2 = profile_deployment_v2.map(profile => {
+        return {
+            value: profile.id,
+            label: profile.username
+        }
+    })
+
+    profile_marketing_v2 = profile_marketing_v2.map(profile => {
+        return {
+            value: profile.id,
+            label: profile.username
+        }
+    })
+
+    profile_project_manager_v2 = profile_project_manager_v2.map(profile => {
+        return {
+            value: profile.id,
+            label: profile.username
+        }
+    })
+
+    let optDeployment = []
+    let optMarketing = []
+    let optManager = []
+    if (profiles.profiles_depayment !== undefined) {
+        optDeployment = [...profiles.profiles_depayment]
+    }
+    if (profiles.profiles_marketing !== undefined) {
+        optMarketing = [...profiles.profiles_marketing]
+    }
+    if (profiles.profiles_project_manager !== undefined) {
+        optManager = [...profiles.profiles_project_manager]
+    }
+
+    const optionsMasterMembership = memberships.map(membership => {
+        return {
+            value: membership.membership_id,
+            label: membership.membership_id
+        }
+    })
 
     const optionsName = [
         {
@@ -93,6 +136,8 @@ export const CustomerEdit = () => {
             label: `${last_name}, ${name}`
         },
     ]
+
+
 
     return (
         <div
@@ -118,12 +163,74 @@ export const CustomerEdit = () => {
             >
                 <Formik
                     enableReinitialize
-                    onSubmit={values => {
-                        console.log({ values })
+                    onSubmit={async values => {
+                        let profileDeployment = values.profile_deployment_v2.map(profile => {
+                            if (isNaN(profile)) {
+                                return profile.value
+                            } return profile
+                        })
+
+                        let profileMarketin = values.profile_marketing_v2.map(profile => {
+                            if (isNaN(profile)) {
+                                return profile.value
+                            } return profile
+                        })
+
+                        let profileProject = values.profile_project_manager_v2.map(profile => {
+                            if (isNaN(profile)) {
+                                return profile.value
+                            } return profile
+                        })
+
+                        // navigate(-1)
+                        const res = editCustomer({
+                            city: values.city,
+                            company: values.company_name,
+                            company_id: "2",
+                            display_name_as: values.display_name_as,
+                            email_contact: values.email_contact,
+                            id,
+                            last_name: values.last_name,
+                            name: values.name,
+                            phone: values.phone,
+                            postal_code: values.postal_code.toString(),
+                            principal_membership: values.principal_membership,
+                            profile_deployment: profileDeployment,
+                            profile_marketing: profileMarketin,
+                            profile_project_manager: profileProject,
+                            state: values.state,
+                            street1: values.street1,
+                            street2: values.street2,
+                            uuid: values.uuid,
+                        })
+
+                        // {
+                        //     "uuid":"IDX001510",
+                        //     "company":"Idxboost",
+                        //     "display_name_as":"Test Stripe Test",
+                        //     "id":"1510",
+                        //     "name":"Test Stripe",
+                        //     "city":"Address 2",
+                        //     "state":"AS",
+                        //     "postal_code":"44444",
+                        //     "last_name":"Test",
+                        //     "email_contact":"7709678678@gmail.com",
+                        //     "phone":"(112) 312-3123",
+                        //     "street1":"Address",
+                        //     "street2":"Address 2",
+                        //     "company_id":"2",
+                        //     "profile_deployment":"[\"30\"]",
+                        //     "profile_marketing":"[\"14\"]",
+                        //     "profile_project_manager":"[\"28\"]",
+                        //     "principal_membership":"Boost02342",
+                        //     "system":"Backoffice"
+                        // }
+
                     }}
                     initialValues={{
                         uuid,
                         company_name,
+                        brokerage_name,
                         name,
                         last_name,
                         display_name_as,
@@ -134,13 +241,19 @@ export const CustomerEdit = () => {
                         city,
                         postal_code,
                         state,
-                        profile_deployment,
-                        profile_marketing,
-                        profile_project_manager,
+                        profile_deployment_v2,
+                        profile_marketing_v2,
+                        profile_project_manager_v2,
                         principal_membership,
-
-
                     }}
+                    validationSchema={Yup.object({
+                        email_contact: Yup.string()
+                            .email('The email does not have a valid format')
+                            .required('Requerido'),
+                        postal_code: Yup.string()
+                            .max(5, 'Maximum length 5')
+                            .required('Requerido'),
+                    })}
                 >
                     {({ errors, touched, handleSubmit, setFieldValue, values }) => (
                         <>
@@ -173,8 +286,15 @@ export const CustomerEdit = () => {
                                         />
                                     </Form.Item>
                                     <Form.Item label='Brokerage *'>
-                                        <FormikInput
-                                            name='companyName'
+                                        <Select
+                                            name='brokerage_name'
+                                            placeholder="--Select--"
+                                            options={[
+                                                { value: 'Stanrdar', label: 'Stanrdar' },
+                                                { value: 'Resf', label: 'Resf' },
+                                                { value: 'Compass', label: 'Compass' },
+                                            ]}
+                                            bordered={false}
                                             className={item}
                                         />
                                     </Form.Item>
@@ -199,7 +319,11 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Email Username *'>
+                                    <Form.Item
+                                        label='Email Username *'
+                                        validateStatus={errors.email_contact}
+                                        help={<ErrorMessage name='email_contact' />}
+                                    >
                                         <FormikInput
                                             name='email_contact'
                                             className={item}
@@ -231,10 +355,15 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Zip / Postal Code'>
+                                    <Form.Item
+                                        label='Zip / Postal Code'
+                                        validateStatus={errors.postal_code}
+                                        help={<ErrorMessage name='postal_code' />}
+                                    >
                                         <FormikInput
                                             name='postal_code'
                                             className={item}
+                                            type='number'
                                         />
                                     </Form.Item>
                                     <Form.Item label='State'>
@@ -257,21 +386,33 @@ export const CustomerEdit = () => {
                                 <Divider dashed />
                                 <div className={form2} >
                                     <Form.Item label='Deployment Team'>
-                                        <FormikInput
-                                            name='profile_deployment                                            '
+                                        <Select
+                                            name='profile_deployment_v2'
+                                            options={optDeployment}
                                             className={item}
+                                            placeholder="--Select--"
+                                            bordered={false}
+                                            mode='multiple'
                                         />
                                     </Form.Item>
                                     <Form.Item label='Marketing Team'>
-                                        <FormikInput
-                                            name='profile_marketing'
+                                        <Select
+                                            name='profile_marketing_v2'
+                                            options={optMarketing}
                                             className={item}
+                                            placeholder="--Select--"
+                                            bordered={false}
+                                            mode='multiple'
                                         />
                                     </Form.Item>
                                     <Form.Item label='Project Manager Team'>
-                                        <FormikInput
-                                            name='profile_project_manager'
+                                        <Select
+                                            name='profile_project_manager_v2'
+                                            options={optManager}
                                             className={item}
+                                            placeholder="--Select--"
+                                            bordered={false}
+                                            mode='multiple'
                                         />
                                     </Form.Item>
                                 </div>
@@ -280,9 +421,12 @@ export const CustomerEdit = () => {
                                 </Typography.Title>
                                 <Divider dashed />
                                 <Form.Item label='Master Membership *'>
-                                    <FormikInput
+                                    <Select
                                         name='principal_membership'
+                                        placeholder="--Select--"
+                                        options={optionsMasterMembership}
                                         className={item}
+                                        bordered={false}
                                     />
                                 </Form.Item>
 
@@ -296,7 +440,7 @@ export const CustomerEdit = () => {
                                     <Button onClick={() => navigate(-1)} className={item} style={{ fontWeight: '600', padding: '12px 30px' }}>
                                         Back
                                     </Button>
-                                    <Button onClick={() => navigate(-1)} className={item}
+                                    <Button onClick={handleSubmit} className={item}
                                         style={{
                                             backgroundImage: 'linear-gradient(to right,#ef3d4e,#ae2865)',
                                             color: 'white',
@@ -318,3 +462,7 @@ export const CustomerEdit = () => {
         </div>
     )
 }
+
+
+
+

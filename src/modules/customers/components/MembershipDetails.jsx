@@ -50,7 +50,7 @@ export const MembershipDetails = () => {
   const crm = membershipData?.hasCrm
   const trial = membershipData?.hasTrial
   const launch = membershipData?.hasLaunch
-  const idxrequest = membershipData?.idx === 'Active' ? 1 : 0
+  const idxrequest = membershipData?.idx
   console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
   if (crm === "1") options.push("Agents")
@@ -163,7 +163,7 @@ export const MembershipDetails = () => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a href>
+                  <a>
                     <div
                       style={{
                         display: 'flex',
@@ -205,7 +205,7 @@ export const MembershipDetails = () => {
               <Requesticon registration_key={membershipData?.cpanelRegistrationKey} id={membershipData.cpanelId} />
 
               <Tooltip title='ONB'>
-                <a href>
+                <a>
                   <div
                     style={{
                       display: 'flex',
@@ -247,7 +247,7 @@ export const MembershipDetails = () => {
           }
           trigger='hover'
         >
-          <a href>
+          <a>
             <div
               style={{
                 display: 'flex',
