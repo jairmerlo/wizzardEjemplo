@@ -281,6 +281,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       }),
       ...getColumnSearchProps('launch_website'),
       ...getColumnSortProps('launch_website'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.launch_website}
+        >
+          {record.launch_website}
+        </Tooltip>
+      )
     },
     {
       title: 'Last Action',
@@ -304,6 +312,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.status}
+        >
+          {record.status}
+        </Tooltip>
+      )
     },
     {
       title: 'Product/Service',
@@ -311,6 +327,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'class_accounting_name',
       ...getColumnSearchProps('class_accounting_name'),
       ...getColumnSortProps('class_accounting_name'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.class_accounting_name}
+        >
+          {record.class_accounting_name}
+        </Tooltip>
+      )
     },
     {
       title: 'Client Name',
@@ -322,11 +346,24 @@ export const MembershipsTable = ({ filter = '' }) => {
           href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
           rel='noreferrer'
         >
-          {renderTextHighlighter({
-            text: clientName,
-            isHighlighted: searchedColumn['client_name'],
-            highlightedText: searchText['client_name'],
-          })}
+          <Tooltip
+            placement='topLeft'
+            title={
+              <>
+                {renderTextHighlighter({
+                  text: clientName,
+                  isHighlighted: searchedColumn['client_name'],
+                  highlightedText: searchText['client_name'],
+                })}
+              </>
+            }
+          >
+            {renderTextHighlighter({
+              text: clientName,
+              isHighlighted: searchedColumn['client_name'],
+              highlightedText: searchText['client_name'],
+            })}
+          </Tooltip>
         </a>
       ),
       ...getColumnSortProps('client_name'),
@@ -337,6 +374,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.memberships_id}
+        >
+          {record.memberships_id}
+        </Tooltip>
+      )
     },
     {
       title: 'URL',
@@ -345,11 +390,24 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSearchProps('wordpress_install_url'),
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
-          {renderTextHighlighter({
-            text: url,
-            isHighlighted: searchedColumn['wordpress_install_url'],
-            highlightedText: searchText['wordpress_install_url'],
-          })}
+          <Tooltip
+            placement='topLeft'
+            title={
+              <>
+                {renderTextHighlighter({
+                  text: url,
+                  isHighlighted: searchedColumn['wordpress_install_url'],
+                  highlightedText: searchText['wordpress_install_url'],
+                })}
+              </>
+            }
+          >
+            {renderTextHighlighter({
+              text: url,
+              isHighlighted: searchedColumn['wordpress_install_url'],
+              highlightedText: searchText['wordpress_install_url'],
+            })}
+          </Tooltip>
         </a>
       ),
       ...getColumnSortProps('wordpress_install_url'),
@@ -392,6 +450,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       }),
       ...getColumnSearchProps('published'),
       ...getColumnSortProps('published'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.published}
+        >
+          {record.published}
+        </Tooltip>
+      )
     },
     {
       title: '$ Price',
@@ -406,6 +472,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.price}
+        >
+          {record.price}
+        </Tooltip>
+      )
     },
     {
       title: 'Actions',
@@ -595,6 +669,13 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'status',
       ...getColumnSearchProps('status'),
       ...getColumnSortProps('status'),
+      render: (text, record) => (
+        <Tooltip
+          title={record.status}
+        >
+          {record.status}
+        </Tooltip>
+      )
       // width: 110,
     },
     {
@@ -603,6 +684,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'memberships_id',
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
+      render: (text, record) => (
+        <Tooltip
+          title={record.memberships_id}
+          placement='topLeft'
+        >
+          {record.memberships_id}
+        </Tooltip>
+      )
       // width: 120,
     },
     {
@@ -616,11 +705,21 @@ export const MembershipsTable = ({ filter = '' }) => {
             href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
             rel='noreferrer'
           >
-            {renderTextHighlighter({
-              text: clientName,
-              isHighlighted: searchedColumn['client_name'],
-              highlightedText: searchText['client_name'],
-            })}
+            <Tooltip placement='topLeft' title={
+              <>
+                {renderTextHighlighter({
+                  text: clientName,
+                  isHighlighted: searchedColumn['client_name'],
+                  highlightedText: searchText['client_name'],
+                })}
+              </>
+            }>
+              {renderTextHighlighter({
+                text: clientName,
+                isHighlighted: searchedColumn['client_name'],
+                highlightedText: searchText['client_name'],
+              })}
+            </Tooltip>
           </a>
         </>
       ),
@@ -633,6 +732,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'projectName',
       ...getColumnSearchProps('project_name'),
       ...getColumnSortProps('project_name'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.projectName}
+        >
+          {record.projectName}
+        </Tooltip>
+      )
       // width: 155,
     },
     {
@@ -641,6 +748,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       key: 'email',
       ...getColumnSearchProps('email'),
       ...getColumnSortProps('email'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.email}
+        >
+          {record.email}
+        </Tooltip>
+      )
       // width: 200,
     },
     {
@@ -650,11 +765,21 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getColumnSearchProps('wordpress_install_url'),
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
-          {renderTextHighlighter({
-            text: url,
-            isHighlighted: searchedColumn['wordpress_install_url'],
-            highlightedText: searchText['wordpress_install_url'],
-          })}
+          <Tooltip placement='topLeft' title={
+            <>
+              {renderTextHighlighter({
+                text: url,
+                isHighlighted: searchedColumn['wordpress_install_url'],
+                highlightedText: searchText['wordpress_install_url'],
+              })}
+            </>
+          }>
+            {renderTextHighlighter({
+              text: url,
+              isHighlighted: searchedColumn['wordpress_install_url'],
+              highlightedText: searchText['wordpress_install_url'],
+            })}
+          </Tooltip>
         </a>
       ),
       ...getColumnSortProps('wordpress_install_url'),
@@ -666,6 +791,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'class_accounting_name',
       ...getColumnSearchProps('class_accounting_name'),
       ...getColumnSortProps('class_accounting_name'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.class_accounting_name}
+        >
+          {record.class_accounting_name}
+        </Tooltip>
+      )
       // width: 150,
     },
     {
@@ -711,6 +844,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.price}
+        >
+          {record.price}
+        </Tooltip>
+      )
       // width: 120,
     },
     {
@@ -718,6 +859,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'setUpFee',
       key: 'setUpFee',
       ...getColumnSearchProps('setUpFee'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.setUpFee}
+        >
+          {record.setUpFee}
+        </Tooltip>
+      )
       // width: 100,
     },
     {
@@ -730,6 +879,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.periods}
+        >
+          {record.periods}
+        </Tooltip>
+      )
       // width: 120,
     },
     {
@@ -745,6 +902,14 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.amount}
+        >
+          {record.amount}
+        </Tooltip>
+      )
       // width: 120,
     },
     {

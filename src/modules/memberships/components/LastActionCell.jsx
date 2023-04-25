@@ -1,4 +1,4 @@
-import { Modal } from 'antd'
+import { Modal, Tooltip } from 'antd'
 import { useState } from 'react'
 import { useCss } from 'react-use'
 import { useGetLastActionsMembershipQuery } from '../../../app/api/backoffice'
@@ -46,11 +46,21 @@ export const LastActionCell = ({
   return (
     <>
       <a onClick={handleOpen}>
-        {renderTextHighlighter({
-          text,
-          isHighlighted,
-          highlightedText,
-        })}
+        <Tooltip title={
+          <>
+            {renderTextHighlighter({
+              text,
+              isHighlighted,
+              highlightedText,
+            })}
+          </>
+        }>
+          {renderTextHighlighter({
+            text,
+            isHighlighted,
+            highlightedText,
+          })}
+        </Tooltip>
       </a>
       <Modal
         title={'Timeline Membership: ' + membershipId}

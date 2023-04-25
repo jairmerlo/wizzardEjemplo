@@ -379,6 +379,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSortProps('lastAction'),
       fixed: 'left',
       width: 150,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.lastAction}
+        >
+          {record.lastAction}
+        </Tooltip>
+      )
     },
     {
       title: 'Status',
@@ -388,6 +396,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSortProps('status'),
       fixed: 'left',
       width: 120,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.status}
+        >
+          {record.status}
+        </Tooltip>
+      )
     },
     {
       title: 'Product/Service',
@@ -397,6 +413,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSortProps('class_accounting_name'),
       fixed: 'left',
       width: 150,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.class_accounting_name}
+        >
+          {record.class_accounting_name}
+        </Tooltip>
+      )
     },
 
     {
@@ -406,6 +430,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('memberships_id'),
       ...getColumnSortProps('memberships_id'),
       width: 150,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.memberships_id}
+        >
+          {record.memberships_id}
+        </Tooltip>
+      )
     },
     {
       title: 'Client Name',
@@ -417,11 +449,24 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
           rel='noreferrer'
         >
-          {renderTextHighlighter({
-            text: clientName,
-            isHighlighted: searchedColumn['client_name'],
-            highlightedText: searchText['client_name'],
-          })}
+          <Tooltip
+            placement='topLeft'
+            title={
+              <>
+                {renderTextHighlighter({
+                  text: clientName,
+                  isHighlighted: searchedColumn['client_name'],
+                  highlightedText: searchText['client_name'],
+                })}
+              </>
+            }
+          >
+            {renderTextHighlighter({
+              text: clientName,
+              isHighlighted: searchedColumn['client_name'],
+              highlightedText: searchText['client_name'],
+            })}
+          </Tooltip>
         </a>
       ),
       ...getColumnSortProps('client_name'),
@@ -465,6 +510,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         dataIndex: 'publication_dtate',
       }),
       width: 120,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.publication_dtate}
+        >
+          {record.publication_dtate}
+        </Tooltip>
+      )
     },
     {
       title: 'IDX',
@@ -484,6 +537,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         dataIndex: 'idx',
       }),
       width: 80,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.idx}
+        >
+          {record.idx}
+        </Tooltip>
+      )
     },
     {
       title: 'IDX Requested',
@@ -498,6 +559,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         },
       }),
       width: 120,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.idx_requested_date}
+        >
+          {record.idx_requested_date}
+        </Tooltip>
+      )
     },
     {
       title: 'Board',
@@ -506,12 +575,28 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSearchProps('board_name'),
       ...getColumnSortProps('board_name'),
       ellipsis: true,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.board_name}
+        >
+          {record.board_name}
+        </Tooltip>
+      )
     },
     {
       title: 'Premium Requested',
       key: 'premium',
       dataIndex: 'premium',
       ...getColumnSearchProps('premium'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.premium}
+        >
+          {record.premium}
+        </Tooltip>
+      )
     },
     {
       title: '$ Price',
@@ -527,6 +612,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         },
       }),
       width: 120,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.price}
+        >
+          {record.price}
+        </Tooltip>
+      )
     },
     // {
     //   title: 'Periods',
