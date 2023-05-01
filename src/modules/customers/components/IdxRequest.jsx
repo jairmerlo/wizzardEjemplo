@@ -59,7 +59,7 @@ export const IdxRequest = ({ registration_key }) => {
             {
                 ...getColumnProps({
                     title: 'Agent MLS ID',
-                    dataIndex: 'board',
+                    dataIndex: 'item_agent_mls_board_id',
                 }),
             },
             {
@@ -114,7 +114,7 @@ export const IdxRequest = ({ registration_key }) => {
             {
                 ...getColumnProps({
                     title: 'Agent MLS ID',
-                    dataIndex: 'board',
+                    dataIndex: 'item_agent_mls_board_id',
                 }),
             },
             {

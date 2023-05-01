@@ -54,7 +54,7 @@ export const MembershipDetails = () => {
   console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
   if (crm === "1") options.push("Agents")
-  if (trial === "1") options.push("Membership Trial")
+  if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
   if (idxrequest === 1) options.push("IDX Request")
   // const idUser = membershipData?.customerId.split('0').slice(-1)
@@ -347,7 +347,9 @@ export const MembershipDetails = () => {
             {stringFallback(fullName)}
           </Descriptions.Item>
           <Descriptions.Item label='IDX'>
-            {stringFallback(membershipData.idx)}
+            {
+              idxrequest ? 'Si' : 'No'
+            }
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
             {stringFallback(membershipData?.price)}
@@ -360,24 +362,24 @@ export const MembershipDetails = () => {
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
             {stringFallback(
-              date(membershipData?.createdAt, 'MM/DD/YYYY', 'll'),
+              membershipData?.createdAt
             )}
+          </Descriptions.Item>
+          <Descriptions.Item label='$ Lifetime'>
+            {stringFallback(membershipData?.amount)}
           </Descriptions.Item>
           {(membershipData?.idxRequestedDate !== null) && (
             <Descriptions.Item label='IDX Requested' span={2}>
               {stringFallback(
-                date(membershipData.idxRequestedDate, 'MM/DD/YYYY', 'll'),
+                membershipData.idxRequestedDate
               )}
             </Descriptions.Item>
           )}
-          <Descriptions.Item label='$ Lifetime'>
-            {stringFallback(membershipData?.amount)}
-          </Descriptions.Item>
           {(trial !== '0') && (
             <>
               <Descriptions.Item label='Trial Due'>
                 {stringFallback(
-                  date(membershipData.trialDue, 'MM/DD/YYYY', 'll'),
+                  membershipData.trialDue
                 )}
               </Descriptions.Item>
             </>

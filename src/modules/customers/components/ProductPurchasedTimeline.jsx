@@ -198,6 +198,7 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
                         billingFrecuency={views.billing_frecuency}
                         initialTerm={views.init_date}
                         paymentMethod={views.payment_method}
+                        paymentMethodValue={views.payment_method_value}
                         creditCardFee={views.credit_card_fee}
                         processingSetupFee={views.processing_setup_fee}
                         processingMonthlyFee={views.processing_montlhy_fee}

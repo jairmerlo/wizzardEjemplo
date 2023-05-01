@@ -292,19 +292,19 @@ export const MembershipsTable = ({ filter = '' }) => {
     },
     {
       title: 'Last Action',
-      dataIndex: 'lastAction',
-      key: 'lastAction',
-      ...getColumnSearchProps('lastAction'),
+      dataIndex: 'last_action',
+      key: 'last_action',
+      ...getColumnSearchProps('last_action'),
       render: (text, record) => (
         <LastActionCell
           text={text}
-          isHighlighted={searchedColumn['lastAction']}
-          highlightedText={searchText['lastAction']}
+          isHighlighted={searchedColumn['last_action']}
+          highlightedText={searchText['last_action']}
           registration_key={record.registration_key}
           membershipId={record.memberships_id}
         />
       ),
-      ...getColumnSortProps('lastAction'),
+      ...getColumnSortProps('last_action'),
     },
     {
       title: 'Status',
@@ -422,13 +422,7 @@ export const MembershipsTable = ({ filter = '' }) => {
 
         <Tooltip
           placement='topLeft'
-          title={
-            <>
-              {moment(record.created_at_date_time).format(
-                'MMM DD, YYYY HH:mm:ss UTC-0',
-              )}
-            </>
-          }
+          title={record.created_at_date_time}
         >
           {moment(record.created_at).format('MMM DD, YYYY')}
         </Tooltip>
@@ -648,19 +642,19 @@ export const MembershipsTable = ({ filter = '' }) => {
   const columns = [
     {
       title: 'Last Action',
-      dataIndex: 'lastAction',
-      key: 'lastAction',
-      ...getColumnSearchProps('lastAction'),
+      dataIndex: 'last_action',
+      key: 'last_action',
+      ...getColumnSearchProps('last_action'),
       render: (text, record) => (
         <LastActionCell
           text={text}
-          isHighlighted={searchedColumn['lastAction']}
-          highlightedText={searchText['lastAction']}
+          isHighlighted={searchedColumn['last_action']}
+          highlightedText={searchText['last_action']}
           registration_key={record.registration_key}
           membershipId={record.memberships_id}
         />
       ),
-      ...getColumnSortProps('lastAction'),
+      ...getColumnSortProps('last_action'),
       // width: 150,
     },
     {
@@ -728,16 +722,16 @@ export const MembershipsTable = ({ filter = '' }) => {
     },
     {
       title: 'Project Name',
-      dataIndex: 'projectName',
-      key: 'projectName',
+      dataIndex: 'project_name',
+      key: 'project_name',
       ...getColumnSearchProps('project_name'),
       ...getColumnSortProps('project_name'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.projectName}
+          title={record.project_name}
         >
-          {record.projectName}
+          {record.project_name}
         </Tooltip>
       )
       // width: 155,
@@ -809,13 +803,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (date, record) => (
         <Tooltip
           placement='topLeft'
-          title={
-            <>
-              {moment(record.created_at_date_time).format(
-                'MMM DD, YYYY HH:mm:ss UTC-0',
-              )}
-            </>
-          }
+          title={record.created_at_hour}
         >
           {moment(record.created_at).format('MMM DD, YYYY')}
         </Tooltip>
@@ -856,15 +844,15 @@ export const MembershipsTable = ({ filter = '' }) => {
     },
     {
       title: '$ Setup Fee',
-      dataIndex: 'setUpFee',
-      key: 'setUpFee',
-      ...getColumnSearchProps('setUpFee'),
+      dataIndex: 'setup_fee',
+      key: 'setup_fee',
+      ...getColumnSearchProps('setup_fee'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.setUpFee}
+          title={record.setup_fee}
         >
-          {record.setUpFee}
+          {record.setup_fee}
         </Tooltip>
       )
       // width: 100,

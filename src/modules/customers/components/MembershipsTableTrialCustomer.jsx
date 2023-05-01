@@ -280,23 +280,23 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
       key: 'trial_due',
       dataIndex: 'trial_due',
       ...getColumnSearchProps('trial_due'),
-      render: date =>
-        date
-          ? moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment())
-            ? moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
-            : stringFallback(null, { fallback: 'Timed out' })
-          : stringFallback(),
-      onFilter: (value, record) => {
-        const text = record['trial_due']
-          ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
-            moment(),
-          )
-            ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
-            ' left'
-            : ''
-          : ''
-        return text.toString().toLowerCase().includes(value.toLowerCase())
-      },
+      // render: date =>
+      //   date
+      //     ? moment(moment(date, 'YYYY-MM-DD')).isSameOrAfter(moment())
+      //       ? moment(moment(date, 'YYYY-MM-DD')).fromNow(true) + ' left'
+      //       : stringFallback(null, { fallback: 'Timed out' })
+      //     : stringFallback(),
+      // onFilter: (value, record) => {
+      //   const text = record['trial_due']
+      //     ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(
+      //       moment(),
+      //     )
+      //       ? moment(moment(record['trial_due'], 'YYYY-MM-DD')).fromNow(true) +
+      //       ' left'
+      //       : ''
+      //     : ''
+      //   return text.toString().toLowerCase().includes(value.toLowerCase())
+      // },
       ...getColumnSortProps('trial_due'),
       width: 120,
       fixed: 'left',

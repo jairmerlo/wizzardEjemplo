@@ -47,7 +47,7 @@ export const IDXWebsite = ({ title = '', subtitle = '', description = '' }) => {
             alignSelf: 'center',
           }}
         >
-          @2022 IDXBoost, LLC All rights Reserved.
+          @2023 IDXBoost, LLC All rights Reserved.
         </Typography.Text>
       </IDXCardContent>
     </IDXCard>

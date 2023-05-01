@@ -11,11 +11,8 @@ import {
   Typography,
 } from 'antd'
 import {
-  DeleteTwoTone,
   DollarOutlined,
-  EyeTwoTone,
   SearchOutlined,
-  ToolOutlined,
 } from '@ant-design/icons'
 import {
   getDateColumnSearchProps as getDateColumnSearchPropsExport,
@@ -292,16 +289,13 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               title={
                 <>
                   Trial Date:{' '}
-                  {moment(record.created_at_date_time).format(
-                    'MM-DD-YYYY hh:mm:ss a',
-                  )}
+                  {record.created_at_date_time}
                   <br />
                   Ending Date:{' '}
                   {record.ending_date_trial}
                 </>
               }
             >
-              {console.log({ record })}
               {moment(date).fromNow(true) + ' left'}
             </Tooltip>
           ) : (
@@ -310,9 +304,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               title={
                 <>
                   Trial Date:{' '}
-                  {moment(record.created_at_date_time).format(
-                    'MM-DD-YYYY hh:mm:ss a',
-                  )}
+                  {record.created_at_date_time}
                   <br />
                   Ending Date:{' '}
                   {record.ending_date_trial}
@@ -349,42 +341,35 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     },
     {
       title: 'Created',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      ...getColumnSearchProps('lastAction'),
-      ...getColumnSortProps('lastAction'),
+      dataIndex: 'created_at_date_time',
+      key: 'created_at_date_time',
+      ...getColumnSearchProps('last_action'),
+      ...getColumnSortProps('last_action'),
       render: (date, record) => (
         <Tooltip
           placement='topLeft'
-          title={
-            <>
-              {moment(record.created_at_date_time).format(
-                'MMM DD, YYYY HH:mm:ss UTC-0',
-              )}
-            </>
-          }
+          title={record.created_at_hour}
         >
-          {moment(record.created_at).format('MMM DD, YYYY')}
+          {record.created_at}
         </Tooltip>
       ),
-
       fixed: 'left',
       width: 120,
     },
     {
       title: 'Last Action',
-      dataIndex: 'lastAction',
-      key: 'lastAction',
-      ...getColumnSearchProps('lastAction'),
-      ...getColumnSortProps('lastAction'),
+      dataIndex: 'last_action',
+      key: 'last_action',
+      ...getColumnSearchProps('last_action'),
+      ...getColumnSortProps('last_action'),
       fixed: 'left',
       width: 150,
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.lastAction}
+          title={record.last_action}
         >
-          {record.lastAction}
+          {record.last_action}
         </Tooltip>
       )
     },
@@ -722,7 +707,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a href>
+                  <a >
                     <div
                       style={{
                         display: 'flex',
