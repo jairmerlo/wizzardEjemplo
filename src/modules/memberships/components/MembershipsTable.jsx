@@ -655,7 +655,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         />
       ),
       ...getColumnSortProps('last_action'),
-      // width: 150,
+      width: 150,
+      fixed: 'left',
     },
     {
       title: 'Status',
@@ -669,8 +670,9 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.status}
         </Tooltip>
-      )
-      // width: 110,
+      ),
+      fixed: 'left',
+      width: 220,
     },
     {
       title: 'Membership ID',
@@ -685,8 +687,9 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.memberships_id}
         </Tooltip>
-      )
-      // width: 120,
+      ),
+      width: 170,
+      fixed: 'left',
     },
     {
       title: 'Client Name',
@@ -718,7 +721,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         </>
       ),
       ...getColumnSortProps('client_name'),
-      // width: 150,
+      width: 160,
+      fixed: 'left',
     },
     {
       title: 'Project Name',
@@ -733,8 +737,9 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.project_name}
         </Tooltip>
-      )
-      // width: 155,
+      ),
+      width: 155,
+      fixed: 'left',
     },
     {
       title: 'Email',
@@ -749,8 +754,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.email}
         </Tooltip>
-      )
-      // width: 200,
+      ),
+      width: 280,
     },
     {
       title: 'URL',
@@ -777,7 +782,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         </a>
       ),
       ...getColumnSortProps('wordpress_install_url'),
-      // width: 200,
+      width: 380,
     },
     {
       title: 'Product/Service',
@@ -792,8 +797,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.class_accounting_name}
         </Tooltip>
-      )
-      // width: 150,
+      ),
+      width: 180,
     },
     {
       title: 'Created',
@@ -816,8 +821,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           )
         },
       }),
-
-      // width: 120,
+      width: 120,
     },
     {
       title: '$ Price',
@@ -839,8 +843,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.price}
         </Tooltip>
-      )
-      // width: 120,
+      ),
+      width: 120,
     },
     {
       title: '$ Setup Fee',
@@ -854,8 +858,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.setup_fee}
         </Tooltip>
-      )
-      // width: 100,
+      ),
+      width: 100,
     },
     {
       title: 'Periods',
@@ -874,8 +878,8 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.periods}
         </Tooltip>
-      )
-      // width: 120,
+      ),
+      width: 120,
     },
     {
       title: '$ Lifetime',
@@ -897,14 +901,14 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.amount}
         </Tooltip>
-      )
-      // width: 120,
+      ),
+      width: 130,
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      // width: 85,
+      width: 85,
       render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
@@ -1064,6 +1068,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           </a>
         </Popover>
       ),
+      fixed: 'right',
     },
   ]
   const idx_requested_columns = [
@@ -1079,6 +1084,16 @@ export const MembershipsTable = ({ filter = '' }) => {
           ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.idx_requested_date}
+        >
+          {moment(record.idx_requested_date).format('MMM DD, YYYY')}
+        </Tooltip>
+      ),
+      width: 160,
+      fixed: 'left',
     },
     ...columns,
   ]

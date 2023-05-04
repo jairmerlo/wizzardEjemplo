@@ -51,7 +51,7 @@ export const MembershipDetails = () => {
   const trial = membershipData?.hasTrial
   const launch = membershipData?.hasLaunch
   const idxrequest = membershipData?.idx
-  console.log({ membershipData })
+  // console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
   if (crm === "1") options.push("Agents")
   if (trial === 1) options.push("Membership Trial")

@@ -249,6 +249,8 @@ export const MembershipEdit = ({
     membershipId = noData,
     activatedAt = noData,
     // isProductionMode = noData,
+    projectName = '',
+    boardName = noData,
     hasCmsTeam = '0',
     hasSpw = '0',
     hasCmsBlog = '0',
@@ -386,6 +388,8 @@ export const MembershipEdit = ({
               profileMarketing,
               profileProjectManager,
               dataStudioUrl,
+              projectName,
+              boardName,
               validateRegistration: boolean(validateRegistration),
               // isProductionMode: boolean(isProductionMode),
               forceRegistration: boolean(forceRegistration),
@@ -525,6 +529,12 @@ export const MembershipEdit = ({
                   </Typography.Title>
                   <Divider dashed />
                   <div className={form} style={{ gap: '16px' }}>
+                    <Form.Item label='Project Name'>
+                      <FormikInput
+                        name='projectName'
+                        placeholder='Project Name'
+                      />
+                    </Form.Item>
                     <Form.Item label='Cpanel Registration Key'>
                       <FormikInput
                         name='cpanelRegistrationKey'
@@ -705,6 +715,7 @@ export const MembershipEdit = ({
                           { label: 'Forced', value: '1' },
                         ]}
                         {...getSelectSearchProps()}
+                        disabled={!values.forceRegistration}
                       />
                     </Form.Item>
                     <Form.Item label='Open Registration After'>
@@ -716,6 +727,7 @@ export const MembershipEdit = ({
                           value: `${value + 1}`,
                         }))}
                         {...getSelectSearchProps()}
+                        disabled={!values.forceRegistration}
                       />
                     </Form.Item>
                     <Form.Item label='Domain Status'>
@@ -727,6 +739,13 @@ export const MembershipEdit = ({
                           { label: 'Pending Apply Domain to Host', value: 'Pending_Apply_Domain_to_Host' },
                           { label: 'DNS Error', value: 'DNS_Error' },
                         ]}
+                      />
+                    </Form.Item>
+                    <Form.Item label='Board'>
+                      <FormikInput
+                        name='boardName'
+                        // placeholder='Data Studio URL'
+                        disabled
                       />
                     </Form.Item>
                   </div>
