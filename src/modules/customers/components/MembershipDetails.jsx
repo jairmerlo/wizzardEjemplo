@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms, IdxRequest, LaunchWebsite, ProductPurchasedTimeline } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
-import { useGetAuthorizationFormsQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
+import { useGetAuthorizationFormsQuery, useGetRequestByregKeyQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
 import { getConfig, stringAvatar, stringFallback, date } from '../../../helpers'
 import { AgentsMembership } from './AgentsMembership'
@@ -56,7 +56,16 @@ export const MembershipDetails = () => {
   if (crm === "1") options.push("Agents")
   if (trial === 1) options.push("Membership Trial")
   if (launch === 1) options.push("Launch Website")
-  if (idxrequest === 1) options.push("IDX Request")
+  const { data: dataRegistration = [], isLoading } = useGetRequestByregKeyQuery({
+    registration_key: membershipData?.cpanelRegistrationKey
+  })
+  if (idxrequest) {
+    if (dataRegistration[0]?.status === "Done") {
+      options.push("IDX Request Approved")
+    } else {
+      options.push("IDX Request")
+    }
+  }
   // const idUser = membershipData?.customerId.split('0').slice(-1)
   // console.log({ membershipData })
 
@@ -497,7 +506,7 @@ export const MembershipDetails = () => {
             customerId={membershipData.customerId}
           />
         )}
-        {section === 'IDX Request' && (
+        {(section === 'IDX Request' || section === 'IDX Request Approved') && (
           <IdxRequest
             registration_key={membershipData.cpanelRegistrationKey}
           />
