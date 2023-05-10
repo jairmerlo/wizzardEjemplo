@@ -590,7 +590,7 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId, re
         </Button>
       </div>
       <Modal
-        title={'Timeline Membership: ' + memberships[0]?.memberships_id}
+        title={'Timeline Membership'}
         open={openModal}
         //   onOk={handleOk}
         onCancel={() => setOpenModal(false)}

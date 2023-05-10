@@ -146,7 +146,7 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                                     paddingTop: '8px',
                                 }}
                             >
-                                <Button onClick={onClose} >Close</Button>
+                                <Button onClick={onClose} >Cancel</Button>
                                 <Button
                                     type='primary'
                                     onClick={hanleOpenCofirm}

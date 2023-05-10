@@ -470,7 +470,7 @@ export const NewQuote = () => {
               membership_type_id: values.membership_type_id,
               items: values.products
             }
-            console.log(data)
+            // console.log({ data }, "data")
             if (hasProspect) {
               createQuote(data)
                 .then(({ data }) => {
@@ -501,7 +501,14 @@ export const NewQuote = () => {
             quoteId: Yup.string().required('This field is required.'),
             bundle_type_id: Yup.string().required('This field is required.'),
             membership_type_id: Yup.string().required('This field is required.'),
-            trial_length: Yup.string(),
+            has_trial: Yup.boolean(),
+            trial_length: Yup
+              .string()
+              .when('has_trial', {
+                is: true,
+                then: Yup.string().required('This field is required.')
+              })
+            ,
             project_name: Yup.string().required('This field is required.'),
             brokerage: Yup.string().required('This field is required.'),
             program: Yup.string().required('This field is required.'),
@@ -599,13 +606,13 @@ export const NewQuote = () => {
                     className={item}
                     name='brokerage'
                     options={brokerages}
+                    bordered={false}
+                    {...getSelectSearchProps()}
                     onChange={value => {
                       setCompany(value)
                       setFieldValue('program', '')
                       // console.log('brokerage', value)
                     }}
-                    {...getSelectSearchProps()}
-                    bordered={false}
                   />
                 </Form.Item>
                 <Form.Item
@@ -732,12 +739,15 @@ export const NewQuote = () => {
                     Has trial
                   </Checkbox>
                   <Form.Item
+                    style={{
+                      visibility: (values.has_trial === 1) ? 'visible' : 'hidden'
+                    }}
                     label='Trial Length (Days)'
                     required
                     validateStatus={errors.trial_length && touched.trial_length && 'error'}
                     help={<ErrorMessage name='trial_length' />}
                   >
-                    <Input name='trial_length' disabled={!values.has_trial} className={item} />
+                    <Input name='trial_length' className={item} />
                   </Form.Item>
                 </div>
               </div>
