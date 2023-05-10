@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Modal,
   Popover,
   Space,
   Table,
@@ -26,8 +27,10 @@ import {
 } from '../../../helpers'
 import moment from 'moment/moment'
 import { Link } from 'react-router-dom'
-import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
+import { useGetAllMembershipsQuery, useGetLastActionsMembershipQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
+import { Loader } from '../../../components'
+import { useCss } from 'react-use'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -50,7 +53,7 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) => {
+export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId, registrationKey }) => {
   const [pageSize, setPageSize] = useState(10)
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
@@ -63,8 +66,16 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
   const totalPrice = items
     ?.map(item => currency(item.price || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
-  console.log({ memberships })
+  // console.log({ memberships })
 
+  const { data: dataLastAction = [], isLoading: isLoadingAction } = useGetLastActionsMembershipQuery(
+    {
+      registration_key: registrationKey,
+    }
+  )
+
+  console.log({ dataLastAction })
+  const [openModal, setOpenModal] = useState(false)
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
     reducer,
@@ -75,6 +86,25 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
     SEARCHED_COLUMN_INITIAL_STATE,
   )
   const searchInput = useRef(null)
+
+  const table = useCss({
+    borderRadius: '8px',
+    width: '100%',
+    overdflowY: 'auto',
+    border: '1px solid rgba(5, 5, 5, 0.06)',
+    '& td': {
+      padding: '16px 24px',
+      border: '1px solid rgba(5, 5, 5, 0.06)',
+      textAlign: 'center',
+    },
+    '& th': {
+      padding: '16px 24px',
+      border: '1px solid rgba(5, 5, 5, 0.06)',
+      backgroundColor: 'rgba(0, 0, 0, 0.02)',
+      fontWeight: 600,
+    },
+  })
+
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
     setSearchText({ [dataIndex]: selectedKeys[0] })
@@ -253,11 +283,14 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
   const columns = [
     {
       title: 'Last Action',
-      dataIndex: 'lastAction',
-      key: 'lastAction',
-      ...getColumnSearchProps('lastAction'),
-      ...getColumnSortProps('lastAction'),
+      dataIndex: 'last_action',
+      key: 'last_action',
+      ...getColumnSearchProps('last_action'),
+      ...getColumnSortProps('last_action'),
       fixed: 'left',
+      render: (text, recover) => {
+        return <Button style={{ border: 'none' }} onClick={() => setOpenModal(true)}>{recover.last_action}</Button>
+      }
     },
     {
       title: 'Status',
@@ -556,7 +589,48 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId }) 
           Reset
         </Button>
       </div>
-
+      <Modal
+        title={'Timeline Membership: ' + memberships[0]?.memberships_id}
+        open={openModal}
+        //   onOk={handleOk}
+        onCancel={() => setOpenModal(false)}
+        destroyOnClose
+        okButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+        cancelButtonProps={{
+          style: {
+            display: 'none',
+          },
+        }}
+      >
+        {isLoadingAction ? (
+          <Loader />
+        ) : dataLastAction?.length === 0 ? (
+          'Data is empty'
+        ) : (
+          <table className={table}>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Last Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataLastAction.map(item => (
+                <>
+                  <tr>
+                    <td>{item.created_at}</td>
+                    <td>{item.action}</td>
+                  </tr>
+                </>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Modal>
       <Table
         key={tableKey}
         rowKey='id'

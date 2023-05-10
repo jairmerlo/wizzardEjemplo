@@ -504,6 +504,7 @@ export const MembershipDetails = () => {
         {section === 'Membership Trial' && (
           <MembershipsTableTrialCustomer
             customerId={membershipData.customerId}
+            registrationKey={membershipRegKey}
           />
         )}
         {(section === 'IDX Request' || section === 'IDX Request Approved') && (

@@ -2,6 +2,7 @@ import { Button, Descriptions, Divider, Typography } from 'antd'
 import { ErrorMessage, Field, FieldArray, useFormikContext } from 'formik'
 import { useState } from 'react'
 import { ProductItem } from '.'
+import { useCss } from 'react-use'
 
 export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
   const { values } = useFormikContext()
@@ -20,9 +21,21 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
         .reduce((a, b) => a + b, 0),
     )
 
+  const button = useCss({
+    // color: 'white',
+    fontWeight: '600',
+    padding: '12px 30px',
+    marginLeft: '10px',
+    // padding: '7px 20px',
+    fontSize: '14px',
+    border: '1px solid #e4e4e4',
+    borderRadius: '25px',
+    minHeight: '50px'
+  })
+
   return (
     <div style={{ marginTop: '32px', marginBottom: '32px' }}>
-      <Typography.Title level={4}>Products</Typography.Title>
+      <Typography.Title level={4} style={{ fontWeight: 'bold' }}>Products</Typography.Title>
       <Divider dashed />
       <div>
         <FieldArray name='products'>
@@ -59,6 +72,7 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
                       item_sort: 0,
                     })
                   }
+                  className={button}
                 >
                   Add Product
                 </Button>
@@ -68,9 +82,9 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
         </FieldArray>
       </div>
 
-      <Descriptions bordered style={{ marginTop: '32px' }}>
-        <Descriptions.Item label='Total Monthly'>{`$${totalMonthly}`}</Descriptions.Item>
-        <Descriptions.Item label='Total SetUp Free'>{`$${totalSetup}`}</Descriptions.Item>
+      <Descriptions bordered style={{ marginTop: '32px', backgroundColor: '#ace5a0', borderRadius: '10px' }}>
+        <Descriptions.Item label='Total Monthly' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>{`$${totalMonthly}`}</Descriptions.Item>
+        <Descriptions.Item label='Total SetUp Free' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>{`$${totalSetup}`}</Descriptions.Item>
       </Descriptions>
     </div>
   )

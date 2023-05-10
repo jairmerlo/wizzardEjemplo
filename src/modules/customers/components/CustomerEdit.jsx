@@ -204,28 +204,6 @@ export const CustomerEdit = () => {
                             uuid: values.uuid,
                         })
 
-                        // {
-                        //     "uuid":"IDX001510",
-                        //     "company":"Idxboost",
-                        //     "display_name_as":"Test Stripe Test",
-                        //     "id":"1510",
-                        //     "name":"Test Stripe",
-                        //     "city":"Address 2",
-                        //     "state":"AS",
-                        //     "postal_code":"44444",
-                        //     "last_name":"Test",
-                        //     "email_contact":"7709678678@gmail.com",
-                        //     "phone":"(112) 312-3123",
-                        //     "street1":"Address",
-                        //     "street2":"Address 2",
-                        //     "company_id":"2",
-                        //     "profile_deployment":"[\"30\"]",
-                        //     "profile_marketing":"[\"14\"]",
-                        //     "profile_project_manager":"[\"28\"]",
-                        //     "principal_membership":"Boost02342",
-                        //     "system":"Backoffice"
-                        // }
-
                     }}
                     initialValues={{
                         uuid,
@@ -272,7 +250,7 @@ export const CustomerEdit = () => {
                                 <div
                                     className={form}
                                 >
-                                    <Form.Item label='Customer ID *'>
+                                    <Form.Item label='Customer ID' required>
                                         <FormikInput
                                             name='uuid'
                                             disabled
@@ -285,7 +263,7 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Brokerage *'>
+                                    <Form.Item label='Brokerage' required>
                                         <Select
                                             name='brokerage_name'
                                             placeholder="--Select--"
@@ -298,19 +276,19 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='First Name *'>
+                                    <Form.Item label='First Name' required>
                                         <FormikInput
                                             name='name'
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Last Name *'>
+                                    <Form.Item label='Last Name' required>
                                         <FormikInput
                                             name='last_name'
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Display Name as *'>
+                                    <Form.Item label='Display Name as' required>
                                         <Select
                                             name='display_name_as'
                                             options={optionsName}
@@ -320,7 +298,8 @@ export const CustomerEdit = () => {
                                         />
                                     </Form.Item>
                                     <Form.Item
-                                        label='Email Username *'
+                                        label='Email Username'
+                                        required
                                         validateStatus={errors.email_contact}
                                         help={<ErrorMessage name='email_contact' />}
                                     >
@@ -329,7 +308,7 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
-                                    <Form.Item label='Phone *'>
+                                    <Form.Item label='Phone' required>
                                         <FormikInput
                                             name='phone'
                                             className={item}
@@ -420,7 +399,7 @@ export const CustomerEdit = () => {
                                     Associated Memberships
                                 </Typography.Title>
                                 <Divider dashed />
-                                <Form.Item label='Master Membership *'>
+                                <Form.Item label='Master Membership' required>
                                     <Select
                                         name='principal_membership'
                                         placeholder="--Select--"

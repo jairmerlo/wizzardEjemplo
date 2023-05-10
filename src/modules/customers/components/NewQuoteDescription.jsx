@@ -16,8 +16,8 @@ export const NewQuoteDescription = ({ programs = [] }) => {
       : programs.find(item => item.value === values.program)?.total_amount || 0
   const setupFeeProgram =
     couponToProgram.total_setup ||
-    programs.find(item => item.value === values.program)?.total_setup ||
-    0
+    programs.find(item => item.value === values.program)?.total_setup || 0
+
   useEffect(() => {
     values.coupon &&
       values.program &&
@@ -28,11 +28,11 @@ export const NewQuoteDescription = ({ programs = [] }) => {
   }, [values.coupon, values.program])
   return (
     <>
-      <Descriptions bordered style={{ marginTop: '32px' }}>
-        <Descriptions.Item label='Monthly Program'>
+      <Descriptions bordered style={{ marginTop: '32px', backgroundColor: '#ace5a0', borderRadius: '10px' }}>
+        <Descriptions.Item label='Monthly Program' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>
           {`$${monthlyProgram}`}
         </Descriptions.Item>
-        <Descriptions.Item label='Setup Free Program'>
+        <Descriptions.Item label='Setup Free Program' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>
           {`$${setupFeeProgram}`}
         </Descriptions.Item>
       </Descriptions>

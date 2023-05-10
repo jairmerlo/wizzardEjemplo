@@ -35,6 +35,8 @@ export const BillinHistory = ({
       },
     )
 
+  console.log({ billinHistoryData })
+
   // let {
   //   data: pdfData = [],
   //   isLoading: isLoadingPdf,
@@ -74,7 +76,13 @@ export const BillinHistory = ({
         title: 'INVOICE #',
         dataIndex: 'invoice_number',
       }),
-      render: (text, id) => <a style={{ color: 'blue' }} className='underlineHover' onClick={() => handleViewPdf(id)}>{text}</a>,
+      render: (text, id) => <button style={{ color: 'blue', border: 'none', backgroundColor: 'white' }} className='underlineHover' onClick={() => handleViewPdf(id)}>{text}</button>,
+    },
+    {
+      ...getColumnProps({
+        title: 'Status',
+        dataIndex: 'status',
+      }),
     },
     {
       ...getColumnProps({

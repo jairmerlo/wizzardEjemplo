@@ -57,6 +57,18 @@ const treeDataIDX = [
     key: 'hasCommercialListing',
   },
   {
+    title: 'My Master Plans',
+    key: 'hasMasterPlans',
+  },
+  {
+    title: 'Off Market Inventory',
+    key: 'hasMarketInventory',
+  },
+  {
+    title: 'CRM & Automations',
+    key: 'hasCRMAutomations',
+  },
+  {
     title: 'Dynamic Remarketing',
     key: 'hasDynamicRemarketing',
   },
@@ -72,7 +84,7 @@ const treeHasVacationRentals = [
 
 const treeLeadGeneration = [
   {
-    title: 'Boost Conversion Tool',
+    title: 'Registration Settings',
     key: 'hasRegistrationSettings',
   },
   {
@@ -88,32 +100,6 @@ const treeLeadGeneration = [
     key: 'hasCmsForm',
   },
 ]
-
-// const data = [
-//   'hasCmsTeam',
-//   'hasSpw',
-//   'hasCmsBlog',
-//   'isSearchFilter',
-//   'displayFilters',
-//   'hasBuilding',
-//   'hasCommercialListing',
-//   'hasDynamicRemarketing',
-//   'listingAgent',
-//   'hasRentalsQuickSearch',
-//   'hasRegistrationSettings',
-//   'smartPropertyAlert',
-//   'boostBox',
-//   'hasCmsForm',
-//   'userShowQuizz',
-//   'hasSms',
-//   'leadAutoCreated',
-//   'hasAlerts',
-//   'hasGenerateSchema',
-//   'hasCms',
-//   'marketing',
-//   'hasBasicIdx',
-//   'hasVacationRentals',
-// ]
 
 const treeOthers = [
   {
@@ -258,6 +244,9 @@ export const MembershipEdit = ({
     displayFilters = '0',
     hasBuilding = '0',
     hasCommercialListing = '0',
+    hasMasterPlans = '0',
+    hasMarketInventory = '0',
+    hasCRMAutomations = '0',
     hasDynamicRemarketing = '0',
     listingAgent = '0',
     hasRentalsQuickSearch = '0',
@@ -405,6 +394,9 @@ export const MembershipEdit = ({
               displayFilters: boolean(displayFilters),
               hasBuilding: boolean(hasBuilding),
               hasCommercialListing: boolean(hasCommercialListing),
+              hasMasterPlans: boolean(hasMasterPlans),
+              hasMarketInventory: boolean(hasMarketInventory),
+              hasCRMAutomations: boolean(hasCRMAutomations),
               hasDynamicRemarketing: boolean(hasDynamicRemarketing),
               listingAgent: boolean(listingAgent),
               hasRentalsQuickSearch: boolean(hasRentalsQuickSearch),
@@ -528,13 +520,15 @@ export const MembershipEdit = ({
                     Membership's Properties
                   </Typography.Title>
                   <Divider dashed />
-                  <div className={form} style={{ gap: '16px' }}>
+                  <div className={form} style={{ marginBottom: '10px' }}>
                     <Form.Item label='Project Name'>
                       <FormikInput
                         name='projectName'
                         placeholder='Project Name'
                       />
                     </Form.Item>
+                  </div>
+                  <div className={form} style={{ gap: '16px' }}>
                     <Form.Item label='Cpanel Registration Key'>
                       <FormikInput
                         name='cpanelRegistrationKey'

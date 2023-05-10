@@ -55,6 +55,8 @@ export const billing = createApi({
             brokerages,
             states,
             boards = [{ label: 'MIAMI ASSOCIATION OF REALTORS', value: '1' }],
+            listMembership,
+            listBundle
           ] = await Promise.all([
             fetchWithBQ({ url: '/get-next-quote', method: 'POST' }).then(
               ({ data }) => data,
@@ -79,7 +81,6 @@ export const billing = createApi({
                 has_trial: args?.has_trial,
               }),
             }).then(({ data }) => {
-              console.log({ data })
               return sorterAlphabetically(
                 data.map(
                   ({ name, id, has_idx, code, total_amount, total_setup }) => ({
@@ -155,6 +156,24 @@ export const billing = createApi({
                   ),
                 ),
               ),
+            fetchWithBQ({
+              url: '/list-membership-type',
+              method: 'POST',
+            }).then(({ data }) =>
+              data.map(({ name, id }) => ({
+                label: name,
+                value: id,
+              })),
+            ),
+            fetchWithBQ({
+              url: '/list-bundle-type',
+              method: 'POST',
+            }).then(({ data }) =>
+              data.map(({ name, id }) => ({
+                label: name,
+                value: id,
+              })),
+            ),
           ])
           return {
             data: {
@@ -166,6 +185,8 @@ export const billing = createApi({
               paymentMethods,
               coupons,
               states,
+              listBundle,
+              listMembership
             },
           }
         } catch (error) {
@@ -211,8 +232,9 @@ export const billing = createApi({
     }),
     createQuote: builder.mutation({
       query: ({
+        project_name,
         quote_name,
-        prospect_id,
+        // prospect_id,
         customer_id,
         coupon_id,
         plan_id,
@@ -229,13 +251,15 @@ export const billing = createApi({
         items,
         payment_method,
         has_trial,
+        show_cupon_wizard,
         trial_length,
       }) => ({
         url: '/create-quote',
         method: 'POST',
         body: {
+          project_name,
           quote_name,
-          prospect_id,
+          // prospect_id,
           customer_id,
           coupon_id,
           plan_id,
@@ -252,6 +276,7 @@ export const billing = createApi({
           items,
           payment_method,
           has_trial,
+          show_cupon_wizard,
           trial_length,
         },
       }),
@@ -388,6 +413,7 @@ export const billing = createApi({
               method: 'POST',
               body: {
                 company: args?.company,
+                program_id: args?.program_id,
               },
             })
               .then(({ data }) => data)

@@ -26,17 +26,19 @@ const productsData = [
 
 export const ProductItem = ({ onRemove, productIndex }) => {
   const { values, errors, touched } = useFormikContext()
-  console.log({ errors })
+  // console.log({ errors })
+  // console.log({ values })
   const { data = {} } = useGetProductOptionsQuery(
     {
       company: values.brokerage,
+      program_id: values.program,
     },
     {
       skip: !values.brokerage,
     },
   )
   const { categories = [], groups = [], products = [] } = data
-  console.log({ data })
+  // console.log({ data })
   const formItemSelect = useCss({
     flexGrow: 2,
   })
