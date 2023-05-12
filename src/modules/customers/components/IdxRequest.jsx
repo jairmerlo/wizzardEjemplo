@@ -28,6 +28,9 @@ export const IdxRequest = ({ registration_key }) => {
                     title: 'Real Estate Agent',
                     dataIndex: 'user_type',
                 }),
+                render(text, data) {
+                    return <td>Real Estate Agent(Realtor)</td>
+                },
             },
             {
                 ...getColumnProps({
@@ -104,6 +107,9 @@ export const IdxRequest = ({ registration_key }) => {
                     title: 'Real State Agent',
                     dataIndex: 'user_type',
                 }),
+                render(text, data) {
+                    return <td>Real Estate Broker</td>
+                },
             },
             {
                 ...getColumnProps({

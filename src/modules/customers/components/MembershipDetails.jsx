@@ -396,9 +396,6 @@ export const MembershipDetails = () => {
 
           {!membershipData?.hasTrial && (
             <>
-              <Descriptions.Item label='Periods'>
-                {stringFallback(membershipData?.periods)}
-              </Descriptions.Item>
               <Descriptions.Item label='Last Payment'>
                 {stringFallback(membershipData?.lastPayment)}
               </Descriptions.Item>

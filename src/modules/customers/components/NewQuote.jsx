@@ -18,6 +18,8 @@ import {
   useGetCustomerQuery,
   useGetCustomerV1Query,
   useGetNewQuotesOptionsQuery,
+  useListMembershipTypeQuery,
+  usePlansFilteredQuery,
 } from '../../../app/api/billing'
 import { ErrorHandler, Loader } from '../../../components'
 import {
@@ -89,9 +91,21 @@ export const NewQuote = () => {
   // console.log({ values })
 
   const [hasIdx, setHasIdx] = useState()
-  const [company, setCompany] = useState()
-  const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
+  const [company, setCompany] = useState(0)
+  const [category, setCategory] = useState(0)
+  const [membership, setMembership] = useState(0)
+
+  const { data: programs = [] } = usePlansFilteredQuery({
     company,
+    bundle_type: category,
+    membership_type: membership
+  })
+
+  // console.log({ programs })
+
+  const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
+
+  const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
     has_trial: hasProspect ? 1 : 0,
   })
 
@@ -111,14 +125,14 @@ export const NewQuote = () => {
     quoteId = '',
     prospects = [],
     brokerages = [],
-    programs = [],
+    // programs = [],
     boards = [],
     paymentMethods = [],
     coupons = [],
     states = [],
     project_name = '',
     listBundle = [],
-    listMembership = [],
+    // listMembership = [],
   } = data
 
   const {
@@ -409,39 +423,41 @@ export const NewQuote = () => {
             paymentMethod: [],
             coupon: '',
             send_email: 0,
-            show_cupon_wizard: 0,
+            show_cupon_wizard: 1,
             products: [],
             project_name,
             has_trial: 0,
             trial_length: '',
             bundle_type_id: '',
-            membership_type_id: ''
+            membership_type_id: '',
+            totalAmount: 0,
+            totalSetup: 0
           }}
           enableReinitialize
           onSubmit={values => {
             // console.log({ values })
             let boardName = boards.filter(board => board.value === values.board)
-            let totalAmount =
-              values.coupon && values.program
-                ? 0
-                : programs.find(item => item.value === values.program)?.total_amount || 0
-            totalAmount =
-              parseFloat(totalAmount) +
-              parseFloat(
-                values.products
-                  .map(({ currencies }) => currencies?.unit_amount || 0)
-                  .reduce((a, b) => a + b, 0),
-              )
-            let totalSetup =
-              0 ||
-              programs.find(item => item.value === values.program)?.total_setup || 0
-            totalSetup =
-              parseFloat(totalSetup) +
-              parseFloat(
-                values.products
-                  .map(({ currencies }) => currencies?.setup_fee || 0)
-                  .reduce((a, b) => a + b, 0),
-              )
+            // let totalAmount =
+            //   values.coupon && values.program
+            //     ? 0
+            //     : programs.find(item => item.value === values.program)?.total_amount || 0
+            // totalAmount =
+            //   parseFloat(totalAmount) +
+            //   parseFloat(
+            //     values.products
+            //       .map(({ currencies }) => currencies?.unit_amount || 0)
+            //       .reduce((a, b) => a + b, 0),
+            //   )
+            // let totalSetup =
+            //   0 ||
+            //   programs.find(item => item.value === values.program)?.total_setup || 0
+            // totalSetup =
+            //   parseFloat(totalSetup) +
+            //   parseFloat(
+            //     values.products
+            //       .map(({ currencies }) => currencies?.setup_fee || 0)
+            //       .reduce((a, b) => a + b, 0),
+            //   )
 
             const data = {
               project_name: values.project_name,
@@ -462,8 +478,8 @@ export const NewQuote = () => {
               user_name: fullName,
               show_cupon_wizard: values.show_cupon_wizard,
               discount: 0,
-              total_amount: totalAmount,
-              total_setup: totalSetup,
+              total_amount: values.totalAmount,
+              total_setup: values.totalSetup,
               has_trial: values.has_trial,
               trial_length: values.trial_length,
               bundle_type_id: values.bundle_type_id,
@@ -499,6 +515,7 @@ export const NewQuote = () => {
           }}
           validationSchema={Yup.object({
             quoteId: Yup.string().required('This field is required.'),
+            paymentMethod: Yup.array().min(1, 'This field is required.'),
             bundle_type_id: Yup.string().required('This field is required.'),
             membership_type_id: Yup.string().required('This field is required.'),
             has_trial: Yup.boolean(),
@@ -509,7 +526,7 @@ export const NewQuote = () => {
                 then: Yup.string().required('This field is required.')
               })
             ,
-            project_name: Yup.string().required('This field is required.'),
+            // project_name: Yup.string().required('This field is required.'),
             brokerage: Yup.string().required('This field is required.'),
             program: Yup.string().required('This field is required.'),
             board: Yup.string().when('program', (program, field) => {
@@ -611,12 +628,12 @@ export const NewQuote = () => {
                     onChange={value => {
                       setCompany(value)
                       setFieldValue('program', '')
-                      // console.log('brokerage', value)
                     }}
                   />
                 </Form.Item>
                 <Form.Item
                   label='Category Product Service'
+
                   required
                   validateStatus={errors.bundle_type_id && touched.bundle_type_id && 'error'}
                   help={<ErrorMessage name='bundle_type_id' />}
@@ -627,6 +644,11 @@ export const NewQuote = () => {
                     options={listBundle}
                     {...getSelectSearchProps()}
                     bordered={false}
+                    onChange={value => {
+                      setCategory(value)
+                      setFieldValue('program', '')
+                      setFieldValue('membership_type_id', '')
+                    }}
                   />
                 </Form.Item>
                 <Form.Item
@@ -641,6 +663,10 @@ export const NewQuote = () => {
                     options={listMembership}
                     {...getSelectSearchProps()}
                     bordered={false}
+                    onChange={value => {
+                      setMembership(value)
+                      setFieldValue('program', '')
+                    }}
                   />
                 </Form.Item>
                 <Form.Item
@@ -653,7 +679,7 @@ export const NewQuote = () => {
                     bordered={false}
                     className={item}
                     name='program'
-                    options={values.brokerage ? programs : []}
+                    options={(values.brokerage && values.bundle_type_id && values.membership_type_id) ? programs : []}
                     {...getSelectSearchProps()}
                   />
                 </Form.Item>

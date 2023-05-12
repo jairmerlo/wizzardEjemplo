@@ -1,25 +1,54 @@
 import { Button, Descriptions, Divider, Typography } from 'antd'
 import { ErrorMessage, Field, FieldArray, useFormikContext } from 'formik'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ProductItem } from '.'
 import { useCss } from 'react-use'
+import { applyCouponToProgram } from '../helpers'
 
 export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
-  const { values } = useFormikContext()
-  const totalMonthly =
-    parseFloat(monthlyProgram) +
-    parseFloat(
-      values.products
-        .map(({ currencies }) => currencies?.unit_amount || 0)
-        .reduce((a, b) => a + b, 0),
-    )
-  const totalSetup =
-    parseFloat(setupFeeProgram) +
-    parseFloat(
-      values.products
-        .map(({ currencies }) => currencies?.setup_fee || 0)
-        .reduce((a, b) => a + b, 0),
-    )
+
+  const currencyFormatter = (value) => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      minimumFractionDigits: 2,
+      currency: 'USD'
+    })
+    return formatter.format(value)
+  }
+  const { values, setFieldValue } = useFormikContext()
+  // console.log({ values })
+  const [couponToProgram, setCouponToProgram] = useState({
+    total_amount: 0,
+    total_setup: 0,
+  })
+  let totalMonthly =
+    values.coupon && values.program
+      ? couponToProgram.total_amount +
+      parseFloat(
+        values.products
+          .map(({ currencies }) => currencies?.unit_amount || 0)
+          .reduce((a, b) => a + b, 0),
+      )
+      : parseFloat(monthlyProgram) +
+      parseFloat(
+        values.products
+          .map(({ currencies }) => currencies?.unit_amount || 0)
+          .reduce((a, b) => a + b, 0),
+      )
+  let totalSetup =
+    values.coupon && values.program
+      ? couponToProgram.total_setup +
+      parseFloat(
+        values.products
+          .map(({ currencies }) => currencies?.setup_fee || 0)
+          .reduce((a, b) => a + b, 0),
+      )
+      : parseFloat(setupFeeProgram) +
+      parseFloat(
+        values.products
+          .map(({ currencies }) => currencies?.setup_fee || 0)
+          .reduce((a, b) => a + b, 0),
+      )
 
   const button = useCss({
     // color: 'white',
@@ -32,6 +61,20 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
     borderRadius: '25px',
     minHeight: '50px'
   })
+
+  useEffect(() => {
+    values.coupon &&
+      values.program &&
+      applyCouponToProgram({
+        coupon_name: values.coupon,
+        program_id: values.program,
+      }).then(data => setCouponToProgram(data))
+  }, [values.coupon, values.program])
+
+  useEffect(() => {
+    setFieldValue('totalAmount', totalMonthly)
+    setFieldValue('totalSetup', totalSetup)
+  }, [values.coupon, values.program])
 
   return (
     <div style={{ marginTop: '32px', marginBottom: '32px' }}>
@@ -83,8 +126,10 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
       </div>
 
       <Descriptions bordered style={{ marginTop: '32px', backgroundColor: '#ace5a0', borderRadius: '10px' }}>
-        <Descriptions.Item label='Total Monthly' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>{`$${totalMonthly}`}</Descriptions.Item>
-        <Descriptions.Item label='Total SetUp Free' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>{`$${totalSetup}`}</Descriptions.Item>
+        <Descriptions.Item label='Total Monthly' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>
+          {`${currencyFormatter(totalMonthly)}`}</Descriptions.Item>
+        <Descriptions.Item label='Total SetUp Free' style={{ border: 'none', backgroundColor: 'rgba(0,0,0,0)' }}>
+          {`${currencyFormatter(totalSetup)}`}</Descriptions.Item>
       </Descriptions>
     </div>
   )

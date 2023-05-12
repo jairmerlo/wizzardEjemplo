@@ -30,6 +30,7 @@ export const ProductItem = ({ onRemove, productIndex }) => {
   // console.log({ values })
   const { data = {} } = useGetProductOptionsQuery(
     {
+      company_id: values.brokerage,
       company: values.brokerage,
       program_id: values.program,
     },

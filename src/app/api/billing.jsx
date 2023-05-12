@@ -106,7 +106,7 @@ export const billing = createApi({
                 ),
             ),
             //* el campo coupon, se muestra el name, se envia el id, como coupon_id
-            fetchWithBQ({ url: '/list-coupons', method: 'POST' }).then(
+            fetchWithBQ({ url: '/list-coupons-v2', method: 'POST' }).then(
               ({ data }) =>
                 [{ label: 'None', value: '' }].slice().concat(
                   sorterAlphabetically(
@@ -124,9 +124,9 @@ export const billing = createApi({
               .then(res => res.json())
               .then(data =>
                 sorterAlphabetically(
-                  data.map(({ name, slug }) => ({
+                  data.map(({ name, id }) => ({
                     label: name,
-                    value: slug,
+                    value: id,
                   })),
                   'label',
                 ),
@@ -412,7 +412,7 @@ export const billing = createApi({
               url: '/items-bycompany',
               method: 'POST',
               body: {
-                company: args?.company,
+                company_id: args?.company_id,
                 program_id: args?.program_id,
               },
             })
@@ -616,6 +616,68 @@ export const billing = createApi({
         }
       },
     }),
+    plansFiltered: builder.query({
+      queryFn: async (
+        { company = 0, bundle_type = 0, membership_type = 0, stripe = true, has_trial = false },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/plans-filtered', {
+            method: 'post',
+            body: JSON.stringify({
+              company,
+              bundle_type,
+              membership_type,
+              stripe,
+              has_trial
+            }),
+          }).then(res => res.json())
+          return {
+            data: res.map(({ name, value, total_amount, total_setup, has_idx }) => ({
+              label: name,
+              value,
+              total_amount,
+              total_setup,
+              has_idx
+            })),
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    listMembershipType: builder.query({
+      queryFn: async (
+        { bundle_type_id = 0 },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/list-membership-type', {
+            method: 'post',
+            body: JSON.stringify({
+              bundle_type_id,
+            }),
+          }).then(res => res.json())
+
+          return {
+            data: res.map(({ id, name }) => ({
+              label: name,
+              value: id
+            })),
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -645,6 +707,8 @@ export const {
   useListAgreementByRegkeyQuery,
   useGetHtmlWizardQuery,
   useBillingInformationQuery,
+  usePlansFilteredQuery,
+  useListMembershipTypeQuery,
   useGetCustomerV1Query,
   useGetStatesQuery,
 } = billing

@@ -72,7 +72,7 @@ export const MembershipCreationSuccess = ({
         <Divider style={{ margin: '15px 0' }} />
         <YourProductItem label='Billing Frequency' text={billingFrecuency} />
         <Divider style={{ margin: '15px 0' }} />
-        <YourProductItem label='Initial Term' text={initialTerm} />
+        <YourProductItem label='Purchased Date' text={initialTerm} />
         {(paymentMethod === 'card') && (creditCardFee !== null) && (
           <>
             <Divider style={{ margin: '20px 0' }} />
@@ -122,7 +122,7 @@ export const MembershipCreationSuccess = ({
           // backgroundColor: theme.colors.green,
         }}
       >
-        <YourProductItem label='Total Initial Payment' text={totalInitialPayment} />
+        <YourProductItem label='Payment' text={totalInitialPayment} />
       </div>
       <div
         style={{
@@ -131,7 +131,7 @@ export const MembershipCreationSuccess = ({
         }}
       >
         <YourProductItem
-          label='Monthly Dues (After 30 Days)'
+          label='Next Monthly Billing Amount'
           text={monthlyDues}
         />
       </div>

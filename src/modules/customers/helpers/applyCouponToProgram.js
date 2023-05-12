@@ -8,6 +8,6 @@ export const applyCouponToProgram = async ({ coupon_name, program_id }) => {
       program_id,
     }),
   }).then(res => res.json())
-  console.log({ data })
+  // console.log({ data })
   return data
 }
