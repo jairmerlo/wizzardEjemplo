@@ -387,9 +387,7 @@ export const MembershipDetails = () => {
           {(trial !== '0') && (
             <>
               <Descriptions.Item label='Trial Due'>
-                {stringFallback(
-                  membershipData.trialDue
-                )}
+                {membershipData.trialDue ? stringFallback(membershipData.trialDue) : 'No'}
               </Descriptions.Item>
             </>
           )}
@@ -506,12 +504,12 @@ export const MembershipDetails = () => {
         )}
         {(section === 'IDX Request' || section === 'IDX Request Approved') && (
           <IdxRequest
-            registration_key={membershipData.cpanelRegistrationKey}
+            registration_key={membershipRegKey}
           />
         )}
         {section === 'Product Purchased Timeline' && (
           <ProductPurchasedTimeline
-            registration_key={membershipData.cpanelRegistrationKey}
+            registration_key={membershipRegKey}
           />
         )}
       </div>

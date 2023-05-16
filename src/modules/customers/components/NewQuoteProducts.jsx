@@ -16,12 +16,11 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
     return formatter.format(value)
   }
   const { values, setFieldValue } = useFormikContext()
-  // console.log({ values })
   const [couponToProgram, setCouponToProgram] = useState({
     total_amount: 0,
     total_setup: 0,
   })
-  let totalMonthly =
+  const totalMonthly =
     values.coupon && values.program
       ? couponToProgram.total_amount +
       parseFloat(
@@ -35,7 +34,7 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
           .map(({ currencies }) => currencies?.unit_amount || 0)
           .reduce((a, b) => a + b, 0),
       )
-  let totalSetup =
+  const totalSetup =
     values.coupon && values.program
       ? couponToProgram.total_setup +
       parseFloat(
@@ -72,9 +71,10 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
   }, [values.coupon, values.program])
 
   useEffect(() => {
+    // console.log({ totalMonthly, totalSetup })
     setFieldValue('totalAmount', totalMonthly)
     setFieldValue('totalSetup', totalSetup)
-  }, [values.coupon, values.program])
+  }, [totalMonthly, totalSetup])
 
   return (
     <div style={{ marginTop: '32px', marginBottom: '32px' }}>

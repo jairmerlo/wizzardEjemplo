@@ -3,6 +3,7 @@ import { useGetMembershipQuery } from "../../../app/api/backoffice"
 
 import {
     getColumnProps,
+    getColumnSortProps,
     showTotal,
 } from '../../../helpers'
 import { useLayoutEffect, useState } from "react"
@@ -11,18 +12,19 @@ import { useGetHtmlWizardQuery, useListAgreementByRegkeyQuery } from "../../../a
 import { IDXWebsite } from "./IDXWebsite"
 import { MembershipCreationSuccess } from "."
 
-export const ProductPurchasedTimeline = ({ registration_key }) => {
+export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
 
-    const { data: wizard, isLoading } = useGetHtmlWizardQuery(
+    let { data: wizard = [], isLoading } = useGetHtmlWizardQuery(
         { registration_key },
     )
 
-    console.log({ wizard })
+    // console.log({ wizard })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [modalView, setModalView] = useState(false)
     const [pdfs, setPdfS] = useState([])
     const [views, setViews] = useState([])
+    console.log({ views })
 
     const handleViewPdf = id => {
         // setPdfS([])
@@ -57,7 +59,6 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
 
         setModalView(true)
     }
-    console.log({ views })
 
 
     useLayoutEffect(() => {
@@ -205,6 +206,11 @@ export const ProductPurchasedTimeline = ({ registration_key }) => {
                         totalInitialPayment={views.total_initial_payment}
                         monthlyDues={views.montlhy_dues}
                         addOns={views.add_ons}
+                        couponId={views.coupon_id}
+                        couponName={views.coupon_name}
+                        setupfeeAmount={views.coupon_data?.setupfee_amount}
+                        monthlyfeeAmount={views.coupon_data?.monthlyfee_amount}
+                        couponTypeSetupfee={views.coupon_data?.coupon_type_setupfee}
                     />
                     <IDXWebsite
                         title={views.program_title}

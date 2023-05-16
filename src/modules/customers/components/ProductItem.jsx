@@ -38,7 +38,24 @@ export const ProductItem = ({ onRemove, productIndex }) => {
       skip: !values.brokerage,
     },
   )
-  const { categories = [], groups = [], products = [] } = data
+  let { categories = [], groups = [], products = [] } = data
+
+  let itemsId = values.products.map(({ item_id }) => item_id)
+  products = products.map((product) => {
+    if (itemsId.includes(product.value)) {
+      return {
+        ...product,
+        disabled: true
+      }
+    } else {
+      return {
+        ...product
+      }
+    }
+  })
+
+  // console.log({ prueba })
+
   // console.log({ data })
   const formItemSelect = useCss({
     flexGrow: 2,

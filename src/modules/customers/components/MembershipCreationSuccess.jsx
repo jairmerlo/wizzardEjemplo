@@ -17,7 +17,12 @@ export const MembershipCreationSuccess = ({
   processingMonthlyFee = '',
   totalInitialPayment = '',
   monthlyDues = '',
-  addOns = []
+  addOns = [],
+  couponId,
+  couponName = '',
+  setupfeeAmount = 0,
+  monthlyfeeAmount = 0,
+  couponTypeSetupfee = 'Fixed',
 }) => {
   let method = ''
   if (paymentMethod === 'ach') {
@@ -25,6 +30,8 @@ export const MembershipCreationSuccess = ({
   } else {
     method = 'Card :'
   }
+
+  const sign = couponTypeSetupfee === 'Fixed' ? '$' : '%'
 
   return (
     <IDXCard style={{ width: '400px', height: 'fit-content' }}>
@@ -135,6 +142,27 @@ export const MembershipCreationSuccess = ({
           text={monthlyDues}
         />
       </div>
+      {(couponId !== null) && (
+        <IDXCardContent>
+          <Divider style={{ margin: '5px' }} />
+          <Typography.Title level={4} style={{ textAlign: 'left' }}>
+            Coupon Information
+          </Typography.Title>
+          <Divider dashed style={{ margin: '5px' }} />
+          <YourProductItem
+            label='Coupon Name:'
+            text={couponName}
+          />
+          <YourProductItem
+            label='Setup Fee'
+            text={`${sign} ${setupfeeAmount} ( Discount)`}
+          />
+          <YourProductItem
+            label='Monthly Fee'
+            text={`${sign} ${monthlyfeeAmount} ( Discount)`}
+          />
+        </IDXCardContent>
+      )}
     </IDXCard>
   )
 }

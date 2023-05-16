@@ -486,7 +486,7 @@ export const NewQuote = () => {
               membership_type_id: values.membership_type_id,
               items: values.products
             }
-            // console.log({ data }, "data")
+            console.log({ data }, "data")
             if (hasProspect) {
               createQuote(data)
                 .then(({ data }) => {
