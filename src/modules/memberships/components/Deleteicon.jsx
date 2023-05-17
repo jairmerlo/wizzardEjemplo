@@ -11,7 +11,7 @@ export const Deleteicon = ({ registration_key }) => {
     return (
         <>
             <Tooltip title='Delete'>
-                <a onClick={handleOpen} href>
+                <a onClick={handleOpen}>
                     <div
                         style={{
                             display: 'flex',

@@ -11,7 +11,7 @@ export const SendMembershipicon = ({ registration_key }) => {
     return (
         <>
             <Tooltip title='Send' >
-                <a onClick={handleOpen} href>
+                <a onClick={handleOpen}>
                     <SendOutlined style={{ fontSize: '18px' }} />
                 </a>
             </Tooltip>

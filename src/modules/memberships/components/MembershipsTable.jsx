@@ -62,6 +62,8 @@ export const MembershipsTable = ({ filter = '' }) => {
     page: 1,
     size: 10,
   })
+  const [filtreredMembership, setFiltreredMembership] = useState([])
+  const [filtredValue, setFiltredValue] = useState('')
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const onScroll = useCallback(() => {
@@ -75,11 +77,39 @@ export const MembershipsTable = ({ filter = '' }) => {
     filter,
   })
 
+  const { data: memberships, total } = data
+
+  useEffect(() => {
+    if (memberships?.length > 0) {
+      setFiltreredMembership(memberships)
+      console.log({ memberships })
+    }
+
+
+  }, [memberships?.length])
+
+
+  useEffect(() => {
+    if (filtredValue === '') return;
+    const newMembership = memberships.filter(membership => {
+      return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.memberships_id?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.client_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.project_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.email?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.wordpress_install_url?.toString().toLowerCase().includes(filtredValue.toLowerCase())
+    })
+
+    setFiltreredMembership(newMembership)
+
+  }, [filtredValue])
+
+
+
   console.log(data, "data")
   // const idx = 'IDX00915'
   // console.log(idx.split('0').slice(-1))
 
-  const { data: memberships, total } = data
   useEffect(() => {
     if (memberships?.length !== 0) {
       window.scrollTo({
@@ -1118,37 +1148,65 @@ export const MembershipsTable = ({ filter = '' }) => {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'baseline',
-          gap: '32px',
+          justifyContent: 'space-between'
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships{' '}
-          {filter
-            ? filter
-              .split('_')
-              .map(word => capitalize(word))
-              .join(' ')
-            : 'Active'}{' '}
-          ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
-        </Typography.Title>
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          Monthly:{' '}
-          {typeof totalPrice === 'number' ? (
-            USD(totalPrice, { precision: 2 })
-          ) : (
-            <DollarOutlined spin />
-          )}
-        </Typography.Title>
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          $ Lifetime:{' '}
-          {typeof totalMonthly === 'number' ? (
-            USD(totalMonthly, { precision: 2 })
-          ) : (
-            <DollarOutlined spin />
-          )}
-        </Typography.Title>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'baseline',
+            gap: '32px',
+          }}
+        >
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Memberships{' '}
+            {filter
+              ? filter
+                .split('_')
+                .map(word => capitalize(word))
+                .join(' ')
+              : 'Active'}{' '}
+            ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
+          </Typography.Title>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            Monthly:{' '}
+            {typeof totalPrice === 'number' ? (
+              USD(totalPrice, { precision: 2 })
+            ) : (
+              <DollarOutlined spin />
+            )}
+          </Typography.Title>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            $ Lifetime:{' '}
+            {typeof totalMonthly === 'number' ? (
+              USD(totalMonthly, { precision: 2 })
+            ) : (
+              <DollarOutlined spin />
+            )}
+          </Typography.Title>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Typography.Title level={5}>
+            Seach:
+          </Typography.Title>
+          <Input.Search
+            onSearch={(value) => setFiltredValue(value)}
+            value={filtredValue}
+            onChange={(e) => setFiltredValue(e.target.value)}
+            size='large'
+            style={{
+              width: '300px',
+              marginLeft: '15px'
+            }}
+          />
+
+        </div>
 
         {/* <Link to='/new-quote'>
           <Button
@@ -1182,7 +1240,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         key={tableKey}
         rowKey='id'
         columns={getColumns(filter)}
-        dataSource={memberships}
+        dataSource={filtreredMembership}
         bordered
         loading={isLoading}
         onChange={handleChange}

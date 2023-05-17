@@ -51,7 +51,7 @@ export const Request = ({ registration_key, idRequest, open, onClose }) => {
                 // description: '',
             })
         }, 2000);
-        // editRequest({ id, user_id, board, product_type, username })
+        editRequest({ id, user_id, board, product_type, username, action: value === "send" ? "aprove" : "cancel" })
     }
 
     return (

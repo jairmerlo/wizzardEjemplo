@@ -11,7 +11,7 @@ export const EditMemberhipIcon = ({ registration_key }) => {
   return (
     <>
       <Tooltip title='Edit'>
-        <a onClick={handleOpen} href>
+        <a onClick={handleOpen}>
           <div
             style={{
               display: 'flex',

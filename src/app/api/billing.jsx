@@ -233,7 +233,7 @@ export const billing = createApi({
     createQuote: builder.mutation({
       query: ({
         project_name,
-        quote_name,
+        // quote_name,
         // prospect_id,
         customer_id,
         coupon_id,
@@ -258,7 +258,7 @@ export const billing = createApi({
         method: 'POST',
         body: {
           project_name,
-          quote_name,
+          // quote_name,
           // prospect_id,
           customer_id,
           coupon_id,

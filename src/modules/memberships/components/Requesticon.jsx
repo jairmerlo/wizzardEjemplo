@@ -12,7 +12,7 @@ export const Requesticon = ({ registration_key, id }) => {
     return (
         <>
             <Tooltip title='Request'>
-                <a onClick={handleOpen} href>
+                <a onClick={handleOpen}>
                     <div
                         style={{
                             display: 'flex',

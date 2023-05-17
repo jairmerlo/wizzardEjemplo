@@ -461,7 +461,7 @@ export const NewQuote = () => {
 
             const data = {
               project_name: values.project_name,
-              quote_name: values.quoteId,
+              // quote_name: values.quoteId,
               prospect_id: values.prospect,
               plan_id: values.program,
               user_id: getConfig().userId,
@@ -514,7 +514,7 @@ export const NewQuote = () => {
             }
           }}
           validationSchema={Yup.object({
-            quoteId: Yup.string().required('This field is required.'),
+            // quoteId: Yup.string().required('This field is required.'),
             paymentMethod: Yup.array().min(1, 'This field is required.'),
             bundle_type_id: Yup.string().required('This field is required.'),
             membership_type_id: Yup.string().required('This field is required.'),
@@ -565,14 +565,14 @@ export const NewQuote = () => {
                 >
                   <Input name='project_name' className={item} />
                 </Form.Item>
-                <Form.Item
+                {/* <Form.Item
                   label='Quote ID'
                   required
                   validateStatus={errors.quoteId && touched.quoteId && 'error'}
                   help={<ErrorMessage name='quoteId' />}
                 >
                   <Input name='quoteId' placeholder='Quote ID' disabled className={item} />
-                </Form.Item>
+                </Form.Item> */}
                 {customerId ? (
                   <div>
                     <Typography style={{ paddingBottom: '8px' }}>
