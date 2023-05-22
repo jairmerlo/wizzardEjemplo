@@ -46,20 +46,14 @@ export const LastActionCell = ({
   return (
     <>
       <a onClick={handleOpen}>
-        <Tooltip title={
-          <>
-            {renderTextHighlighter({
-              text,
-              isHighlighted,
-              highlightedText,
-            })}
-          </>
-        }>
-          {renderTextHighlighter({
-            text,
-            isHighlighted,
-            highlightedText,
-          })}
+        <Tooltip title={text}>
+          <p
+            style={{
+              whiteSpace: "pre-wrap"
+            }}
+          >
+            {text}
+          </p>
         </Tooltip>
       </a>
       <Modal

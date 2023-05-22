@@ -82,15 +82,14 @@ export const MembershipsTable = ({ filter = '' }) => {
   useEffect(() => {
     if (memberships?.length > 0) {
       setFiltreredMembership(memberships)
-      console.log({ memberships })
     }
-
-
   }, [memberships?.length])
 
 
   useEffect(() => {
-    if (filtredValue === '') return;
+
+    if (filtredValue === '') return setFiltreredMembership(memberships);
+
     const newMembership = memberships.filter(membership => {
       return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
         membership.memberships_id?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
@@ -697,12 +696,20 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (text, record) => (
         <Tooltip
           title={record.status}
+
         >
-          {record.status}
+          <p
+            style={{
+              whiteSpace: "pre-wrap"
+            }}
+          >
+            {record.status}
+
+          </p>
         </Tooltip>
       ),
       fixed: 'left',
-      width: 220,
+      width: 150,
     },
     {
       title: 'Membership ID',
@@ -1193,7 +1200,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           }}
         >
           <Typography.Title level={5}>
-            Seach:
+            Search:
           </Typography.Title>
           <Input.Search
             onSearch={(value) => setFiltredValue(value)}
