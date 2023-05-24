@@ -101,7 +101,7 @@ export const NewQuote = () => {
     membership_type: membership
   })
 
-  // console.log({ programs })
+  // console.log(programs[0])
 
   const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
 
@@ -690,6 +690,7 @@ export const NewQuote = () => {
                   help={<ErrorMessage name='board' />}
                 >
                   <Select
+                    disabled={(programs?.find(({ value }) => value === values.program)?.has_idx ? false : true)}
                     bordered={false}
                     className={item}
                     name='board'

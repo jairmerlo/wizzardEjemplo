@@ -33,7 +33,7 @@ import currency from 'currency.js'
 import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
-import { useEvent } from 'react-use'
+import { useCss, useEvent } from 'react-use'
 import '../../../icons/style.css'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
@@ -64,6 +64,12 @@ export const MembershipsTable = ({ filter = '' }) => {
   })
   const [filtreredMembership, setFiltreredMembership] = useState([])
   const [filtredValue, setFiltredValue] = useState('')
+
+
+  const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
+
+  // const [filteredColumnSort, setFilteredColumnSort] = useState([])
+  // const [filteredOrder, setFilteredOrder] = useState({ dataIndex: '', order: 'asc' })
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const onScroll = useCallback(() => {
@@ -85,10 +91,72 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }, [memberships?.length])
 
+  // useEffect(() => {
+  //   if (memberships?.length > 0) {
+
+  //     const membershipCopy = [...memberships]
+
+  //     // este codigo es ascendente
+
+  //     membershipCopy.sort((a, b) => {
+
+  //       if (a.status === null || b.status === null) return 1
+
+  //       const nombreA = a.status.toUpperCase();
+  //       const nombreB = b.status.toUpperCase();
+
+  //       let comparacion = 0;
+  //       if (nombreA > nombreB) {
+  //         comparacion = 1;
+  //       } else if (nombreA < nombreB) {
+  //         comparacion = -1;
+  //       }
+  //       return comparacion;
+  //     })
+  //     membershipCopy.map(data => {
+  //       console.log(data.status)
+  //     })
+  //   }
+
+  // }, [memberships?.length])
+
+  useEffect(() => {
+    if (filteredValueColumn.value === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      setFilteredValueColumn(current => ({ ...current, dataIndex: '' }))
+      return
+    }
+
+
+    const newColumnFiltered = memberships.filter(membership => {
+      return membership[filteredValueColumn.dataIndex]?.toString().toLowerCase().includes(filteredValueColumn.value.toLowerCase())
+    })
+    // console.log({ newColumnFiltered })
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFiltreredMembership(newColumnFiltered)
+    setTotalCurrentItems(newColumnFiltered.length)
+
+  }, [filteredValueColumn.value])
 
   useEffect(() => {
 
-    if (filtredValue === '') return setFiltreredMembership(memberships);
+    if (filtredValue === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      return
+    };
 
     const newMembership = memberships.filter(membership => {
       return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
@@ -98,12 +166,19 @@ export const MembershipsTable = ({ filter = '' }) => {
         membership.email?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
         membership.wordpress_install_url?.toString().toLowerCase().includes(filtredValue.toLowerCase())
     })
-
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
     setFiltreredMembership(newMembership)
+    setTotalCurrentItems(newMembership.length)
 
   }, [filtredValue])
 
 
+  const containerSortButtons = useCss({
+    display: 'flex'
+  })
 
   console.log(data, "data")
   // const idx = 'IDX00915'
@@ -301,6 +376,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ellipsis: true,
     }
   }
+
 
   const launch_website_columns = [
     {
@@ -674,6 +750,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'last_action',
       key: 'last_action',
       ...getColumnSearchProps('last_action'),
+      ...getColumnSortProps('last_action'),
       render: (text, record) => (
         <LastActionCell
           text={text}
@@ -683,16 +760,48 @@ export const MembershipsTable = ({ filter = '' }) => {
           membershipId={record.memberships_id}
         />
       ),
-      ...getColumnSortProps('last_action'),
       width: 150,
       fixed: 'left',
     },
     {
-      title: 'Status',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button>A → Z</Button>
+                <Button>Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'status',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Status
+        </Popover>
+      ),
       dataIndex: 'status',
       key: 'status',
-      ...getColumnSearchProps('status'),
-      ...getColumnSortProps('status'),
+      // ...getColumnSearchProps('status'),
+      // ...getColumnSortProps('status'),
       render: (text, record) => (
         <Tooltip
           title={record.status}
@@ -949,7 +1058,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (text, { registration_key, id }) => (
         <Popover
           placement='bottom'
-          title={text}
+          trigger='hover'
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
@@ -1003,7 +1112,7 @@ export const MembershipsTable = ({ filter = '' }) => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a href>
+                  <a >
                     <div
                       style={{
                         display: 'flex',
@@ -1087,7 +1196,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
-          trigger='hover'
+
         >
           <a>
             <div
@@ -1144,6 +1253,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         return columns
     }
   }
+
   return (
     <div
       style={{

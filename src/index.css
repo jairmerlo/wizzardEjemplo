@@ -52,3 +52,11 @@
 .underlineHover:hover {
   text-decoration: underline;
 }
+
+tr:nth-child(even) td {
+  background-color: #edf3fd !important;
+}
+
+tr:nth-child(odd) td {
+  background-color: #ffffff !important;
+}

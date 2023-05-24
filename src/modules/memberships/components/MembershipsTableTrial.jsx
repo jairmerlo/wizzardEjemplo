@@ -335,7 +335,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           showTitle: false,
         },
       }),
-      defaultSortOrder: 'descend',
+      defaultSortOrder: 'ascend',
       width: 120,
       fixed: 'left',
     },

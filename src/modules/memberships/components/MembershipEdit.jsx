@@ -57,18 +57,6 @@ const treeDataIDX = [
     key: 'hasCommercialListing',
   },
   {
-    title: 'My Master Plans',
-    key: 'hasMasterPlans',
-  },
-  {
-    title: 'Off Market Inventory',
-    key: 'hasMarketInventory',
-  },
-  {
-    title: 'CRM & Automations',
-    key: 'hasCRMAutomations',
-  },
-  {
     title: 'Dynamic Remarketing',
     key: 'hasDynamicRemarketing',
   },
@@ -77,8 +65,12 @@ const treeDataIDX = [
 const treeHasVacationRentals = [
   { title: "Listing Agent's CC Email", key: 'listingAgent' },
   {
-    title: 'Has Home Page Vacation Rentals Quick Search',
+    title: 'Has Home Page Vacation Rentals',
     key: 'hasRentalsQuickSearch',
+  },
+  {
+    title: 'Has Quick IDX Vacation Rentals',
+    key: 'hasQuickIDXVacationRentals',
   },
 ]
 
@@ -102,6 +94,18 @@ const treeLeadGeneration = [
 ]
 
 const treeOthers = [
+  {
+    title: 'My Master Plans',
+    key: 'hasMasterPlans',
+  },
+  {
+    title: 'Off Market Inventory',
+    key: 'hasMarketInventory',
+  },
+  {
+    title: 'CRM & Automations',
+    key: 'hasCRMAutomations',
+  },
   {
     title: 'Quiz After Registration',
     key: 'userShowQuizz',
@@ -250,6 +254,7 @@ export const MembershipEdit = ({
     hasDynamicRemarketing = '0',
     listingAgent = '0',
     hasRentalsQuickSearch = '0',
+    hasQuickIDXVacationRentals = '0',
     hasRegistrationSettings = '0',
     smartPropertyAlert = '0',
     boostBox = '0',
@@ -400,6 +405,7 @@ export const MembershipEdit = ({
               hasDynamicRemarketing: boolean(hasDynamicRemarketing),
               listingAgent: boolean(listingAgent),
               hasRentalsQuickSearch: boolean(hasRentalsQuickSearch),
+              hasQuickIDXVacationRentals: boolean(hasQuickIDXVacationRentals),
               hasRegistrationSettings: boolean(hasRegistrationSettings),
               smartPropertyAlert: boolean(smartPropertyAlert),
               boostBox: boolean(boostBox),

@@ -211,6 +211,7 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
                         setupfeeAmount={views.coupon_data?.setupfee_amount}
                         monthlyfeeAmount={views.coupon_data?.monthlyfee_amount}
                         couponTypeSetupfee={views.coupon_data?.coupon_type_setupfee}
+                    // billingCycleDate={views.}
                     />
                     <IDXWebsite
                         title={views.program_title}

@@ -23,6 +23,7 @@ export const MembershipCreationSuccess = ({
   setupfeeAmount = 0,
   monthlyfeeAmount = 0,
   couponTypeSetupfee = 'Fixed',
+  billingCycleDate = '0'
 }) => {
   let method = ''
   if (paymentMethod === 'ach') {
@@ -141,6 +142,11 @@ export const MembershipCreationSuccess = ({
           label='Next Monthly Billing Amount'
           text={monthlyDues}
         />
+        <Divider style={{ margin: '15px 0' }} />
+        <YourProductItem
+          label='Billing Cycle Date'
+          text={billingCycleDate}
+        />
       </div>
       {(couponId !== null) && (
         <IDXCardContent>
@@ -155,11 +161,11 @@ export const MembershipCreationSuccess = ({
           />
           <YourProductItem
             label='Setup Fee'
-            text={`${sign} ${setupfeeAmount} ( Discount)`}
+            text={`${sign === '$' ? '$' : ''} ${setupfeeAmount} ${sign === '%' ? '%' : ''} ( Discount)`}
           />
           <YourProductItem
             label='Monthly Fee'
-            text={`${sign} ${monthlyfeeAmount} ( Discount)`}
+            text={`${sign === '$' ? '$' : ''} ${monthlyfeeAmount} ${sign === '%' ? '%' : ''} ( Discount)`}
           />
         </IDXCardContent>
       )}
