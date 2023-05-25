@@ -67,9 +67,10 @@ export const MembershipsTable = ({ filter = '' }) => {
 
 
   const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
-
-  // const [filteredColumnSort, setFilteredColumnSort] = useState([])
-  // const [filteredOrder, setFilteredOrder] = useState({ dataIndex: '', order: 'asc' })
+  const [isEmpty, setIsEmpty] = useState('')
+  const [isNotEmpty, setIsNotEmpty] = useState('')
+  const [sortAscending, setSortAscending] = useState('')
+  const [sortDescending, setSortDescending] = useState('')
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const onScroll = useCallback(() => {
@@ -91,34 +92,128 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }, [memberships?.length])
 
-  // useEffect(() => {
-  //   if (memberships?.length > 0) {
+  useEffect(() => {
+    if (sortAscending === '') {
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setFiltreredMembership(memberships)
+      setTotalCurrentItems(total)
+      return
+    }
+    const membershipCopy = [...memberships]
+    // este codigo es ascendente
+    membershipCopy.sort((a, b) => {
+      if (a[sortAscending] === null && b[sortAscending] === null) {
+        return 0;
+      }
+      if (a[sortAscending] === null) {
+        return 1;
+      }
+      if (b[sortAscending] === null) {
+        return -1;
+      }
+      const nombreA = a[sortAscending].toUpperCase();
+      const nombreB = b[sortAscending].toUpperCase();
+      if (nombreA > nombreB) {
+        return 1; // cambia a -1 para ordenar de Z-A
+      }
+      if (nombreA < nombreB) {
+        return -1; // cambia a 1 para ordenar de Z-A
+      }
+      return 0;
+    });
 
-  //     const membershipCopy = [...memberships]
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFiltreredMembership(membershipCopy)
+    setTotalCurrentItems(membershipCopy.length)
 
-  //     // este codigo es ascendente
+  }, [sortAscending])
 
-  //     membershipCopy.sort((a, b) => {
+  useEffect(() => {
+    if (sortDescending === '') {
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setFiltreredMembership(memberships)
+      setTotalCurrentItems(total)
+      return
+    }
+    const membershipCopy = [...memberships]
+    // este codigo es ascendente
+    membershipCopy.sort((a, b) => {
+      if (a[sortDescending] === null && b[sortDescending] === null) {
+        return 0;
+      }
+      if (a[sortDescending] === null) {
+        return 1;
+      }
+      if (b[sortDescending] === null) {
+        return -1;
+      }
+      const nombreA = a[sortDescending].toUpperCase();
+      const nombreB = b[sortDescending].toUpperCase();
+      if (nombreA > nombreB) {
+        return -1; // cambia a -1 para ordenar de Z-A
+      }
+      if (nombreA < nombreB) {
+        return 1; // cambia a 1 para ordenar de Z-A
+      }
+      return 0;
+    });
 
-  //       if (a.status === null || b.status === null) return 1
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFiltreredMembership(membershipCopy)
+    setTotalCurrentItems(membershipCopy.length)
 
-  //       const nombreA = a.status.toUpperCase();
-  //       const nombreB = b.status.toUpperCase();
+  }, [sortDescending])
 
-  //       let comparacion = 0;
-  //       if (nombreA > nombreB) {
-  //         comparacion = 1;
-  //       } else if (nombreA < nombreB) {
-  //         comparacion = -1;
-  //       }
-  //       return comparacion;
-  //     })
-  //     membershipCopy.map(data => {
-  //       console.log(data.status)
-  //     })
-  //   }
+  useEffect(() => {
+    if (isEmpty === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      return
+    }
 
-  // }, [memberships?.length])
+    const newEmptyMembership = memberships.filter(membership => {
+      return membership[isEmpty] === null
+    })
+
+    console.log({ newEmptyMembership })
+
+  }, [isEmpty])
+
+  useEffect(() => {
+    if (isNotEmpty === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      return
+    }
+
+    const newNotEmptyMembership = memberships.filter(membership => {
+      return membership[isEmpty] !== null
+    })
+
+    console.log({ newNotEmptyMembership })
+
+  }, [isNotEmpty])
+
 
   useEffect(() => {
     if (filteredValueColumn.value === '') {
@@ -128,26 +223,22 @@ export const MembershipsTable = ({ filter = '' }) => {
         size: 10,
       })
       setTotalCurrentItems(total)
-      setFilteredValueColumn(current => ({ ...current, dataIndex: '' }))
+      // setFilteredValueColumn(current => ({ ...current, dataIndex: '' }))
       return
     }
-
 
     const newColumnFiltered = memberships.filter(membership => {
       return membership[filteredValueColumn.dataIndex]?.toString().toLowerCase().includes(filteredValueColumn.value.toLowerCase())
     })
-    // console.log({ newColumnFiltered })
     setSearchParams({
       page: 1,
       size: 10,
     })
     setFiltreredMembership(newColumnFiltered)
     setTotalCurrentItems(newColumnFiltered.length)
-
   }, [filteredValueColumn.value])
 
   useEffect(() => {
-
     if (filtredValue === '') {
       setFiltreredMembership(memberships)
       setSearchParams({
@@ -157,7 +248,6 @@ export const MembershipsTable = ({ filter = '' }) => {
       setTotalCurrentItems(total)
       return
     };
-
     const newMembership = memberships.filter(membership => {
       return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
         membership.memberships_id?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
@@ -746,11 +836,44 @@ export const MembershipsTable = ({ filter = '' }) => {
 
   const columns = [
     {
-      title: 'Last Action',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('last_action')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('last_action')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'last_action',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Last Action
+        </Popover>
+      ),
       dataIndex: 'last_action',
       key: 'last_action',
-      ...getColumnSearchProps('last_action'),
-      ...getColumnSortProps('last_action'),
+      // ...getColumnSearchProps('last_action'),
+      // ...getColumnSortProps('last_action'),
       render: (text, record) => (
         <LastActionCell
           text={text}
@@ -774,8 +897,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button>A → Z</Button>
-                <Button>Z → A</Button>
+                <Button onClick={() => setSortAscending('status')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('status')} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -786,11 +909,6 @@ export const MembershipsTable = ({ filter = '' }) => {
                   dataIndex: 'status',
                   value: e.target.value
                 })}
-              // size='large'
-              // style={{
-              //   width: '300px',
-              //   marginLeft: '15px'
-              // }}
               />
             </Space>
           }
@@ -821,11 +939,44 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 150,
     },
     {
-      title: 'Membership ID',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('memberships_id')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('memberships_id')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'memberships_id',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Membership ID
+        </Popover>
+      ),
       dataIndex: 'memberships_id',
       key: 'memberships_id',
-      ...getColumnSearchProps('memberships_id'),
-      ...getColumnSortProps('memberships_id'),
+      // ...getColumnSearchProps('memberships_id'),
+      // ...getColumnSortProps('memberships_id'),
       render: (text, record) => (
         <Tooltip
           title={record.memberships_id}
@@ -838,10 +989,39 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: 'Client Name',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('client_name')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('client_name')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'client_name',
+                  value: e.target.value
+                })}
+              />
+            </Space>
+          }
+        >
+          Client Name
+        </Popover>
+      ),
       dataIndex: 'client_name',
       key: 'client_name',
-      ...getColumnSearchProps('client_name'),
+      // ...getColumnSearchProps('client_name'),
+      // ...getColumnSortProps('client_name'),
       render: (clientName, record) => (
         <>
           <a
@@ -866,16 +1046,48 @@ export const MembershipsTable = ({ filter = '' }) => {
           </a>
         </>
       ),
-      ...getColumnSortProps('client_name'),
       width: 160,
       fixed: 'left',
     },
     {
-      title: 'Project Name',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('project_name')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('project_name')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'project_name',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Project Name
+        </Popover>
+      ),
       dataIndex: 'project_name',
       key: 'project_name',
-      ...getColumnSearchProps('project_name'),
-      ...getColumnSortProps('project_name'),
+      // ...getColumnSearchProps('project_name'),
+      // ...getColumnSortProps('project_name'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -888,11 +1100,44 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: 'Email',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('Email')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('Email')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'email',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Email
+        </Popover>
+      ),
       dataIndex: 'email',
       key: 'email',
-      ...getColumnSearchProps('email'),
-      ...getColumnSortProps('email'),
+      // ...getColumnSearchProps('email'),
+      // ...getColumnSortProps('email'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -904,10 +1149,44 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 280,
     },
     {
-      title: 'URL',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('wordpress_install_url')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('wordpress_install_url')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'wordpress_install_url',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          URL
+        </Popover>
+      ),
       dataIndex: 'wordpress_install_url',
       key: 'wordpress_install_url',
-      ...getColumnSearchProps('wordpress_install_url'),
+      // ...getColumnSearchProps('wordpress_install_url'),
+      // ...getColumnSortProps('wordpress_install_url'),
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
           <Tooltip placement='topLeft' title={
@@ -927,15 +1206,47 @@ export const MembershipsTable = ({ filter = '' }) => {
           </Tooltip>
         </a>
       ),
-      ...getColumnSortProps('wordpress_install_url'),
       width: 380,
     },
     {
-      title: 'Product/Service',
+      title: (text, record) => (
+        <Popover
+          placement='bottomLeft'
+          trigger="click"
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortAscending('class_accounting_name')} >A → Z</Button>
+                <Button onClick={() => setSortDescending('class_accounting_name')} >Z → A</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Input
+                value={filteredValueColumn.value}
+                onChange={(e) => setFilteredValueColumn({
+                  dataIndex: 'class_accounting_name',
+                  value: e.target.value
+                })}
+              // size='large'
+              // style={{
+              //   width: '300px',
+              //   marginLeft: '15px'
+              // }}
+              />
+            </Space>
+          }
+        >
+          Product/Service
+        </Popover>
+      ),
       key: 'class_accounting_name',
       dataIndex: 'class_accounting_name',
-      ...getColumnSearchProps('class_accounting_name'),
-      ...getColumnSortProps('class_accounting_name'),
+      // ...getColumnSearchProps('class_accounting_name'),
+      // ...getColumnSortProps('class_accounting_name'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -950,7 +1261,6 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
-      ...getDateColumnSearchProps('created_at'),
       render: (date, record) => (
         <Tooltip
           placement='topLeft'
@@ -958,30 +1268,30 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {moment(record.created_at).format('MMM DD, YYYY')}
         </Tooltip>
-      )
-      ,
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
-            moment(b.created_at, 'MM-DD-YYYY'),
-          )
-        },
-      }),
+      ),
+      // ...getDateColumnSearchProps('created_at'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
+      //       moment(b.created_at, 'MM-DD-YYYY'),
+      //     )
+      //   },
+      // }),
       width: 120,
     },
     {
       title: '$ Price',
       dataIndex: 'price',
       key: 'price',
-      ...getColumnSearchProps('price'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.price).value) -
-            parseFloat(currency(b.price).value)
-          )
-        },
-      }),
+      // ...getColumnSearchProps('price'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return (
+      //       parseFloat(currency(a.price).value) -
+      //       parseFloat(currency(b.price).value)
+      //     )
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -996,7 +1306,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: '$ Setup Fee',
       dataIndex: 'setup_fee',
       key: 'setup_fee',
-      ...getColumnSearchProps('setup_fee'),
+      // ...getColumnSearchProps('setup_fee'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1011,12 +1321,12 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Periods',
       dataIndex: 'periods',
       key: 'periods',
-      ...getColumnSearchProps('periods'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
-        },
-      }),
+      // ...getColumnSearchProps('periods'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1031,15 +1341,15 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: '$ Lifetime',
       dataIndex: 'amount',
       key: 'amount',
-      ...getColumnSearchProps('amount'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.amount).value) -
-            parseFloat(currency(b.amount).value)
-          )
-        },
-      }),
+      // ...getColumnSearchProps('amount'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return (
+      //       parseFloat(currency(a.amount).value) -
+      //       parseFloat(currency(b.amount).value)
+      //     )
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
