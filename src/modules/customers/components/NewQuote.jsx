@@ -101,7 +101,7 @@ export const NewQuote = () => {
     membership_type: membership
   })
 
-  // console.log(programs[0])
+  console.log({ programs })
 
   const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
 
@@ -743,9 +743,10 @@ export const NewQuote = () => {
                 )}
               </Form>
               <NewQuoteDescription programs={programs} />
+              {/* {console.log({ values })} */}
               <div
                 style={{
-                  display: (values.paymentMethod[0] === 'card' && values.paymentMethod[1] === undefined) ? 'block' : 'none'
+                  display: (values.paymentMethod[0] === 'card' && values.paymentMethod[1] === undefined && values.coupon === '' && (programs?.find(({ value }) => value === values.program)?.trial_quote === "1")) ? 'block' : 'none'
                 }}
               >
                 <Typography.Title level={4} style={{ fontWeight: 'bold' }}>Recurly Information</Typography.Title>

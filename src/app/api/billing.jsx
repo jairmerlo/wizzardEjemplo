@@ -635,12 +635,13 @@ export const billing = createApi({
             }),
           }).then(res => res.json())
           return {
-            data: res.map(({ name, value, total_amount, total_setup, has_idx }) => ({
+            data: res.map(({ name, value, total_amount, total_setup, has_idx, trial_quote }) => ({
               label: name,
               value,
               total_amount,
               total_setup,
-              has_idx
+              has_idx,
+              trial_quote
             })),
           }
         } catch (error) {
