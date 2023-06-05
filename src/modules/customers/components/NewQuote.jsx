@@ -435,30 +435,7 @@ export const NewQuote = () => {
           }}
           enableReinitialize
           onSubmit={values => {
-            // console.log({ values })
             let boardName = boards.filter(board => board.value === values.board)
-            // let totalAmount =
-            //   values.coupon && values.program
-            //     ? 0
-            //     : programs.find(item => item.value === values.program)?.total_amount || 0
-            // totalAmount =
-            //   parseFloat(totalAmount) +
-            //   parseFloat(
-            //     values.products
-            //       .map(({ currencies }) => currencies?.unit_amount || 0)
-            //       .reduce((a, b) => a + b, 0),
-            //   )
-            // let totalSetup =
-            //   0 ||
-            //   programs.find(item => item.value === values.program)?.total_setup || 0
-            // totalSetup =
-            //   parseFloat(totalSetup) +
-            //   parseFloat(
-            //     values.products
-            //       .map(({ currencies }) => currencies?.setup_fee || 0)
-            //       .reduce((a, b) => a + b, 0),
-            //   )
-
             const data = {
               project_name: values.project_name,
               // quote_name: values.quoteId,
@@ -556,7 +533,6 @@ export const NewQuote = () => {
         >
           {({ handleSubmit, errors, touched, values, setFieldValue }) => (
             <Fragment>
-              {/* {console.log({ values })} */}
               <Form className={form} layout='vertical' autoComplete='off'>
                 <Form.Item
                   label='Project Name'
@@ -681,6 +657,10 @@ export const NewQuote = () => {
                     name='program'
                     options={(values.brokerage && values.bundle_type_id && values.membership_type_id) ? programs : []}
                     {...getSelectSearchProps()}
+                    onChange={() => {
+                      setFieldValue('has_trial', 0)
+                      setFieldValue('trial_length', '')
+                    }}
                   />
                 </Form.Item>
                 <Form.Item
@@ -713,6 +693,10 @@ export const NewQuote = () => {
                     allowClear
                     name='paymentMethod'
                     options={paymentMethods}
+                    onChange={() => {
+                      setFieldValue('has_trial', 0)
+                      setFieldValue('trial_length', '')
+                    }}
                   />
                 </Form.Item>
                 <Form.Item
@@ -727,6 +711,10 @@ export const NewQuote = () => {
                     name='coupon'
                     options={coupons}
                     {...getSelectSearchProps()}
+                    onChange={() => {
+                      setFieldValue('has_trial', 0)
+                      setFieldValue('trial_length', '')
+                    }}
                   />
                 </Form.Item>
 
@@ -744,7 +732,7 @@ export const NewQuote = () => {
               </Form>
               <NewQuoteDescription programs={programs} />
               {/* {console.log({ values })} */}
-              <div
+              {/* <div
                 style={{
                   display: (values.paymentMethod[0] === 'card' && values.paymentMethod[1] === undefined && values.coupon === '' && (programs?.find(({ value }) => value === values.program)?.trial_quote === "1")) ? 'block' : 'none'
                 }}
@@ -778,7 +766,7 @@ export const NewQuote = () => {
                     <Input name='trial_length' className={item} />
                   </Form.Item>
                 </div>
-              </div>
+              </div> */}
               <div
                 style={{
                   display: 'flex',

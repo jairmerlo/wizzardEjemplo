@@ -105,7 +105,7 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
                     push({
                       plan_id: values.program,
                       item_id: '',
-                      currencies: {
+                      currencies_format: {
                         currency: 'USD',
                         setup_fee: '',
                         unit_amount: '',

@@ -8,9 +8,7 @@ export const IdxRequest = ({ registration_key }) => {
         registration_key
     })
 
-
-    const rows = []
-    rows.push(data[0])
+    const rows = data
     console.log({ rows })
 
     let columns = []

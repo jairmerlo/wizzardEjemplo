@@ -37,17 +37,6 @@ export const BillinHistory = ({
 
   console.log({ billinHistoryData })
 
-  // let {
-  //   data: pdfData = [],
-  //   isLoading: isLoadingPdf,
-  //   refetch: refetchPDF,
-  // } = useGetPdfInvoiceQuery(
-  //   { id: id },
-  //   {
-  //     skip: !id,
-  //   },
-  // )
-
   const [pdfs, setPdfS] = useState([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)

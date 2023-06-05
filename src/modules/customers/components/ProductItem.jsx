@@ -4,6 +4,7 @@ import { Select, Input } from 'formik-antd'
 import { ErrorMessage, useFormikContext } from 'formik'
 import { useCss } from 'react-use'
 import { useGetProductOptionsQuery } from '../../../app/api/billing'
+import { useEffect } from 'react'
 
 const productsData = [
   {
@@ -25,7 +26,7 @@ const productsData = [
 ]
 
 export const ProductItem = ({ onRemove, productIndex }) => {
-  const { values, errors, touched } = useFormikContext()
+  const { values, errors, touched, setFieldValue } = useFormikContext()
   // console.log({ errors })
   // console.log({ values })
   const { data = {} } = useGetProductOptionsQuery(
@@ -38,6 +39,7 @@ export const ProductItem = ({ onRemove, productIndex }) => {
       skip: !values.brokerage,
     },
   )
+  // console.log({ data })
   let { categories = [], groups = [], products = [] } = data
 
   let itemsId = values.products.map(({ item_id }) => item_id)
@@ -54,7 +56,18 @@ export const ProductItem = ({ onRemove, productIndex }) => {
     }
   })
 
-  // console.log({ prueba })
+  // console.log({ products })
+  // console.log({ productIndex })
+  const productFiltered = products.filter(product => product.value === values.products[productIndex]?.item_id)
+  const monthly = productFiltered[0]?.currencies_format.unit_amount || 0
+  const setupFee = productFiltered[0]?.currencies_format.setup_fee || 0
+  console.log({ monthly, setupFee })
+
+  useEffect(() => {
+    setFieldValue(`products[${productIndex}].currencies_format`, { currency: 'USD', setup_fee: setupFee, unit_amount: monthly })
+
+  }, [monthly, setupFee])
+
 
   // console.log({ data })
   const formItemSelect = useCss({
@@ -106,44 +119,48 @@ export const ProductItem = ({ onRemove, productIndex }) => {
             label='Monthly'
             className={formItemInput}
             required
-            validateStatus={
-              errors.products &&
-              errors.products[productIndex]?.currencies?.unit_amount &&
-              touched.products &&
-              touched.products?.[productIndex]?.currencies?.unit_amount &&
-              'error'
-            }
-            help={
-              <ErrorMessage
-                name={`products[${productIndex}].currencies.unit_amount`}
-              />
-            }
+          // validateStatus={
+          //   errors.products &&
+          //   errors.products[productIndex]?.currencies_format?.unit_amount &&
+          //   touched.products &&
+          //   touched.products?.[productIndex]?.currencies_format?.unit_amount &&
+          //   'error'
+          // }
+          // help={
+          //   <ErrorMessage
+          //     name={`products[${productIndex}].currencies_format.unit_amount`}
+          //   />
+          // }
           >
             <Input
-              name={`products[${productIndex}].currencies.unit_amount`}
-              type='number'
+              disabled
+              // name={`products[${productIndex}].currencies_format.unit_amount`}
+              value={monthly}
+            // type='number'
             />
           </Form.Item>
           <Form.Item
             label='SetUp Fee'
             className={formItemInput}
             required
-            validateStatus={
-              errors.products &&
-              errors.products[productIndex]?.currencies?.setup_fee &&
-              touched.products &&
-              touched.products?.[productIndex]?.currencies?.setup_fee &&
-              'error'
-            }
-            help={
-              <ErrorMessage
-                name={`products[${productIndex}].currencies.setup_fee`}
-              />
-            }
+          // validateStatus={
+          //   errors.products &&
+          //   errors.products[productIndex]?.currencies_format?.setup_fee &&
+          //   touched.products &&
+          //   touched.products?.[productIndex]?.currencies_format?.setup_fee &&
+          //   'error'
+          // }
+          // help={
+          //   <ErrorMessage
+          //     name={`products[${productIndex}].currencies_format.setup_fee`}
+          //   />
+          // }
           >
             <Input
-              name={`products[${productIndex}].currencies.setup_fee`}
-              type='number'
+              disabled
+              // name={`products[${productIndex}].currencies_format.setup_fee`}
+              value={setupFee}
+            // type='number'
             />
           </Form.Item>
           <Form.Item

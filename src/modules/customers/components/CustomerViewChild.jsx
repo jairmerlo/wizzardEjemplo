@@ -104,7 +104,7 @@ export const CustomerViewChild = () => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Segmented
-              options={['Membership', 'Billing', 'Quotes']}
+              options={['Membership', 'Billing History', 'Quotes']}
               style={{
                 alignSelf: 'flex-start',
               }}
@@ -118,7 +118,7 @@ export const CustomerViewChild = () => {
           {table === 'Membership' && (
             <MembershipTable memberships={memberships} />
           )}
-          {table === 'Billing' && <BillingHistoryTable dataSource={invoices} />}
+          {table === 'Billing History' && <BillingHistoryTable dataSource={invoices} customerId={customerId} />}
           {table === 'Quotes' && <QuotesTable dataSource={quotes} />}
         </div>
       )}

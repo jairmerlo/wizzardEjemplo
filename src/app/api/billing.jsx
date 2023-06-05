@@ -42,7 +42,9 @@ export const billing = createApi({
     getCustomerV1: builder.query({
       query: uuid => `/get-customer/${uuid}`,
     }),
-
+    getCustomerV2Billing: builder.query({
+      query: customerId => `/get-customer-v2-billing/${customerId}`,
+    }),
     getNewQuotesOptions: builder.query({
       async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
         try {
@@ -418,9 +420,10 @@ export const billing = createApi({
             })
               .then(({ data }) => data)
               .then(data =>
-                data.map(({ name, item_id }) => ({
+                data.map(({ name, item_id, currencies_format }) => ({
                   label: name,
                   value: item_id,
+                  currencies_format: currencies_format
                 })),
               ),
             fetchWithBQ({
@@ -711,5 +714,6 @@ export const {
   usePlansFilteredQuery,
   useListMembershipTypeQuery,
   useGetCustomerV1Query,
+  useGetCustomerV2BillingQuery,
   useGetStatesQuery,
 } = billing

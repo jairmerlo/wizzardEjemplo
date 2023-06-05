@@ -1,4 +1,4 @@
-import { Table } from 'antd'
+import { Modal, Skeleton, Table } from 'antd'
 import currency from 'currency.js'
 import { API } from '../../../api'
 import {
@@ -9,14 +9,41 @@ import {
   showTotal,
 } from '../../../helpers'
 import { useColumnSearch } from '../../../hooks'
+import { useGetCustomerV2BillingQuery } from '../../../app/api/billing'
+import { useEffect, useState } from 'react'
+import { FilePdfOutlined } from '@ant-design/icons'
 
-export const BillingHistoryTable = ({ dataSource }) => {
-  const handleOpenPDF = async id => {
-    const { url = 'about:blank' } = await fetch(
-      API._BILLING_HOST + '/get-invoice-pdf/' + id,
-    ).then(res => res.json())
+export const BillingHistoryTable = ({ dataSource, customerId }) => {
 
-    window.open(url, '_blank')
+  // console.log({ customerId })
+  const { data = [], isLoading } = useGetCustomerV2BillingQuery(customerId)
+
+  console.log({ data })
+
+  const [pdfs, setPdfS] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleOk = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleViewPdf = async id => {
+    setPdfS([])
+    setIsModalOpen(true)
+    console.log({ id })
+    const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
+      method: 'get',
+    }).then(res => res.json())
+    setPdfS(res)
+    // const { url = 'about:blank' } = await fetch(
+    //   API._BILLING_HOST + '/get-invoice-pdf/' + id,
+    // ).then(res => res.json())
+
+    // window.open(url, '_blank')
   }
   const { handleReset, handleSearch, searchInput, searchedColumn, searchText } =
     useColumnSearch({
@@ -82,7 +109,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
         onSearch: handleSearch,
       }),
       render: (text, record) => (
-        <a href onClick={() => handleOpenPDF(record.id)}>{text}</a>
+        <button style={{ color: 'blue', border: 'none', backgroundColor: 'white' }} className='underlineHover' onClick={() => handleViewPdf(record.id)}>{text}</button>
       ),
       ...getColumnSortProps({
         dataIndex: 'name',
@@ -105,7 +132,7 @@ export const BillingHistoryTable = ({ dataSource }) => {
     },
     {
       ...getColumnProps({
-        title: '$ Lifetime',
+        title: 'AMOUNT',
         dataIndex: 'total',
       }),
       ...getColumnSearchProps({
@@ -125,15 +152,50 @@ export const BillingHistoryTable = ({ dataSource }) => {
     },
   ]
   return (
-    <Table
-      rowKey='id'
-      size='small'
-      columns={columns}
-      dataSource={dataSource}
-      bordered
-      pagination={{
-        showTotal,
-      }}
-    />
+    <>
+      <Table
+        rowKey='id'
+        size='small'
+        columns={columns}
+        dataSource={data}
+        bordered
+        pagination={{
+          showTotal,
+        }}
+        loading={isLoading}
+      />
+      <Modal
+        title='Payment Billing Information'
+        width='50%'
+        style={{ height: '20px' }}
+        open={isModalOpen}
+        footer={[]}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {pdfs.url && (
+          <object
+            data={pdfs.url}
+            type='application/pdf'
+            style={{ width: '100%', height: '700px' }}
+          >
+            <iframe frameborder='0' width={'100%'} title='pdf'></iframe>
+          </object>
+        )}
+
+        {!pdfs.url && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Skeleton.Node active={true} size={'large'} block={true}>
+              <FilePdfOutlined
+                style={{
+                  fontSize: 60,
+                  color: '#bfbfbf',
+                }}
+              />
+            </Skeleton.Node>
+          </div>
+        )}
+      </Modal>
+    </>
   )
 }
