@@ -68,8 +68,9 @@ export const MembershipsTable = ({ filter = '' }) => {
 
 
   // const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
-  const [sortAscending, setSortAscending] = useState('')
-  const [sortDescending, setSortDescending] = useState('')
+  // const [sortAscending, setSortAscending] = useState('')
+  // const [sortDescending, setSortDescending] = useState('')
+  const [sortColumn, setSortColumn] = useState({ sort: '', dataIndex: '' })
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const onScroll = useCallback(() => {
@@ -93,8 +94,9 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }, [memberships?.length])
 
+
   useEffect(() => {
-    if (sortAscending === '') {
+    if (sortColumn.dataIndex === '') {
       setSearchParams({
         page: 1,
         size: 10,
@@ -104,69 +106,48 @@ export const MembershipsTable = ({ filter = '' }) => {
       return
     }
     const membershipCopy = [...memberships]
-    // este codigo es ascendente
-    membershipCopy.sort((a, b) => {
-      if (a[sortAscending] === null && b[sortAscending] === null) {
+
+    if (sortColumn.sort === 'asc') {
+      membershipCopy.sort((a, b) => {
+        if (a[sortColumn.dataIndex] === null && b[sortColumn.dataIndex] === null) {
+          return 0;
+        }
+        if (a[sortColumn.dataIndex] === null) {
+          return 1;
+        }
+        if (b[sortColumn.dataIndex] === null) {
+          return -1;
+        }
+
+        if (a[sortColumn.dataIndex] > b[sortColumn.dataIndex]) {
+          return 1; // cambia a -1 para ordenar de Z-A
+        }
+        if (a[sortColumn.dataIndex] < b[sortColumn.dataIndex]) {
+          return -1; // cambia a 1 para ordenar de Z-A
+        }
         return 0;
-      }
-      if (a[sortAscending] === null) {
-        return 1;
-      }
-      if (b[sortAscending] === null) {
-        return -1;
-      }
-      const nombreA = a[sortAscending].toUpperCase();
-      const nombreB = b[sortAscending].toUpperCase();
-      if (nombreA > nombreB) {
-        return 1; // cambia a -1 para ordenar de Z-A
-      }
-      if (nombreA < nombreB) {
-        return -1; // cambia a 1 para ordenar de Z-A
-      }
-      return 0;
-    });
+      });
+    } else if (sortColumn.sort === 'desc') {
+      membershipCopy.sort((a, b) => {
+        if (a[sortColumn.dataIndex] === null && b[sortColumn.dataIndex] === null) {
+          return 0;
+        }
+        if (a[sortColumn.dataIndex] === null) {
+          return 1;
+        }
+        if (b[sortColumn.dataIndex] === null) {
+          return -1;
+        }
 
-    setSearchParams({
-      page: 1,
-      size: 10,
-    })
-    setFiltreredMembership(membershipCopy)
-    setTotalCurrentItems(membershipCopy.length)
-
-  }, [sortAscending])
-
-  useEffect(() => {
-    if (sortDescending === '') {
-      setSearchParams({
-        page: 1,
-        size: 10,
-      })
-      setFiltreredMembership(memberships)
-      setTotalCurrentItems(total)
-      return
+        if (a[sortColumn.dataIndex] > b[sortColumn.dataIndex]) {
+          return -1; // cambia a -1 para ordenar de Z-A
+        }
+        if (a[sortColumn.dataIndex] < b[sortColumn.dataIndex]) {
+          return 1; // cambia a 1 para ordenar de Z-A
+        }
+        return 0;
+      });
     }
-    const membershipCopy = [...memberships]
-    // este codigo es ascendente
-    membershipCopy.sort((a, b) => {
-      if (a[sortDescending] === null && b[sortDescending] === null) {
-        return 0;
-      }
-      if (a[sortDescending] === null) {
-        return 1;
-      }
-      if (b[sortDescending] === null) {
-        return -1;
-      }
-      const nombreA = a[sortDescending].toUpperCase();
-      const nombreB = b[sortDescending].toUpperCase();
-      if (nombreA > nombreB) {
-        return -1; // cambia a -1 para ordenar de Z-A
-      }
-      if (nombreA < nombreB) {
-        return 1; // cambia a 1 para ordenar de Z-A
-      }
-      return 0;
-    });
 
     setSearchParams({
       page: 1,
@@ -175,7 +156,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     setFiltreredMembership(membershipCopy)
     setTotalCurrentItems(membershipCopy.length)
 
-  }, [sortDescending])
+  }, [sortColumn])
 
   useEffect(() => {
     if (filteredRadioGroup.dataIndex === '') {
@@ -832,8 +813,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('last_action')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('last_action')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'last_action' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'last_action' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -903,8 +884,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('status')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('status')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'status' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'status' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -980,8 +961,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('memberships_id')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('memberships_id')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'memberships_id' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'memberships_id' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -1050,8 +1031,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('client_name')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('client_name')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'client_name' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'client_name' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -1136,8 +1117,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('project_name')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('project_name')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'project_name' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'project_name' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -1355,8 +1336,8 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('class_accounting_name')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('class_accounting_name')} >Z → A</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'class_accounting_name' })} >A → Z</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'class_accounting_name' })} >Z → A</Button>
               </div>
               <Typography.Title level={5}>
                 Filter
@@ -1440,32 +1421,67 @@ export const MembershipsTable = ({ filter = '' }) => {
         <Popover
           placement='bottomLeft'
           trigger="click"
-        // content={
-        //   <Space size='large' direction='vertical'>
-        //     <Typography.Title level={5}>
-        //       Sort
-        //     </Typography.Title>
-        //     <div className={containerSortButtons}>
-        //       <Button onClick={() => setSortAscending('price')} >0 → 9</Button>
-        //       <Button onClick={() => setSortDescending('price')} >9 → 0</Button>
-        //     </div>
-        //   </Space>
-        // }
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'price' })} >0 → 9</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'price' })} >9 → 0</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Radio.Group
+                onChange={(e) => {
+                  setFilteredRadioGroup({
+                    value: e.target.value,
+                    dataIndex: 'price',
+                    key: ''
+                  })
+                }}
+                value={filteredRadioGroup.value}
+              >
+                <Space direction='vertical'>
+                  <Radio value={1}>is not empty</Radio>
+                  <Radio value={2}>
+                    contains
+                    {filteredRadioGroup.value === 2 ? (
+                      <Input
+                        style={{
+                          width: 100,
+                          marginLeft: 10,
+                        }}
+                        value={filteredRadioGroup.key}
+                        onChange={(e) => setFilteredRadioGroup({
+                          dataIndex: 'price',
+                          key: e.target.value,
+                          value: 2
+                        })}
+                      />
+                    ) : null}
+                  </Radio>
+                  <Radio value={3}>is empty</Radio>
+                </Space>
+              </Radio.Group>
+            </Space>
+          }
         >
           $ Price
         </Popover>
       ),
       dataIndex: 'price',
       key: 'price',
-      ...getColumnSearchProps('price'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.price).value) -
-            parseFloat(currency(b.price).value)
-          )
-        },
-      }),
+      // ...getColumnSearchProps('price'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return (
+      //       parseFloat(currency(a.price).value) -
+      //       parseFloat(currency(b.price).value)
+      //     )
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1487,9 +1503,44 @@ export const MembershipsTable = ({ filter = '' }) => {
                 Sort
               </Typography.Title>
               <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('setup_fee')} >0 → 9</Button>
-                <Button onClick={() => setSortDescending('setup_fee')} >9 → 0</Button>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'setup_fee' })} >0 → 9</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'setup_fee' })} >9 → 0</Button>
               </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Radio.Group
+                onChange={(e) => {
+                  setFilteredRadioGroup({
+                    value: e.target.value,
+                    dataIndex: 'setup_fee',
+                    key: ''
+                  })
+                }}
+                value={filteredRadioGroup.value}
+              >
+                <Space direction='vertical'>
+                  <Radio value={1}>is not empty</Radio>
+                  <Radio value={2}>
+                    contains
+                    {filteredRadioGroup.value === 2 ? (
+                      <Input
+                        style={{
+                          width: 100,
+                          marginLeft: 10,
+                        }}
+                        value={filteredRadioGroup.key}
+                        onChange={(e) => setFilteredRadioGroup({
+                          dataIndex: 'setup_fee',
+                          key: e.target.value,
+                          value: 2
+                        })}
+                      />
+                    ) : null}
+                  </Radio>
+                  <Radio value={3}>is empty</Radio>
+                </Space>
+              </Radio.Group>
             </Space>
           }
         >
@@ -1514,29 +1565,64 @@ export const MembershipsTable = ({ filter = '' }) => {
         <Popover
           placement='bottomLeft'
           trigger="click"
-        // content={
-        //   <Space size='large' direction='vertical'>
-        //     <Typography.Title level={5}>
-        //       Sort
-        //     </Typography.Title>
-        //     <div className={containerSortButtons}>
-        //       <Button onClick={() => setSortAscending('periods')} >0 → 9</Button>
-        //       <Button onClick={() => setSortDescending('periods')} >9 → 0</Button>
-        //     </div>
-        //   </Space>
-        // }
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'periods' })} >0 → 9</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'periods' })} >9 → 0</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Radio.Group
+                onChange={(e) => {
+                  setFilteredRadioGroup({
+                    value: e.target.value,
+                    dataIndex: 'periods',
+                    key: ''
+                  })
+                }}
+                value={filteredRadioGroup.value}
+              >
+                <Space direction='vertical'>
+                  <Radio value={1}>is not empty</Radio>
+                  <Radio value={2}>
+                    contains
+                    {filteredRadioGroup.value === 2 ? (
+                      <Input
+                        style={{
+                          width: 100,
+                          marginLeft: 10,
+                        }}
+                        value={filteredRadioGroup.key}
+                        onChange={(e) => setFilteredRadioGroup({
+                          dataIndex: 'periods',
+                          key: e.target.value,
+                          value: 2
+                        })}
+                      />
+                    ) : null}
+                  </Radio>
+                  <Radio value={3}>is empty</Radio>
+                </Space>
+              </Radio.Group>
+            </Space>
+          }
         >
           Periods
         </Popover>
       ),
       dataIndex: 'periods',
       key: 'periods',
-      ...getColumnSearchProps('periods'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
-        },
-      }),
+      // ...getColumnSearchProps('periods'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1552,32 +1638,67 @@ export const MembershipsTable = ({ filter = '' }) => {
         <Popover
           placement='bottomLeft'
           trigger="click"
-        // content={
-        //   <Space size='large' direction='vertical'>
-        //     <Typography.Title level={5}>
-        //       Sort
-        //     </Typography.Title>
-        //     <div className={containerSortButtons}>
-        //       <Button onClick={() => setSortAscending('amount')} >0 → 9</Button>
-        //       <Button onClick={() => setSortDescending('amount')} >9 → 0</Button>
-        //     </div>
-        //   </Space>
-        // }
+          content={
+            <Space size='large' direction='vertical'>
+              <Typography.Title level={5}>
+                Sort
+              </Typography.Title>
+              <div className={containerSortButtons}>
+                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'amount' })} >0 → 9</Button>
+                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'amount' })} >9 → 0</Button>
+              </div>
+              <Typography.Title level={5}>
+                Filter
+              </Typography.Title>
+              <Radio.Group
+                onChange={(e) => {
+                  setFilteredRadioGroup({
+                    value: e.target.value,
+                    dataIndex: 'amount',
+                    key: ''
+                  })
+                }}
+                value={filteredRadioGroup.value}
+              >
+                <Space direction='vertical'>
+                  <Radio value={1}>is not empty</Radio>
+                  <Radio value={2}>
+                    contains
+                    {filteredRadioGroup.value === 2 ? (
+                      <Input
+                        style={{
+                          width: 100,
+                          marginLeft: 10,
+                        }}
+                        value={filteredRadioGroup.key}
+                        onChange={(e) => setFilteredRadioGroup({
+                          dataIndex: 'amount',
+                          key: e.target.value,
+                          value: 2
+                        })}
+                      />
+                    ) : null}
+                  </Radio>
+                  <Radio value={3}>is empty</Radio>
+                </Space>
+              </Radio.Group>
+            </Space>
+          }
         >
           $ Lifetime
         </Popover>
       ),
       dataIndex: 'amount',
       key: 'amount',
-      ...getColumnSearchProps('amount'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.amount).value) -
-            parseFloat(currency(b.amount).value)
-          )
-        },
-      }),
+      // ...getColumnSearchProps('amount'),
+      // ...getCustomColumnSortProps({
+      //   sorter: (a, b) => {
+      //     return (
+      //       parseFloat(currency(a.amount).value) -
+      //       parseFloat(currency(b.amount).value)
+      //     )
+      //   },
+      // }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'

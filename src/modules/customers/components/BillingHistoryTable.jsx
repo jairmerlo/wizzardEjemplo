@@ -116,6 +116,23 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
       }),
     },
     {
+      ...getColumnProps({
+        title: 'Status',
+        dataIndex: 'status',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'status',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      ...getColumnSortProps({
+        dataIndex: 'status',
+      }),
+    },
+    {
       ...getColumnProps({ title: 'Date', dataIndex: 'created_at' }),
       ...getColumnSearchProps({
         dataIndex: 'created_at',
