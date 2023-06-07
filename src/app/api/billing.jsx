@@ -36,6 +36,23 @@ export const billing = createApi({
         },
       }),
     }),
+    sendQuote: builder.mutation({
+      query: ({ quote_id, user_id, user_name }) => ({
+        url: `/send-quote`,
+        method: 'POST',
+        body: {
+          quote_id,
+          user_id,
+          user_name
+        }
+      }),
+    }),
+    deleteQuote: builder.mutation({
+      query: ({ quoteId }) => ({
+        url: `/quote-delete/${quoteId}`,
+        method: 'DELETE',
+      }),
+    }),
     getCustomer: builder.query({
       query: id => `/get-customer-v2/${id}`,
     }),
@@ -230,6 +247,13 @@ export const billing = createApi({
           user_id,
           user_name,
         },
+      }),
+    }),
+    modifyQuote: builder.mutation({
+      query: ({ id, project_name, prospect_id, customer_id, coupon_id, plan_id, board_id, board_name, user_id, user_name, expiration_date, is_valid, status, send_email, bundle_type_id, payment_method, total_amount, total_setup, membership_type_id, items, show_cupon_wizard, has_trial, trial_length }) => ({
+        url: '/modify-quote',
+        method: 'PUT',
+        body: { id, project_name, prospect_id, customer_id, coupon_id, plan_id, board_id, board_name, user_id, user_name, expiration_date, is_valid, status, send_email, bundle_type_id, payment_method, total_amount, total_setup, membership_type_id, items, show_cupon_wizard, has_trial, trial_length },
       }),
     }),
     createQuote: builder.mutation({
@@ -696,6 +720,7 @@ export const {
   useGetAllCustomersQuery,
   useGetNewQuotesOptionsQuery,
   useCreateProspectMutation,
+  useModifyQuoteMutation,
   useCreateQuoteMutation,
   useGetAuthorizationFormsQuery,
   useSendAuthorizationFormMutation,
@@ -715,5 +740,7 @@ export const {
   useListMembershipTypeQuery,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
+  useSendQuoteMutation,
+  useDeleteQuoteMutation,
   useGetStatesQuery,
 } = billing

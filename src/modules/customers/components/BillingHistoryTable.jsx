@@ -145,7 +145,7 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
       ...getColumnSortProps({
         dataIndex: 'created_at',
       }),
-      render: text => date(text),
+      // render: text => date(text),
     },
     {
       ...getColumnProps({

@@ -54,7 +54,8 @@ export const CustomerEdit = () => {
 
     const { data: profiles = {} } = useGetProfilesToCustomersQuery()
 
-    const { data: states } = useGetStatesQuery()
+    const { data: states = [] } = useGetStatesQuery()
+    // console.log({ states })
     const optionsStates = states?.map(state => {
         return {
             value: state.name,
@@ -85,26 +86,31 @@ export const CustomerEdit = () => {
         memberships = []
     } = data
 
-    profile_deployment_v2 = profile_deployment_v2.map(profile => {
-        return {
-            value: profile.id,
-            label: profile.username
-        }
-    })
+    // if (profile_deployment_v2?.length !== 0) {
+    //     profile_deployment_v2 = profile_deployment_v2?.map(profile => {
+    //         return {
+    //             value: profile.id,
+    //             label: profile.username
+    //         }
+    //     })
+    // }
+    // if (profile_marketing_v2?.length !== 0) {
+    //     profile_marketing_v2 = profile_marketing_v2?.map(profile => {
+    //         return {
+    //             value: profile.id,
+    //             label: profile.username
+    //         }
+    //     })
+    // }
 
-    profile_marketing_v2 = profile_marketing_v2.map(profile => {
-        return {
-            value: profile.id,
-            label: profile.username
-        }
-    })
-
-    profile_project_manager_v2 = profile_project_manager_v2.map(profile => {
-        return {
-            value: profile.id,
-            label: profile.username
-        }
-    })
+    // if (profile_project_manager_v2?.length !== 0) {
+    //     profile_project_manager_v2 = profile_project_manager_v2?.map(profile => {
+    //         return {
+    //             value: profile.id,
+    //             label: profile.username
+    //         }
+    //     })
+    // }
 
     let optDeployment = []
     let optMarketing = []
@@ -119,7 +125,9 @@ export const CustomerEdit = () => {
         optManager = [...profiles.profiles_project_manager]
     }
 
-    const optionsMasterMembership = memberships.map(membership => {
+    // console.log({ memberships })
+
+    const optionsMasterMembership = memberships?.map(membership => {
         return {
             value: membership.membership_id,
             label: membership.membership_id
@@ -164,25 +172,24 @@ export const CustomerEdit = () => {
                 <Formik
                     enableReinitialize
                     onSubmit={async values => {
-                        let profileDeployment = values.profile_deployment_v2.map(profile => {
+                        let profileDeployment = (values.profile_deployment_v2 === null) ? [] : values.profile_deployment_v2.map(profile => {
                             if (isNaN(profile)) {
                                 return profile.value
                             } return profile
                         })
 
-                        let profileMarketin = values.profile_marketing_v2.map(profile => {
+                        let profileMarketin = (values.profile_marketing_v2 === null) ? [] : values.profile_marketing_v2.map(profile => {
                             if (isNaN(profile)) {
                                 return profile.value
                             } return profile
                         })
 
-                        let profileProject = values.profile_project_manager_v2.map(profile => {
+                        let profileProject = (values.profile_project_manager_v2 === null) ? [] : values.profile_project_manager_v2.map(profile => {
                             if (isNaN(profile)) {
                                 return profile.value
                             } return profile
                         })
 
-                        // navigate(-1)
                         const res = editCustomer({
                             city: values.city,
                             company: values.company_name,
@@ -203,7 +210,7 @@ export const CustomerEdit = () => {
                             street2: values.street2,
                             uuid: values.uuid,
                         })
-
+                        navigate(-1)
                     }}
                     initialValues={{
                         uuid,

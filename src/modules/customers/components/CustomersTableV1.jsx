@@ -63,14 +63,14 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
 }
 
 export const CustomersTableV1 = ({ filter }) => {
-  console.log({ API })
+  // console.log({ API })
   let [searchParams, setSearchParams] = useSearchParams({
     page: 1,
     size: 10,
   })
-  console.log({
-    page: searchParams.get('page'),
-  })
+  // console.log({
+  //   page: searchParams.get('page'),
+  // })
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const [totalCurrentItems, setTotalCurrentItems] = useState()
@@ -86,7 +86,7 @@ export const CustomersTableV1 = ({ filter }) => {
   const totalMonthly = items
     ?.map(item => currency(item.monthly).value ?? 0)
     .reduce((a, b) => a + b, 0)
-  console.log({ totalLifetime, totalMonthly, items })
+  // console.log({ totalLifetime, totalMonthly, items })
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -150,7 +150,7 @@ export const CustomersTableV1 = ({ filter }) => {
         <DatePicker
           value={selectedKeys[0]}
           onChange={e => {
-            console.log(e.format('DD-MM-YYYY'))
+            // console.log(e.format('DD-MM-YYYY'))
             setSelectedKeys([e])
           }}
           allowClear={true}
@@ -441,7 +441,7 @@ export const CustomersTableV1 = ({ filter }) => {
                 </Link>
               </Tooltip>
               <Tooltip title='Delete'>
-                <a href>
+                <a >
                   <div
                     style={{
                       display: 'flex',
@@ -460,7 +460,7 @@ export const CustomersTableV1 = ({ filter }) => {
             </Space>
           }
         >
-          <a href>
+          <a >
             <div
               style={{
                 display: 'flex',

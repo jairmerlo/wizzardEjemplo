@@ -10,7 +10,7 @@ import { BillingHistoryTable, MembershipTable, QuotesTable } from '.'
 export const CustomerViewChild = () => {
   const { customerId } = useParams()
   const [table, setTable] = useState('Membership')
-  const { data = {}, isLoading } = useGetCustomerQuery(customerId)
+  const { data = {}, isLoading, refetch } = useGetCustomerQuery(customerId)
   // console.log({ data }, "data")
   const {
     name,
@@ -119,7 +119,7 @@ export const CustomerViewChild = () => {
             <MembershipTable memberships={memberships} />
           )}
           {table === 'Billing History' && <BillingHistoryTable dataSource={invoices} customerId={customerId} />}
-          {table === 'Quotes' && <QuotesTable dataSource={quotes} />}
+          {table === 'Quotes' && <QuotesTable dataSource={quotes} onSuccess={refetch} />}
         </div>
       )}
     </>
