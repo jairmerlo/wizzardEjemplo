@@ -11,7 +11,8 @@ export const CustomerViewChild = () => {
   const { customerId } = useParams()
   const [table, setTable] = useState('Membership')
   const { data = {}, isLoading, refetch } = useGetCustomerQuery(customerId)
-  // console.log({ data }, "data")
+  console.log({ data }, "data")
+
   const {
     name,
     last_name,
@@ -119,7 +120,7 @@ export const CustomerViewChild = () => {
             <MembershipTable memberships={memberships} />
           )}
           {table === 'Billing History' && <BillingHistoryTable dataSource={invoices} customerId={customerId} />}
-          {table === 'Quotes' && <QuotesTable dataSource={quotes} onSuccess={refetch} />}
+          {table === 'Quotes' && <QuotesTable dataSource={quotes} refetch={refetch} />}
         </div>
       )}
     </>

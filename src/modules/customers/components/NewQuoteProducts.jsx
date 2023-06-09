@@ -20,18 +20,19 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
     total_amount: 0,
     total_setup: 0,
   })
+  // console.log({ values })
   const totalMonthly =
     values.coupon && values.program
       ? couponToProgram.total_amount +
       parseFloat(
         values.products
-          .map(({ currencies }) => currencies?.unit_amount || 0)
+          .map(({ currencies_format }) => currencies_format?.unit_amount || 0)
           .reduce((a, b) => a + b, 0),
       )
       : parseFloat(monthlyProgram) +
       parseFloat(
         values.products
-          .map(({ currencies }) => currencies?.unit_amount || 0)
+          .map(({ currencies_format }) => currencies_format?.unit_amount || 0)
           .reduce((a, b) => a + b, 0),
       )
   const totalSetup =
@@ -39,13 +40,13 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
       ? couponToProgram.total_setup +
       parseFloat(
         values.products
-          .map(({ currencies }) => currencies?.setup_fee || 0)
+          .map(({ currencies_format }) => currencies_format?.setup_fee || 0)
           .reduce((a, b) => a + b, 0),
       )
       : parseFloat(setupFeeProgram) +
       parseFloat(
         values.products
-          .map(({ currencies }) => currencies?.setup_fee || 0)
+          .map(({ currencies_format }) => currencies_format?.setup_fee || 0)
           .reduce((a, b) => a + b, 0),
       )
 

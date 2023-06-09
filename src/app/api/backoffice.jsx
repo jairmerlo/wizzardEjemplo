@@ -255,6 +255,28 @@ export const backoffice = createApi({
         }
       },
     }),
+    getBrokerage: builder.query({
+      queryFn: async () => {
+        try {
+          const res = await fetch(API._PACKAGE_BUILDER + '/company-list', {
+            method: 'GET',
+          })
+          let data = await res.json()
+          data = data.map(({ name, id }) => ({
+            label: name,
+            value: id,
+          }))
+          return {
+            data,
+          }
+        } catch (error) {
+          console.log({ error })
+          return {
+            error: 'Error',
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -271,4 +293,5 @@ export const {
   useEditMembershipMutation,
   useGetTheamProfilesQuery,
   useGetProfilesToCustomersQuery,
+  useGetBrokerageQuery,
 } = backoffice

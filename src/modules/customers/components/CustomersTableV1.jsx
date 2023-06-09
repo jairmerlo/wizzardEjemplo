@@ -283,6 +283,14 @@ export const CustomersTableV1 = ({ filter }) => {
       key: 'uuid',
       ...getColumnSearchProps('uuid'),
       ...getColumnSortProps('uuid'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.uuid}
+        >
+          {record.uuid}
+        </Tooltip>
+      ),
     },
     {
       title: 'Client Name',
@@ -290,11 +298,17 @@ export const CustomersTableV1 = ({ filter }) => {
       key: 'clientName',
       ...getColumnSearchProps('clientName'),
       render: (text, record) =>
-        renderTextHighlighter({
-          text: `${record?.name} ${record.last_name}`,
-          isHighlighted: searchedColumn['clientName'],
-          highlightedText: searchText['clientName'],
-        }),
+        <Tooltip
+          placement='topLeft'
+          title={`${record.name} ${record.last_name}`}
+        >
+          {renderTextHighlighter({
+            text: `${record?.name} ${record.last_name}`,
+            isHighlighted: searchedColumn['clientName'],
+            highlightedText: searchText['clientName'],
+          })}
+        </Tooltip>
+      ,
       onFilter: (value, record) =>
         `${record?.name} ${record.last_name}`
           .toString()
@@ -314,6 +328,14 @@ export const CustomersTableV1 = ({ filter }) => {
       key: 'email_contact',
       ...getColumnSearchProps('email_contact'),
       ...getColumnSortProps('email_contact'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.email_contact}
+        >
+          {record.email_contact}
+        </Tooltip>
+      ),
     },
     {
       title: 'Phone',
@@ -321,6 +343,14 @@ export const CustomersTableV1 = ({ filter }) => {
       dataIndex: 'phone',
       ...getColumnSearchProps('phone'),
       ...getColumnSortProps('phone'),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.phone}
+        >
+          {record.phone}
+        </Tooltip>
+      ),
     },
     {
       title: 'Membership',
@@ -332,6 +362,14 @@ export const CustomersTableV1 = ({ filter }) => {
           return parseFloat(a.memberships) - parseFloat(b.memberships)
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.memberships}
+        >
+          {record.memberships}
+        </Tooltip>
+      ),
     },
     {
       title: 'Monthly',
@@ -346,6 +384,14 @@ export const CustomersTableV1 = ({ filter }) => {
           )
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.monthly}
+        >
+          {record.monthly}
+        </Tooltip>
+      ),
     },
     {
       title: '$ Lifetime',
@@ -360,13 +406,30 @@ export const CustomersTableV1 = ({ filter }) => {
           )
         },
       }),
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.monthly_amount}
+        >
+          {record.monthly_amount}
+        </Tooltip>
+      ),
     },
     {
       title: 'Since',
       dataIndex: 'created_on',
       key: 'created_on',
       ...getDateColumnSearchProps('created_on'),
-      render: date => moment(moment(date, 'MM-DD-YYYY')).format('ll'),
+      render: date => (
+        <Tooltip
+          placement='topLeft'
+          title={moment(moment(date, 'MM-DD-YYYY')).format('ll')}
+        >
+          {/* {record.monthly_amount} */}
+          {moment(moment(date, 'MM-DD-YYYY')).format('ll')}
+        </Tooltip>
+
+      ),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(moment(a.created_on, 'MM-DD-YYYY')).diff(
@@ -374,6 +437,7 @@ export const CustomersTableV1 = ({ filter }) => {
           )
         },
       }),
+
     },
     {
       title: 'Actions',

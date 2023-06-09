@@ -101,7 +101,7 @@ export const NewQuote = () => {
     membership_type: membership
   })
 
-  console.log({ programs })
+  // console.log({ programs })
 
   const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
 
@@ -436,6 +436,23 @@ export const NewQuote = () => {
           enableReinitialize
           onSubmit={values => {
             let boardName = boards.filter(board => board.value === values.board)
+
+            let products = (values.products.length === 0) ? [] : values.products?.map((product, index) => {
+              return {
+                ...product,
+                currencies: product.currencies_format,
+                item_sort: index,
+              }
+            })
+
+            products.map(product => {
+              if (product.currencies?.unit_amount !== 0) {
+                values.totalSetup = values.totalSetup - product.currencies.setup_fee
+              }
+            })
+
+            console.log({ products })
+
             const data = {
               project_name: values.project_name,
               // quote_name: values.quoteId,
@@ -461,9 +478,9 @@ export const NewQuote = () => {
               trial_length: values.trial_length,
               bundle_type_id: values.bundle_type_id,
               membership_type_id: values.membership_type_id,
-              items: values.products
+              items: products
             }
-            console.log({ data }, "data")
+            console.log({ data })
             if (hasProspect) {
               createQuote(data)
                 .then(({ data }) => {
@@ -495,14 +512,14 @@ export const NewQuote = () => {
             paymentMethod: Yup.array().min(1, 'This field is required.'),
             bundle_type_id: Yup.string().required('This field is required.'),
             membership_type_id: Yup.string().required('This field is required.'),
-            has_trial: Yup.boolean(),
-            trial_length: Yup
-              .string()
-              .when('has_trial', {
-                is: true,
-                then: Yup.string().required('This field is required.')
-              })
-            ,
+            // has_trial: Yup.boolean(),
+            // trial_length: Yup
+            //   .string()
+            //   .when('has_trial', {
+            //     is: true,
+            //     then: Yup.string().required('This field is required.')
+            //   })
+            // ,
             // project_name: Yup.string().required('This field is required.'),
             brokerage: Yup.string().required('This field is required.'),
             program: Yup.string().required('This field is required.'),
@@ -517,7 +534,7 @@ export const NewQuote = () => {
               Yup.object().shape({
                 plan_id: Yup.string().required('This field is required.'),
                 item_id: Yup.string().required('This field is required.'),
-                currencies: Yup.object({
+                currencies_format: Yup.object({
                   currency: Yup.string(),
                   setup_fee: Yup.number().required('This field is required.'),
                   unit_amount: Yup.number().required('This field is required.'),

@@ -55,13 +55,14 @@ export const ProductItem = ({ onRemove, productIndex }) => {
       }
     }
   })
+  // console.log({ values })
 
   // console.log({ products })
   // console.log({ productIndex })
   const productFiltered = products.filter(product => product.value === values.products[productIndex]?.item_id)
   const monthly = productFiltered[0]?.currencies_format.unit_amount || 0
   const setupFee = productFiltered[0]?.currencies_format.setup_fee || 0
-  console.log({ monthly, setupFee })
+  // console.log({ monthly, setupFee })
 
   useEffect(() => {
     setFieldValue(`products[${productIndex}].currencies_format`, { currency: 'USD', setup_fee: setupFee, unit_amount: monthly })
@@ -119,48 +120,50 @@ export const ProductItem = ({ onRemove, productIndex }) => {
             label='Monthly'
             className={formItemInput}
             required
-          // validateStatus={
-          //   errors.products &&
-          //   errors.products[productIndex]?.currencies_format?.unit_amount &&
-          //   touched.products &&
-          //   touched.products?.[productIndex]?.currencies_format?.unit_amount &&
-          //   'error'
-          // }
-          // help={
-          //   <ErrorMessage
-          //     name={`products[${productIndex}].currencies_format.unit_amount`}
-          //   />
-          // }
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.currencies_format?.unit_amount &&
+              touched.products &&
+              touched.products?.[productIndex]?.currencies_format?.unit_amount &&
+              'error'
+            }
+            help={
+              <ErrorMessage
+                name={`products[${productIndex}].currencies_format.unit_amount`}
+              />
+            }
           >
             <Input
-              disabled
-              // name={`products[${productIndex}].currencies_format.unit_amount`}
-              value={monthly}
-            // type='number'
+              // disabled
+              name={`products[${productIndex}].currencies_format.unit_amount`}
+              // value={monthly}
+              type='number'
+              min={0}
             />
           </Form.Item>
           <Form.Item
             label='SetUp Fee'
             className={formItemInput}
             required
-          // validateStatus={
-          //   errors.products &&
-          //   errors.products[productIndex]?.currencies_format?.setup_fee &&
-          //   touched.products &&
-          //   touched.products?.[productIndex]?.currencies_format?.setup_fee &&
-          //   'error'
-          // }
-          // help={
-          //   <ErrorMessage
-          //     name={`products[${productIndex}].currencies_format.setup_fee`}
-          //   />
-          // }
+            validateStatus={
+              errors.products &&
+              errors.products[productIndex]?.currencies_format?.setup_fee &&
+              touched.products &&
+              touched.products?.[productIndex]?.currencies_format?.setup_fee &&
+              'error'
+            }
+            help={
+              <ErrorMessage
+                name={`products[${productIndex}].currencies_format.setup_fee`}
+              />
+            }
           >
             <Input
-              disabled
-              // name={`products[${productIndex}].currencies_format.setup_fee`}
-              value={setupFee}
-            // type='number'
+              // disabled
+              name={`products[${productIndex}].currencies_format.setup_fee`}
+              // value={setupFee}
+              type='number'
+              min={0}
             />
           </Form.Item>
           <Form.Item

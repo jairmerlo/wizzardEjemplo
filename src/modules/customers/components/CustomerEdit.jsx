@@ -7,7 +7,7 @@ import { useCss } from 'react-use';
 import { useEditCustomerMutation, useGetCustomerQuery, useGetNewQuotesOptionsQuery, useGetStatesQuery } from '../../../app/api/billing'
 import { useState } from 'react';
 import * as Yup from 'yup'
-import { useGetProfilesToCustomersQuery } from '../../../app/api/backoffice';
+import { useGetBrokerageQuery, useGetProfilesToCustomersQuery } from '../../../app/api/backoffice';
 // import backoffice from '../../../app/api/backoffice'
 
 export const CustomerEdit = () => {
@@ -50,10 +50,10 @@ export const CustomerEdit = () => {
     const { customerId } = useParams()
 
     const { data = {}, isLoading } = useGetCustomerQuery(customerId)
+    console.log({ data })
     const [editCustomer] = useEditCustomerMutation()
-
     const { data: profiles = {} } = useGetProfilesToCustomersQuery()
-
+    const { data: brokerages = [] } = useGetBrokerageQuery()
     const { data: states = [] } = useGetStatesQuery()
     // console.log({ states })
     const optionsStates = states?.map(state => {
@@ -64,10 +64,10 @@ export const CustomerEdit = () => {
     })
 
     let {
-        // company_id = '',
+        company_id = '',
         id = '',
         uuid = '',
-        company_name = '',
+        company = '',
         brokerage_name = '',
         name = '',
         last_name = '',
@@ -190,10 +190,11 @@ export const CustomerEdit = () => {
                             } return profile
                         })
 
+
                         const res = editCustomer({
                             city: values.city,
-                            company: values.company_name,
-                            company_id: "2",
+                            company: values.company,
+                            company_id: values.company_id,
                             display_name_as: values.display_name_as,
                             email_contact: values.email_contact,
                             id,
@@ -213,8 +214,9 @@ export const CustomerEdit = () => {
                         navigate(-1)
                     }}
                     initialValues={{
+                        company_id,
                         uuid,
-                        company_name,
+                        company,
                         brokerage_name,
                         name,
                         last_name,
@@ -224,7 +226,7 @@ export const CustomerEdit = () => {
                         street1,
                         street2,
                         city,
-                        postal_code,
+                        postal_code: postal_code || '',
                         state,
                         profile_deployment_v2,
                         profile_marketing_v2,
@@ -234,10 +236,10 @@ export const CustomerEdit = () => {
                     validationSchema={Yup.object({
                         email_contact: Yup.string()
                             .email('The email does not have a valid format')
-                            .required('Requerido'),
+                            .required('This field is required.'),
                         postal_code: Yup.string()
                             .max(5, 'Maximum length 5')
-                            .required('Requerido'),
+                            .required('This field is required.'),
                     })}
                 >
                     {({ errors, touched, handleSubmit, setFieldValue, values }) => (
@@ -266,19 +268,15 @@ export const CustomerEdit = () => {
                                     </Form.Item>
                                     <Form.Item label='Company'>
                                         <FormikInput
-                                            name='company_name'
+                                            name='company'
                                             className={item}
                                         />
                                     </Form.Item>
                                     <Form.Item label='Brokerage' required>
                                         <Select
-                                            name='brokerage_name'
+                                            name='company_id'
                                             placeholder="--Select--"
-                                            options={[
-                                                { value: 'Stanrdar', label: 'Stanrdar' },
-                                                { value: 'Resf', label: 'Resf' },
-                                                { value: 'Compass', label: 'Compass' },
-                                            ]}
+                                            options={brokerages}
                                             bordered={false}
                                             className={item}
                                         />
@@ -307,7 +305,10 @@ export const CustomerEdit = () => {
                                     <Form.Item
                                         label='Email Username'
                                         required
-                                        validateStatus={errors.email_contact}
+                                        validateStatus={
+                                            // errors.email_contact
+                                            errors.email_contact && touched.email_contact && 'error'
+                                        }
                                         help={<ErrorMessage name='email_contact' />}
                                     >
                                         <FormikInput
@@ -343,7 +344,10 @@ export const CustomerEdit = () => {
                                     </Form.Item>
                                     <Form.Item
                                         label='Zip / Postal Code'
-                                        validateStatus={errors.postal_code}
+                                        validateStatus={
+                                            // errors.postal_code
+                                            errors.postal_code && touched.postal_code && 'error'
+                                        }
                                         help={<ErrorMessage name='postal_code' />}
                                     >
                                         <FormikInput
