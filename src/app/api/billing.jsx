@@ -706,6 +706,35 @@ export const billing = createApi({
         }
       },
     }),
+    getQuoteByname: builder.query({
+      queryFn: async (
+        { quote_name = "" },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/get-quote-byname', {
+            method: 'POST',
+            body: JSON.stringify({
+              quote_name,
+            }),
+          }).then(res => res.json())
+
+          return { data: res }
+          // {
+          //   data: res.map(({ id, name }) => ({
+          //     label: name,
+          //     value: id
+          //   })),
+          // }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -738,6 +767,7 @@ export const {
   useBillingInformationQuery,
   usePlansFilteredQuery,
   useListMembershipTypeQuery,
+  useGetQuoteBynameQuery,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,

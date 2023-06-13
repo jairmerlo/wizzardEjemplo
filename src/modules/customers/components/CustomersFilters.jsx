@@ -23,13 +23,13 @@ export const CustomersFilters = () => {
           forceRender: true,
         },
         {
-          label: `Access`,
+          label: `Website Builder`,
           key: 'access',
           children: filter === 'access' && <CustomersTableV1 filter='access' />,
           forceRender: true,
         },
         {
-          label: `IDX`,
+          label: `Builder + IDX`,
           key: 'idx',
           children: filter === 'idx' && <CustomersTableV1 filter='idx' />,
           forceRender: true,
@@ -75,7 +75,7 @@ export const CustomersFilters = () => {
           forceRender: true,
         },
         {
-          label: `Omnipresence`,
+          label: `Omnipresent`,
           key: 'omnipresence',
           children: filter === 'omnipresence' && (
             <CustomersTableV1 filter='omnipresence' />

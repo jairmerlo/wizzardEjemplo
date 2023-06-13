@@ -23,13 +23,13 @@ const Memberships = () => {
           forceRender: true,
         },
         {
-          label: `Access`,
+          label: `Website Builder`,
           key: 'access',
           children: filter === 'access' && <MembershipsTable filter='access' />,
           forceRender: true,
         },
         {
-          label: `IDX`,
+          label: `Builder + IDX`,
           key: 'idx',
           children: filter === 'idx' && <MembershipsTable filter='idx' />,
           forceRender: true,
@@ -59,7 +59,7 @@ const Memberships = () => {
           forceRender: true,
         },
         {
-          label: `Onnmipresence`,
+          label: `Omnipresent`,
           key: 'omnipresence',
           children: filter === 'omnipresence' && (
             <MembershipsTable filter='onnmipresence ' />

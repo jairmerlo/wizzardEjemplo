@@ -656,7 +656,10 @@ export const MembershipsTable = ({ filter = '' }) => {
                   <Space size='middle' direction='vertical'>
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='CPanel'>
-                      <a href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a
+                        // href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`}
+                        href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`}
+                        target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -673,7 +676,10 @@ export const MembershipsTable = ({ filter = '' }) => {
                     </Tooltip>
 
                     <Tooltip title='Wordpress'>
-                      <a href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
+                      <a
+                        // href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} 
+                        href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`}
+                        target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             display: 'flex',
@@ -803,64 +809,66 @@ export const MembershipsTable = ({ filter = '' }) => {
 
   const columns = [
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'last_action' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'last_action' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'last_action',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'last_action',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Last Action
-        </Popover>
-      ),
+      title: "Last Action"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'last_action' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'last_action' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'last_action',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'last_action',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Last Action
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'last_action',
       key: 'last_action',
-      // ...getColumnSearchProps('last_action'),
-      // ...getColumnSortProps('last_action'),
+      ...getColumnSearchProps('last_action'),
+      ...getColumnSortProps('last_action'),
       render: (text, record) => (
         <LastActionCell
           text={text}
@@ -874,64 +882,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'status' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'status' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'status',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'status',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Status
-        </Popover>
-      ),
+      title: "Status"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'status' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'status' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'status',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'status',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Status
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'status',
       key: 'status',
-      // ...getColumnSearchProps('status'),
-      // ...getColumnSortProps('status'),
+      ...getColumnSearchProps('status'),
+      ...getColumnSortProps('status'),
       render: (text, record) => (
         <Tooltip
           title={record.status}
@@ -951,64 +961,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 150,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'memberships_id' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'memberships_id' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'memberships_id',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'memberships_id',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Membership ID
-        </Popover>
-      ),
+      title: "Membership ID"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'memberships_id' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'memberships_id' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'memberships_id',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'memberships_id',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Membership ID
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'memberships_id',
       key: 'memberships_id',
-      // ...getColumnSearchProps('memberships_id'),
-      // ...getColumnSortProps('memberships_id'),
+      ...getColumnSearchProps('memberships_id'),
+      ...getColumnSortProps('memberships_id'),
       render: (text, record) => (
         <Tooltip
           title={record.memberships_id}
@@ -1021,64 +1033,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'client_name' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'client_name' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'client_name',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'client_name',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Client Name
-        </Popover>
-      ),
+      title: "Client Name"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'client_name' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'client_name' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'client_name',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'client_name',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Client Name
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'client_name',
       key: 'client_name',
-      // ...getColumnSearchProps('client_name'),
-      // ...getColumnSortProps('client_name'),
+      ...getColumnSearchProps('client_name'),
+      ...getColumnSortProps('client_name'),
       render: (clientName, record) => (
         <>
           <a
@@ -1107,64 +1121,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'project_name' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'project_name' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'project_name',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'project_name',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Project Name
-        </Popover>
-      ),
+      title: "Project Name"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'project_name' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'project_name' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'project_name',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'project_name',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Project Name
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'project_name',
       key: 'project_name',
-      // ...getColumnSearchProps('project_name'),
-      // ...getColumnSortProps('project_name'),
+      ...getColumnSearchProps('project_name'),
+      ...getColumnSortProps('project_name'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1177,64 +1193,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       fixed: 'left',
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              {/* <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('Email')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('Email')} >Z → A</Button>
-              </div> */}
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'email',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'email',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Email
-        </Popover>
-      ),
+      title: "Email"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         {/* <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortAscending('Email')} >A → Z</Button>
+      //           <Button onClick={() => setSortDescending('Email')} >Z → A</Button>
+      //         </div> */}
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'email',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'email',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Email
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'email',
       key: 'email',
-      // ...getColumnSearchProps('email'),
-      // ...getColumnSortProps('email'),
+      ...getColumnSearchProps('email'),
+      ...getColumnSortProps('email'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1246,64 +1264,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 280,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              {/* <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortAscending('wordpress_install_url')} >A → Z</Button>
-                <Button onClick={() => setSortDescending('wordpress_install_url')} >Z → A</Button>
-              </div> */}
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'wordpress_install_url',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'wordpress_install_url',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          URL
-        </Popover>
-      ),
+      title: "URL"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         {/* <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortAscending('wordpress_install_url')} >A → Z</Button>
+      //           <Button onClick={() => setSortDescending('wordpress_install_url')} >Z → A</Button>
+      //         </div> */}
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'wordpress_install_url',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'wordpress_install_url',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     URL
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'wordpress_install_url',
       key: 'wordpress_install_url',
-      // ...getColumnSearchProps('wordpress_install_url'),
-      // ...getColumnSortProps('wordpress_install_url'),
+      ...getColumnSearchProps('wordpress_install_url'),
+      ...getColumnSortProps('wordpress_install_url'),
       render: url => (
         <a href={url} target='_blank' rel='noreferrer'>
           <Tooltip placement='topLeft' title={
@@ -1326,64 +1346,66 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 380,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'class_accounting_name' })} >A → Z</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'class_accounting_name' })} >Z → A</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'class_accounting_name',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'class_accounting_name',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Product/Service
-        </Popover>
-      ),
+      title: "Product/Service"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'class_accounting_name' })} >A → Z</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'class_accounting_name' })} >Z → A</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'class_accounting_name',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'class_accounting_name',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Product/Service
+      //   </Popover>
+      // )
+      ,
       key: 'class_accounting_name',
       dataIndex: 'class_accounting_name',
-      // ...getColumnSearchProps('class_accounting_name'),
-      // ...getColumnSortProps('class_accounting_name'),
+      ...getColumnSearchProps('class_accounting_name'),
+      ...getColumnSortProps('class_accounting_name'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1417,71 +1439,73 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 120,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'price' })} >0 → 9</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'price' })} >9 → 0</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'price',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'price',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          $ Price
-        </Popover>
-      ),
+      title: "$ Price"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'price' })} >0 → 9</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'price' })} >9 → 0</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'price',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'price',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     $ Price
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'price',
       key: 'price',
-      // ...getColumnSearchProps('price'),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return (
-      //       parseFloat(currency(a.price).value) -
-      //       parseFloat(currency(b.price).value)
-      //     )
-      //   },
-      // }),
+      ...getColumnSearchProps('price'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.price).value) -
+            parseFloat(currency(b.price).value)
+          )
+        },
+      }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1493,63 +1517,65 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 120,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'setup_fee' })} >0 → 9</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'setup_fee' })} >9 → 0</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'setup_fee',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'setup_fee',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          $ Setup Fee
-        </Popover>
-      ),
+      title: "$ Setup Fee"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'setup_fee' })} >0 → 9</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'setup_fee' })} >9 → 0</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'setup_fee',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'setup_fee',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     $ Setup Fee
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'setup_fee',
       key: 'setup_fee',
-      // ...getColumnSearchProps('setup_fee'),
+      ...getColumnSearchProps('setup_fee'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1561,68 +1587,70 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 100,
     },
     {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'periods' })} >0 → 9</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'periods' })} >9 → 0</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'periods',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'periods',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Periods
-        </Popover>
-      ),
+      title: "Periods"
+      // (text, record) => (
+      //   <Popover
+      //     placement='bottomLeft'
+      //     trigger="click"
+      //     content={
+      //       <Space size='large' direction='vertical'>
+      //         <Typography.Title level={5}>
+      //           Sort
+      //         </Typography.Title>
+      //         <div className={containerSortButtons}>
+      //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'periods' })} >0 → 9</Button>
+      //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'periods' })} >9 → 0</Button>
+      //         </div>
+      //         <Typography.Title level={5}>
+      //           Filter
+      //         </Typography.Title>
+      //         <Radio.Group
+      //           onChange={(e) => {
+      //             setFilteredRadioGroup({
+      //               value: e.target.value,
+      //               dataIndex: 'periods',
+      //               key: ''
+      //             })
+      //           }}
+      //           value={filteredRadioGroup.value}
+      //         >
+      //           <Space direction='vertical'>
+      //             <Radio value={1}>is not empty</Radio>
+      //             <Radio value={2}>
+      //               contains
+      //               {filteredRadioGroup.value === 2 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredRadioGroup.key}
+      //                   onChange={(e) => setFilteredRadioGroup({
+      //                     dataIndex: 'periods',
+      //                     key: e.target.value,
+      //                     value: 2
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={3}>is empty</Radio>
+      //           </Space>
+      //         </Radio.Group>
+      //       </Space>
+      //     }
+      //   >
+      //     Periods
+      //   </Popover>
+      // )
+      ,
       dataIndex: 'periods',
       key: 'periods',
-      // ...getColumnSearchProps('periods'),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
-      //   },
-      // }),
+      ...getColumnSearchProps('periods'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
+        },
+      }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1633,82 +1661,84 @@ export const MembershipsTable = ({ filter = '' }) => {
       ),
       width: 120,
     },
-    {
-      title: (text, record) => (
-        <Popover
-          placement='bottomLeft'
-          trigger="click"
-          content={
-            <Space size='large' direction='vertical'>
-              <Typography.Title level={5}>
-                Sort
-              </Typography.Title>
-              <div className={containerSortButtons}>
-                <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'amount' })} >0 → 9</Button>
-                <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'amount' })} >9 → 0</Button>
-              </div>
-              <Typography.Title level={5}>
-                Filter
-              </Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: 'amount',
-                    key: ''
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction='vertical'>
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) => setFilteredRadioGroup({
-                          dataIndex: 'amount',
-                          key: e.target.value,
-                          value: 2
-                        })}
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          $ Lifetime
-        </Popover>
-      ),
-      dataIndex: 'amount',
-      key: 'amount',
-      // ...getColumnSearchProps('amount'),
-      // ...getCustomColumnSortProps({
-      //   sorter: (a, b) => {
-      //     return (
-      //       parseFloat(currency(a.amount).value) -
-      //       parseFloat(currency(b.amount).value)
-      //     )
-      //   },
-      // }),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.amount}
-        >
-          {record.amount}
-        </Tooltip>
-      ),
-      width: 130,
-    },
+    // {
+    //   title: "$ Lifetime"
+    //   // (text, record) => (
+    //   //   <Popover
+    //   //     placement='bottomLeft'
+    //   //     trigger="click"
+    //   //     content={
+    //   //       <Space size='large' direction='vertical'>
+    //   //         <Typography.Title level={5}>
+    //   //           Sort
+    //   //         </Typography.Title>
+    //   //         <div className={containerSortButtons}>
+    //   //           <Button onClick={() => setSortColumn({ sort: 'asc', dataIndex: 'amount' })} >0 → 9</Button>
+    //   //           <Button onClick={() => setSortColumn({ sort: 'desc', dataIndex: 'amount' })} >9 → 0</Button>
+    //   //         </div>
+    //   //         <Typography.Title level={5}>
+    //   //           Filter
+    //   //         </Typography.Title>
+    //   //         <Radio.Group
+    //   //           onChange={(e) => {
+    //   //             setFilteredRadioGroup({
+    //   //               value: e.target.value,
+    //   //               dataIndex: 'amount',
+    //   //               key: ''
+    //   //             })
+    //   //           }}
+    //   //           value={filteredRadioGroup.value}
+    //   //         >
+    //   //           <Space direction='vertical'>
+    //   //             <Radio value={1}>is not empty</Radio>
+    //   //             <Radio value={2}>
+    //   //               contains
+    //   //               {filteredRadioGroup.value === 2 ? (
+    //   //                 <Input
+    //   //                   style={{
+    //   //                     width: 100,
+    //   //                     marginLeft: 10,
+    //   //                   }}
+    //   //                   value={filteredRadioGroup.key}
+    //   //                   onChange={(e) => setFilteredRadioGroup({
+    //   //                     dataIndex: 'amount',
+    //   //                     key: e.target.value,
+    //   //                     value: 2
+    //   //                   })}
+    //   //                 />
+    //   //               ) : null}
+    //   //             </Radio>
+    //   //             <Radio value={3}>is empty</Radio>
+    //   //           </Space>
+    //   //         </Radio.Group>
+    //   //       </Space>
+    //   //     }
+    //   //   >
+    //   //     $ Lifetime
+    //   //   </Popover>
+    //   // )
+    //   ,
+    //   dataIndex: 'amount',
+    //   key: 'amount',
+    //   ...getColumnSearchProps('amount'),
+    //   ...getCustomColumnSortProps({
+    //     sorter: (a, b) => {
+    //       return (
+    //         parseFloat(currency(a.amount).value) -
+    //         parseFloat(currency(b.amount).value)
+    //       )
+    //     },
+    //   }),
+    //   render: (text, record) => (
+    //     <Tooltip
+    //       placement='topLeft'
+    //       title={record.amount}
+    //     >
+    //       {record.amount}
+    //     </Tooltip>
+    //   ),
+    //   width: 130,
+    // },
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -1953,14 +1983,14 @@ export const MembershipsTable = ({ filter = '' }) => {
               <DollarOutlined spin />
             )}
           </Typography.Title>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          {/* <Typography.Title level={5} style={{ margin: 0 }}>
             $ Lifetime:{' '}
             {typeof totalMonthly === 'number' ? (
               USD(totalMonthly, { precision: 2 })
             ) : (
               <DollarOutlined spin />
             )}
-          </Typography.Title>
+          </Typography.Title> */}
         </div>
         <div
           style={{
@@ -1971,7 +2001,9 @@ export const MembershipsTable = ({ filter = '' }) => {
           <Typography.Title level={5}>
             Search:
           </Typography.Title>
+          {/* {console.log({ memberships })} */}
           <Input.Search
+            disabled={!memberships}
             onSearch={(value) => setFiltredValue(value)}
             value={filtredValue}
             onChange={(e) => setFiltredValue(e.target.value)}

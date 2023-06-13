@@ -11,7 +11,7 @@ export const CustomerViewChild = () => {
   const { customerId } = useParams()
   const [table, setTable] = useState('Membership')
   const { data = {}, isLoading, refetch } = useGetCustomerQuery(customerId)
-  console.log({ data }, "data")
+  // console.log({ data }, "data")
 
   const {
     name,

@@ -451,7 +451,7 @@ export const NewQuote = () => {
               }
             })
 
-            console.log({ products })
+            console.log({ values })
 
             const data = {
               project_name: values.project_name,
@@ -489,7 +489,7 @@ export const NewQuote = () => {
                     description: data[1],
                     placement: 'bottomRight',
                   })
-                  navigate('/')
+                  navigate(-1)
                 })
                 .catch(console.log)
             } else {
@@ -502,7 +502,7 @@ export const NewQuote = () => {
                     description: data[1],
                     placement: 'bottomRight',
                   })
-                  navigate('/')
+                  navigate(-1)
                 })
                 .catch(console.log)
             }

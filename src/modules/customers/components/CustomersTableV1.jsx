@@ -393,28 +393,28 @@ export const CustomersTableV1 = ({ filter }) => {
         </Tooltip>
       ),
     },
-    {
-      title: '$ Lifetime',
-      dataIndex: 'monthly_amount',
-      key: 'monthly_amount',
-      ...getColumnSearchProps('monthly_amount'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.monthly_amount).value) -
-            parseFloat(currency(b.monthly_amount).value)
-          )
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.monthly_amount}
-        >
-          {record.monthly_amount}
-        </Tooltip>
-      ),
-    },
+    // {
+    //   title: '$ Lifetime',
+    //   dataIndex: 'monthly_amount',
+    //   key: 'monthly_amount',
+    //   ...getColumnSearchProps('monthly_amount'),
+    //   ...getCustomColumnSortProps({
+    //     sorter: (a, b) => {
+    //       return (
+    //         parseFloat(currency(a.monthly_amount).value) -
+    //         parseFloat(currency(b.monthly_amount).value)
+    //       )
+    //     },
+    //   }),
+    //   render: (text, record) => (
+    //     <Tooltip
+    //       placement='topLeft'
+    //       title={record.monthly_amount}
+    //     >
+    //       {record.monthly_amount}
+    //     </Tooltip>
+    //   ),
+    // },
     {
       title: 'Since',
       dataIndex: 'created_on',
@@ -577,14 +577,14 @@ export const CustomersTableV1 = ({ filter }) => {
               <DollarOutlined spin />
             )}
           </Typography.Title>
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          {/* <Typography.Title level={5} style={{ margin: 0 }}>
             $ Lifetime:{' '}
             {typeof totalLifetime === 'number' ? (
               USD(totalLifetime, { precision: 2 })
             ) : (
               <DollarOutlined spin />
             )}
-          </Typography.Title>
+          </Typography.Title> */}
         </div>
         <Link to='/new-quote'>
           <Button

@@ -96,13 +96,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     setSearchedColumn({ [dataIndex]: false })
     setSearchText({ [dataIndex]: '' })
   }
-  const resetFilters = () => {
-    setTableKey(tableKey => tableKey + 1)
-    setSearchText(SEARCH_TEXT_INITIAL_STATE)
-    setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
-    setTotalCurrentItems(total)
-    setCurrentItems([])
-  }
+
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
     // console.log('Various parameters', pagination, filters, sorter)
@@ -111,6 +105,59 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   }
   const { saveSelectedRow, selectedRow } = useSelectedRow()
   const { initialScrollY } = useScroll('scrollY003')
+
+  const [filtreredMembership, setFiltreredMembership] = useState([])
+  const [filtredValue, setFiltredValue] = useState('')
+
+  const resetFilters = () => {
+    setTableKey(tableKey => tableKey + 1)
+    setTotalCurrentItems(total)
+    setFiltredValue('')
+    // setFilteredRadioGroup({ value: 0, dataIndex: '', key: '' })
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    // setTableKey(tableKey => tableKey + 1)
+    // setSearchText(SEARCH_TEXT_INITIAL_STATE)
+    // setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
+    // setTotalCurrentItems(total)
+    // setCurrentItems([])
+  }
+
+  useEffect(() => {
+    if (memberships?.length > 0) {
+      setFiltreredMembership(memberships)
+    }
+  }, [memberships?.length])
+
+  useEffect(() => {
+    if (filtredValue === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      return
+    };
+    const newMembership = memberships.filter(membership => {
+      return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.memberships_id?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.client_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.project_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.email?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        membership.wordpress_install_url?.toString().toLowerCase().includes(filtredValue.toLowerCase())
+    })
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFiltreredMembership(newMembership)
+    setTotalCurrentItems(newMembership.length)
+
+  }, [filtredValue])
+
 
   useEffect(() => {
     if (memberships?.length !== 0) {
@@ -296,7 +343,8 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                 </>
               }
             >
-              {moment(date).fromNow(true) + ' left'}
+              {/* {moment(date).fromNow(true) + ' left'} */}
+              {date}
             </Tooltip>
           ) : (
             <Tooltip
@@ -311,7 +359,6 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                 </>
               }
             >
-              {console.log({ record })}
               <span style={{ color: 'red' }}>
                 {date}
               </span>
@@ -323,13 +370,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSortPropsExport({
         dataIndex: 'trial_due',
         sorter: (a, b) => {
-          if (
-            moment(moment(a['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(moment())
-          )
-            return moment().diff(moment(b['trial_due'], 'YYYY-MM-DD'))
-          return moment(moment(a['trial_due'], 'YYYY-MM-DD')).diff(
-            moment(b['trial_due'], 'YYYY-MM-DD'),
-          )
+          // if (
+          //   moment(moment(a['trial_due'], 'YYYY-MM-DD')).isSameOrAfter(moment())
+          // )
+          //   return moment().diff(moment(b['trial_due'], 'YYYY-MM-DD'))
+          // return moment(moment(a['trial_due'], 'YYYY-MM-DD')).diff(
+          //   moment(b['trial_due'], 'YYYY-MM-DD'),
+          // )
+          return parseInt(a.trial_due) - parseInt(b.trial_due)
         },
         ellipsis: {
           showTitle: false,
@@ -823,35 +871,64 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'baseline',
-          gap: '32px',
+          justifyContent: 'space-between'
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          Memberships Trial ({total})
-        </Typography.Title>
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          Price:{' '}
-          {typeof totalPrice === 'number' ? (
-            USD(totalPrice, { precision: 2 })
-          ) : (
-            <DollarOutlined spin />
-          )}
-        </Typography.Title>
-        {/* <Link to='/new-quote'>
-          <Button
-            type='primary'
-            shape='round'
-            icon={<UserAddOutlined />}
-            size='middle'
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'baseline',
+            gap: '32px',
+          }}
+        >
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Memberships Trial ({total})
+          </Typography.Title>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            Price:{' '}
+            {typeof totalPrice === 'number' ? (
+              USD(totalPrice, { precision: 2 })
+            ) : (
+              <DollarOutlined spin />
+            )}
+          </Typography.Title>
+          {/* <Link to='/new-quote'>
+            <Button
+              type='primary'
+              shape='round'
+              icon={<UserAddOutlined />}
+              size='middle'
+              style={{
+                alignSelf: 'flex-end',
+              }}
+            >
+              Add New Customer
+            </Button>
+          </Link> */}
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Typography.Title level={5}>
+            Search:
+          </Typography.Title>
+          {/* {console.log({ memberships })} */}
+          <Input.Search
+            disabled={!memberships}
+            onSearch={(value) => setFiltredValue(value)}
+            value={filtredValue}
+            onChange={(e) => setFiltredValue(e.target.value)}
+            size='large'
             style={{
-              alignSelf: 'flex-end',
+              width: '300px',
+              marginLeft: '15px'
             }}
-          >
-            Add New Customer
-          </Button>
-        </Link> */}
+          />
+        </div>
       </div>
       <Divider dashed />
       <Button
@@ -865,7 +942,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         key={tableKey}
         rowKey='id'
         columns={columns}
-        dataSource={memberships}
+        dataSource={filtreredMembership}
         bordered
         rowSelection={{
           selectedRowKeys: selectedRow,
