@@ -20,6 +20,17 @@ export const IdxRequest = ({ registration_key }) => {
                     title: 'Status',
                     dataIndex: 'status',
                 }),
+                render(text, data) {
+                    if (data?.status === "pending") {
+                        return <td>Pending Accept IDX Request</td>
+                    } else if (data?.status === "Pending Data") {
+                        return <td>Pending IDX Request Form</td>
+                    } else if (data?.status === "Pending Accept Board") {
+                        return <td>Pending Accept IDX Request</td>
+                    } else {
+                        return <td>{data.status}</td>
+                    }
+                }
             },
             {
                 ...getColumnProps({
@@ -99,6 +110,17 @@ export const IdxRequest = ({ registration_key }) => {
                     title: 'Status',
                     dataIndex: 'status',
                 }),
+                render(text, data) {
+                    if (data?.status === "pending") {
+                        return <td>Pending Accept IDX Request</td>
+                    } else if (data?.status === "Pending Data") {
+                        return <td>Pending IDX Request Form</td>
+                    } else if (data?.status === "Pending Accept Board") {
+                        return <td>Pending Accept IDX Request</td>
+                    } else {
+                        return <td>{data.status}</td>
+                    }
+                }
             },
             {
                 ...getColumnProps({

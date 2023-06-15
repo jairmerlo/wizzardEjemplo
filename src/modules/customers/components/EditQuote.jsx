@@ -60,6 +60,7 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
     })
     // console.log({ programs })
     const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
+    console.log({ listMembership })
 
     const { data: dataEdit = {} } = useGetQuoteBynameQuery({ quote_name })
     const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
@@ -74,7 +75,9 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
         project_name = "",
         customer_name = "",
         customer_last_name = "",
-        payment_method = []
+        payment_method = [],
+        bundle_type_id = "",
+        membership_type_id = ""
     } = dataEdit
 
     const {
@@ -124,9 +127,11 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
                     customer_name,
                     customer_last_name,
                     payment_method,
+                    bundle_type_id,
+                    membership_type_id,
 
                     // quoteId,
-                    brokerage: '',
+                    brokerage: 'Compass',
                     program: '',
                     board: '',
                     // paymentMethod: [],
@@ -218,7 +223,6 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
                             </Form.Item>
                             <Form.Item
                                 label='Category Product Service'
-
                                 required
                                 validateStatus={errors.bundle_type_id && touched.bundle_type_id && 'error'}
                                 help={<ErrorMessage name='bundle_type_id' />}

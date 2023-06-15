@@ -351,6 +351,22 @@ export const billing = createApi({
         },
       }),
     }),
+    billingEnrollment: builder.mutation({
+      query: ({ registration_key, program_code, periods_setupfee = 0, setupfee, startdate_setupfee, periods_monthly, monthly, startdate_monthly }) => ({
+        url: '/program-enrollment',
+        method: 'POST',
+        body: {
+          registration_key,
+          program_code,
+          periods_setupfee,
+          setupfee,
+          startdate_setupfee,
+          periods_monthly,
+          monthly,
+          startdate_monthly
+        },
+      }),
+    }),
     idxResendAgreementEmail: builder.mutation({
       query: ({ registration_key, program_name }) => ({
         url: '/idx-resend-agreement-email',
@@ -678,6 +694,36 @@ export const billing = createApi({
         }
       },
     }),
+    getPlanBycompanyId: builder.query({
+      queryFn: async (
+        { company = 0 },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/get-plan-bycompany_id', {
+            method: 'POST',
+            body: JSON.stringify({
+              company,
+            }),
+          }).then(res => res.json())
+          return {
+            data: res.map(({ name, code, total_amount, total_setup }) => ({
+              label: `${code} ${name}`,
+              value: code,
+              setupfee: total_setup,
+              monthly: total_amount
+            })),
+          }
+
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     listMembershipType: builder.query({
       queryFn: async (
         { bundle_type_id = 0 },
@@ -754,6 +800,7 @@ export const {
   useGetAuthorizationFormsQuery,
   useSendAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
+  useBillingEnrollmentMutation,
   useIdxResendAgreementEmailMutation,
   useReplaceAuthorizationFormMutation,
   useWebsitePublishedEmailMutation,
@@ -766,6 +813,7 @@ export const {
   useGetHtmlWizardQuery,
   useBillingInformationQuery,
   usePlansFilteredQuery,
+  useGetPlanBycompanyIdQuery,
   useListMembershipTypeQuery,
   useGetQuoteBynameQuery,
   useGetCustomerV1Query,

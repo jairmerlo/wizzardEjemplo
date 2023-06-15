@@ -87,8 +87,6 @@ export const NewQuote = () => {
     },
   })
 
-  // const { values } = useFormikContext()
-  // console.log({ values })
 
   const [hasIdx, setHasIdx] = useState()
   const [company, setCompany] = useState(0)
@@ -550,6 +548,7 @@ export const NewQuote = () => {
         >
           {({ handleSubmit, errors, touched, values, setFieldValue }) => (
             <Fragment>
+              {console.log({ values })}
               <Form className={form} layout='vertical' autoComplete='off'>
                 <Form.Item
                   label='Project Name'
@@ -626,7 +625,6 @@ export const NewQuote = () => {
                 </Form.Item>
                 <Form.Item
                   label='Category Product Service'
-
                   required
                   validateStatus={errors.bundle_type_id && touched.bundle_type_id && 'error'}
                   help={<ErrorMessage name='bundle_type_id' />}

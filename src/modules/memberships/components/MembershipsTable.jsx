@@ -31,7 +31,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon } from '.'
+import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon, BillingEnrollment } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useCss, useEvent } from 'react-use'
@@ -1744,14 +1744,13 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'actions',
       key: 'actions',
       width: 85,
-      render: (text, { registration_key, id }) => (
+      render: (text, { registration_key, id, cycle_billing_type }) => (
         <Popover
           placement='bottom'
           trigger='hover'
           content={
             <Space size='middle' direction='vertical'>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
-
               <Popover
                 placement='bottom'
                 title={text}
@@ -1878,6 +1877,12 @@ export const MembershipsTable = ({ filter = '' }) => {
                   </div>
                 </a>
               </Tooltip>
+
+              {
+                cycle_billing_type && (
+                  <BillingEnrollment registration_key={registration_key} />
+                )
+              }
 
               <Deleteicon registration_key={registration_key} />
 
