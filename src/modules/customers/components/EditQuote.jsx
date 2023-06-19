@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useGetNewQuotesOptionsQuery, useGetQuoteBynameQuery, useListMembershipTypeQuery, useModifyQuoteMutation, usePlansFilteredQuery } from "../../../app/api/billing"
-import { Button, Divider, Form, Modal, Typography } from "antd"
+import { Button, Divider, Form, Modal, Typography, notification } from "antd"
 import { Formik, ErrorMessage } from "formik"
 import { Input as FormikInput, Select, Checkbox, Input } from 'formik-antd'
 import * as Yup from 'yup'
@@ -58,13 +58,10 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
         bundle_type: category,
         membership_type: membership
     })
-    // console.log({ programs })
     const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
-    console.log({ listMembership })
 
     const { data: dataEdit = {} } = useGetQuoteBynameQuery({ quote_name })
     const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
-        // has_trial: hasProspect ? 1 : 0,
         has_trial: 0,
     })
 
@@ -75,23 +72,46 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
         project_name = "",
         customer_name = "",
         customer_last_name = "",
-        payment_method = [],
+        company_id = "",
         bundle_type_id = "",
-        membership_type_id = ""
+        membership_type_id = "",
+        plan_id = "",
+        board_id = "",
+        payment_method = [],
+        coupon_id = "",
+        show_cupon_wizard = 0,
+        additional_items = [],
+
+
+        id = "",
+        prospect_id = "",
+        customer_id = "",
+        // plan_id = "",
+        board_name = "",
+        user_id = "",
+        user_name = "",
+        expiration_date = "",
+        is_valid = "",
+        status = "",
+        has_trial = "0",
+        trial_length = "0",
     } = dataEdit
 
+    useEffect(() => {
+        setCompany(company_id)
+        setCategory(bundle_type_id)
+        setMembership(membership_type_id)
+    }, [dataEdit])
+
+
     const {
-        // quoteId = '',
         prospects = [],
         brokerages = [],
-        // programs = [],
         boards = [],
         paymentMethods = [],
         coupons = [],
         states = [],
-        // project_name = '',
         listBundle = [],
-        // listMembership = [],
     } = data
 
     return (
@@ -119,41 +139,86 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
             <Formik
                 enableReinitialize
                 onSubmit={values => {
-                    console.log({ values })
+                    console.log({ values }, "valores a enviar")
+
+                    const data = {
+                        id,
+                        project_name: values.project_name,
+                        prospect_id,
+                        customer_id,
+                        coupon_id: values.coupon,
+                        plan_id: values.program,
+                        board_id: values.board,
+                        board_name,
+                        user_id,
+                        user_name,
+                        expiration_date,
+                        is_valid,
+                        status,
+                        send_email: values.send_email,
+                        bundle_type_id: values.bundle_type_id,
+                        payment_method: values.payment_method,
+                        total_amount: values.totalAmount,
+                        total_setup: values.totalSetup,
+                        membership_type_id: values.membership_type_id,
+                        items: values.products,
+                        show_cupon_wizard: values.show_cupon_wizard,
+                        has_trial,
+                        trial_length,
+                    }
+
+                    modifyQuote(data)
+                        .then(({ data }) => {
+                            notification.success({
+                                message: `Success`,
+                                // description: data[1],
+                                placement: 'bottomRight',
+                            })
+                            cancel()
+                        })
+                        .catch(console.log)
+
+
                 }}
                 initialValues={{
 
                     project_name,
                     customer_name,
                     customer_last_name,
-                    payment_method,
+                    brokerage: company_id,
                     bundle_type_id,
                     membership_type_id,
+                    program: plan_id,
+                    board: board_id,
+                    payment_method,
+                    coupon: coupon_id,
+                    show_cupon_wizard,
+                    products: additional_items,
+                    send_email: 0,
 
                     // quoteId,
-                    brokerage: 'Compass',
-                    program: '',
-                    board: '',
+                    // program: '',
+                    // board: '',
                     // paymentMethod: [],
-                    coupon: '',
-                    products: [],
+                    // coupon: '',
+                    // products: [],
                     totalAmount: 0,
                     totalSetup: 0
                 }}
                 validationSchema={Yup.object({
-                    quoteId: Yup.string().required('This field is required.'),
+                    // quoteId: Yup.string().required('This field is required.'),
                     payment_method: Yup.array().min(1, 'This field is required.'),
                     bundle_type_id: Yup.string().required('This field is required.'),
                     membership_type_id: Yup.string().required('This field is required.'),
-                    has_trial: Yup.boolean(),
-                    trial_length: Yup
-                        .string()
-                        .when('has_trial', {
-                            is: true,
-                            then: Yup.string().required('This field is required.')
-                        })
-                    ,
-                    project_name: Yup.string().required('This field is required.'),
+                    // has_trial: Yup.boolean(),
+                    // trial_length: Yup
+                    //     .string()
+                    //     .when('has_trial', {
+                    //         is: true,
+                    //         then: Yup.string().required('This field is required.')
+                    //     })
+                    // ,
+                    // project_name: Yup.string().required('This field is required.'),
                     brokerage: Yup.string().required('This field is required.'),
                     program: Yup.string().required('This field is required.'),
                     board: Yup.string().when('program', (program, field) => {
@@ -165,14 +230,14 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
                     }),
                     products: Yup.array().of(
                         Yup.object().shape({
-                            plan_id: Yup.string().required('This field is required.'),
+                            // plan_id: Yup.string().required('This field is required.'),
                             item_id: Yup.string().required('This field is required.'),
                             currencies: Yup.object({
                                 currency: Yup.string(),
                                 setup_fee: Yup.number().required('This field is required.'),
                                 unit_amount: Yup.number().required('This field is required.'),
                             }),
-                            category: Yup.string(), //* id group
+                            // category: Yup.string(), //* id group
                             product_category: Yup.string().required(
                                 'This field is required.',
                             ),
@@ -207,7 +272,7 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
                                 validateStatus={
                                     errors.brokerage && touched.brokerage && 'error'
                                 }
-                                help={<ErrorMessage name='brokerage' />}
+                                help={<ErrorMessage name='company_id' />}
                             >
                                 <Select
                                     className={item}

@@ -130,7 +130,6 @@ export const NewQuote = () => {
     states = [],
     project_name = '',
     listBundle = [],
-    // listMembership = [],
   } = data
 
   const {
@@ -548,7 +547,6 @@ export const NewQuote = () => {
         >
           {({ handleSubmit, errors, touched, values, setFieldValue }) => (
             <Fragment>
-              {console.log({ values })}
               <Form className={form} layout='vertical' autoComplete='off'>
                 <Form.Item
                   label='Project Name'

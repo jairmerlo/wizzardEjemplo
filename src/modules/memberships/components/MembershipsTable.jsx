@@ -446,9 +446,9 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.created_at_hour}
+          title={record.request_publish_date_time}
         >
-          {record.created_at}
+          {record.request_publish_date}
         </Tooltip>
       )
     },
@@ -1879,7 +1879,7 @@ export const MembershipsTable = ({ filter = '' }) => {
               </Tooltip>
 
               {
-                cycle_billing_type && (
+                !cycle_billing_type && (
                   <BillingEnrollment registration_key={registration_key} />
                 )
               }
