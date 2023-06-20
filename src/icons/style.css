@@ -229,3 +229,11 @@
   font-weight: 600;
   font-family: "Open Sans", sans-serif;
 }
+
+.titleColumn {
+  cursor: pointer;
+}
+
+.titleColumn:hover {
+  text-decoration: underline;
+}

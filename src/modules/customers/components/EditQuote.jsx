@@ -65,8 +65,8 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
         has_trial: 0,
     })
 
-    console.log({ data })
-    console.log({ dataEdit })
+    // console.log({ data })
+    // console.log({ dataEdit })
 
     const {
         project_name = "",
@@ -78,7 +78,7 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
         plan_id = "",
         board_id = "",
         payment_method = [],
-        coupon_id = "",
+        coupon_id = 0,
         show_cupon_wizard = 0,
         additional_items = [],
 
@@ -191,7 +191,7 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
                     program: plan_id,
                     board: board_id,
                     payment_method,
-                    coupon: coupon_id,
+                    coupon: parseInt(coupon_id),
                     show_cupon_wizard,
                     products: additional_items,
                     send_email: 0,

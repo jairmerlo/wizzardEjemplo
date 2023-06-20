@@ -533,6 +533,67 @@ export const billing = createApi({
         }
       },
     }),
+    getPlanByregistrationKey: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/get-plan-byregistration_key',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res.map(({ name, code, total_amount, total_setup }) => ({
+              label: `${code} ${name}`,
+              value: code,
+              setupfee: total_setup,
+              monthly: total_amount
+            })),
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getCompanyByRegistrationKey: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/company-by-registration_key',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getRequestByregKey: builder.query({
       queryFn: async (
         { registration_key },
@@ -807,6 +868,8 @@ export const {
   useEditCustomerMutation,
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
+  useGetPlanByregistrationKeyQuery,
+  useGetCompanyByRegistrationKeyQuery,
   useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
   useListAgreementByRegkeyQuery,

@@ -609,6 +609,7 @@ export const CustomersTableV1 = ({ filter }) => {
         Reset
       </Button>
       <Table
+        className='mainTable'
         key={tableKey}
         rowKey='id'
         columns={columns}

@@ -78,7 +78,8 @@ export const MembershipsTable = ({ filter = '' }) => {
   }, [])
 
   const [filteredRadioGroup, setFilteredRadioGroup] = useState({ value: 0, dataIndex: '', key: '' })
-
+  const [filteredNumber, setFilteredNumber] = useState({ less: 0, greater: 0, dataIndex: '', value: '' })
+  // console.log({ filteredNumber })
   useEvent('scroll', onScroll)
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
@@ -196,6 +197,52 @@ export const MembershipsTable = ({ filter = '' }) => {
     console.log({ newMembership })
 
   }, [filteredRadioGroup])
+
+  useEffect(() => {
+    if (filteredNumber.dataIndex === '') {
+      setFiltreredMembership(memberships)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(total)
+      return
+    }
+
+    let newMembership = []
+
+    if (filteredNumber.value === 1) {
+      newMembership = memberships.filter(membership => {
+        return membership[filteredNumber.dataIndex] !== null
+      })
+    } else if (filteredNumber.value === 5) {
+      newMembership = memberships.filter(membership => {
+        return membership[filteredNumber.dataIndex] === null
+      })
+    } else if (filteredNumber.value === 2) {
+
+      newMembership = memberships.filter(membership => {
+        let number = membership[filteredNumber.dataIndex].match(/\d+/g)
+        let numberPart = parseFloat(number.join(""))
+        // console.log(filteredNumber.less, numberPart)
+        return filteredNumber.less < numberPart
+      })
+
+      // if (filteredNumber.key === '') return
+
+      // newMembership = memberships.filter(membership => {
+      //   return membership[filteredRadioGroup.dataIndex]?.toString().toLowerCase().includes(filteredRadioGroup.key.toLowerCase())
+      // })
+    }
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFiltreredMembership(newMembership)
+    setTotalCurrentItems(newMembership.length)
+    console.log({ newMembership })
+
+  }, [filteredNumber])
 
   useEffect(() => {
     if (filtredValue === '') {
@@ -1440,8 +1487,9 @@ export const MembershipsTable = ({ filter = '' }) => {
     },
     {
       title: "$ Price"
-      // (text, record) => (
+      // title: (text, record) => (
       //   <Popover
+      //     className='titleColumn'
       //     placement='bottomLeft'
       //     trigger="click"
       //     content={
@@ -1458,34 +1506,96 @@ export const MembershipsTable = ({ filter = '' }) => {
       //         </Typography.Title>
       //         <Radio.Group
       //           onChange={(e) => {
-      //             setFilteredRadioGroup({
+      //             setFilteredNumber({
       //               value: e.target.value,
       //               dataIndex: 'price',
-      //               key: ''
+      //               less: 0,
+      //               greater: 0
       //             })
       //           }}
-      //           value={filteredRadioGroup.value}
+      //           value={filteredNumber.value}
       //         >
       //           <Space direction='vertical'>
       //             <Radio value={1}>is not empty</Radio>
       //             <Radio value={2}>
-      //               contains
-      //               {filteredRadioGroup.value === 2 ? (
+      //               is less than
+      //               {filteredNumber.value === 2 ? (
       //                 <Input
       //                   style={{
       //                     width: 100,
       //                     marginLeft: 10,
       //                   }}
-      //                   value={filteredRadioGroup.key}
-      //                   onChange={(e) => setFilteredRadioGroup({
+      //                   value={filteredNumber.less}
+      //                   type='number'
+      //                   min={0}
+      //                   onChange={(e) => setFilteredNumber({
       //                     dataIndex: 'price',
-      //                     key: e.target.value,
-      //                     value: 2
+      //                     value: 2,
+      //                     less: parseFloat(e.target.value),
+      //                     greater: 0
       //                   })}
       //                 />
       //               ) : null}
       //             </Radio>
-      //             <Radio value={3}>is empty</Radio>
+      //             <Radio value={3}>
+      //               is greater than
+      //               {filteredNumber.value === 3 ? (
+      //                 <Input
+      //                   style={{
+      //                     width: 100,
+      //                     marginLeft: 10,
+      //                   }}
+      //                   value={filteredNumber.greater}
+      //                   min={0}
+      //                   type='number'
+      //                   onChange={(e) => setFilteredNumber({
+      //                     dataIndex: 'price',
+      //                     value: 3,
+      //                     greater: e.target.value,
+      //                     less: 0
+      //                   })}
+      //                 />
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={4}>
+      //               between
+      //               {filteredNumber.value === 4 ? (
+      //                 <>
+      //                   <Input
+      //                     style={{
+      //                       width: 100,
+      //                       marginLeft: 10,
+      //                     }}
+      //                     value={filteredNumber.less}
+      //                     min={0}
+      //                     type='number'
+      //                     onChange={(e) => setFilteredNumber(previous => {
+      //                       return {
+      //                         ...previous,
+      //                         less: e.target.value
+      //                       }
+      //                     })}
+      //                   />
+      //                   To
+      //                   <Input
+      //                     style={{
+      //                       width: 100,
+      //                       marginLeft: 10,
+      //                     }}
+      //                     value={filteredNumber.greater}
+      //                     min={0}
+      //                     type='number'
+      //                     onChange={(e) => setFilteredNumber(previous => {
+      //                       return {
+      //                         ...previous,
+      //                         greater: e.target.value
+      //                       }
+      //                     })}
+      //                   />
+      //                 </>
+      //               ) : null}
+      //             </Radio>
+      //             <Radio value={5}>is empty</Radio>
       //           </Space>
       //         </Radio.Group>
       //       </Space>
@@ -1511,7 +1621,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           placement='topLeft'
           title={record.price}
         >
-          {record.price}
+          ${record.price}
         </Tooltip>
       ),
       width: 120,
@@ -2050,6 +2160,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         Reset
       </Button>
       <Table
+        className='mainTable'
         key={tableKey}
         rowKey='id'
         columns={getColumns(filter)}

@@ -374,9 +374,9 @@ export const MembershipDetails = () => {
               membershipData?.createdAt
             )}
           </Descriptions.Item>
-          <Descriptions.Item label='$ Lifetime'>
+          {/* <Descriptions.Item label='$ Lifetime'>
             {stringFallback(membershipData?.amount)}
-          </Descriptions.Item>
+          </Descriptions.Item> */}
           {(membershipData?.idxRequestedDate !== null) && (
             <Descriptions.Item label='IDX Requested' span={2}>
               {stringFallback(

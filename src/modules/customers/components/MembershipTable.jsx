@@ -174,18 +174,18 @@ export const MembershipTable = ({ memberships }) => {
       ...getColumnProps({ title: 'Periods', dataIndex: 'periods' }),
       ...getColumnSearchProps('periods'),
     },
-    {
-      title: '$ Lifetime',
-      dataIndex: 'amount',
-      key: 'amount',
-      ...getColumnSearchProps('amount'),
-      //   render: monthlyAmount =>
-      //     currency(monthlyAmount, {
-      //       decimal: '.',
-      //       separator: ',',
-      //       precision: 0,
-      //     }).format(),
-    },
+    // {
+    //   title: '$ Lifetime',
+    //   dataIndex: 'amount',
+    //   key: 'amount',
+    //   ...getColumnSearchProps('amount'),
+    //   //   render: monthlyAmount =>
+    //   //     currency(monthlyAmount, {
+    //   //       decimal: '.',
+    //   //       separator: ',',
+    //   //       precision: 0,
+    //   //     }).format(),
+    // },
     {
       title: 'Status',
       dataIndex: 'status',

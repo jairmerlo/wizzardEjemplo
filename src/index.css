@@ -53,10 +53,10 @@
   text-decoration: underline;
 }
 
-tr:nth-child(even) td {
+.mainTable tr:nth-child(even) td {
   background-color: #edf3fd !important;
 }
 
-tr:nth-child(odd) td {
+.mainTable tr:nth-child(odd) td {
   background-color: #ffffff !important;
 }

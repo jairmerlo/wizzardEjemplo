@@ -71,8 +71,8 @@ export const NewQuoteProducts = ({ monthlyProgram, setupFeeProgram }) => {
       }).then(data => setCouponToProgram(data))
   }, [values.coupon, values.program])
 
+  // console.log({ totalMonthly, totalSetup })
   useEffect(() => {
-    // console.log({ totalMonthly, totalSetup })
     setFieldValue('totalAmount', totalMonthly)
     setFieldValue('totalSetup', totalSetup)
   }, [totalMonthly, totalSetup])

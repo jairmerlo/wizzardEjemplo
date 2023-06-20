@@ -1,4 +1,4 @@
-import { useBillingEnrollmentMutation, useGetNewQuotesOptionsQuery, useGetPlanBycompanyIdQuery } from "../../../app/api/billing"
+import { useBillingEnrollmentMutation, useGetCompanyByRegistrationKeyQuery, useGetNewQuotesOptionsQuery, useGetPlanBycompanyIdQuery, useGetPlanByregistrationKeyQuery } from "../../../app/api/billing"
 import { ErrorMessage, Formik } from "formik"
 import * as Yup from 'yup'
 import { useCss, useSetState } from "react-use"
@@ -15,9 +15,13 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
     const navigate = useNavigate()
     const [setupfee, setSetupfee] = useState(0)
     const [monthly, setMonthly] = useState(0)
-    const [billingEnrollment, { isLoading: isLoadingBilling }] = useBillingEnrollmentMutation()
 
-    const [company, setCompany] = useState(0)
+
+    const [billingEnrollment, { isLoading: isLoadingBilling }] = useBillingEnrollmentMutation()
+    const { data: programs = [] } = useGetPlanByregistrationKeyQuery({ registration_key })
+    const { data: companyEnrollment = [] } = useGetCompanyByRegistrationKeyQuery({ registration_key })
+
+    // const [company, setCompany] = useState(0)
 
     const form = useCss({
         display: 'grid',
@@ -73,19 +77,21 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
         },
     })
 
-    const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
-        has_trial: 0,
-    })
-    const {
-        brokerages = [],
-        // programs = []
-    } = data
+    // const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
+    //     has_trial: 0,
+    // })
+    // const {
+    //     brokerages = [],
+    //     // programs = []
+    // } = data
 
-    const { data: programs = [] } = useGetPlanBycompanyIdQuery({
-        company
-    })
+    // const { data: programs = [] } = useGetPlanBycompanyIdQuery({
+    //     company
+    // })
 
     const today = new Date();
+    const nextMonth = new Date()
+    nextMonth.setMonth(nextMonth.getMonth() + 1)
     let yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
@@ -138,13 +144,13 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                 }}
                 enableReinitialize
                 initialValues={{
-                    brokerage: "",
+                    brokerage: companyEnrollment,
                     programas: {},
                     program_code: "",
                     periods_setupfee: 1,
                     periods_monthly: 1,
-                    startdate_setupfee: moment(new Date()).format('YYYY-MM-DD'),
-                    startdate_monthly: moment(new Date()).format('YYYY-MM-DD'),
+                    startdate_setupfee: moment(today).format('YYYY-MM-DD'),
+                    startdate_monthly: moment(nextMonth).format('YYYY-MM-DD'),
                 }}
                 validationSchema={Yup.object({
                     brokerage: Yup.string().required('This field is required.'),
@@ -170,13 +176,14 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                     help={<ErrorMessage name='brokerage' />}
                                 >
                                     <Select
+                                        disabled
                                         className={item}
                                         name='brokerage'
-                                        options={brokerages}
+                                        // options={brokerages}
                                         bordered={false}
                                         {...getSelectSearchProps()}
                                         onChange={value => {
-                                            setCompany(value)
+                                            // setCompany(value)
                                             setFieldValue('program_code', '')
                                         }}
                                     />
@@ -217,7 +224,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                         min={0} />
                                 </Form.Item>
                                 <Form.Item
-                                    label='Periods (Monthly)'
+                                    label='Quantity'
                                     required
 
                                 >
@@ -253,7 +260,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                     />
                                 </Form.Item>
                                 <Form.Item
-                                    label='Periods (Monthly)'
+                                    label='Quantity'
                                     required
                                 >
                                     <Input
@@ -264,7 +271,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                     />
                                 </Form.Item>
                                 <Form.Item
-                                    label='Start Data'
+                                    label='Start Date'
                                     required
                                     validateStatus={errors.startdate_monthly && touched.startdate_monthly && 'error'}
                                     help={<ErrorMessage name='startdate_monthly' />}
@@ -280,23 +287,29 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                             <div
                                 style={{
                                     display: 'flex',
-                                    justifyContent: 'flex-end',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
                                     gap: 8,
                                     paddingTop: 30,
                                 }}
                             >
-                                <Button className={button} onClick={handleClose}>Cancel</Button>
-                                <Button
-                                    type='primary'
-                                    onClick={handleSubmit}
-                                    loading={isLoadingBilling}
-                                    className={button}
-                                    style={{
-                                        backgroundImage: 'linear-gradient(to right,#ef3d4e,#ae2865)'
-                                    }}
-                                >
-                                    Save
-                                </Button>
+                                <h4>
+                                    Quantity: Amount of setup fee or monthly fee to be paid during that period
+                                </h4>
+                                <div>
+                                    <Button className={button} onClick={handleClose}>Cancel</Button>
+                                    <Button
+                                        type='primary'
+                                        onClick={handleSubmit}
+                                        loading={isLoadingBilling}
+                                        className={button}
+                                        style={{
+                                            backgroundImage: 'linear-gradient(to right,#ef3d4e,#ae2865)'
+                                        }}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
                             </div>
                         </Form>
                     </>
