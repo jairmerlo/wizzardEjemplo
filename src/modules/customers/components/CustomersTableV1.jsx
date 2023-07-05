@@ -17,12 +17,8 @@ import {
   Typography,
 } from 'antd'
 import {
-  DeleteTwoTone,
   DollarOutlined,
-  EditTwoTone,
-  EyeTwoTone,
   SearchOutlined,
-  ToolOutlined,
   UserAddOutlined,
 } from '@ant-design/icons'
 import {
@@ -35,7 +31,6 @@ import { useGetAllCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { Link, useSearchParams } from 'react-router-dom'
 import currency from 'currency.js'
-import { API } from '../../../api'
 import numbro from 'numbro'
 import { useEvent } from 'react-use'
 import { useSelectedRow } from '../../../hooks/useSelectedRow'
@@ -71,22 +66,33 @@ export const CustomersTableV1 = ({ filter }) => {
   // console.log({
   //   page: searchParams.get('page'),
   // })
+  const [filtredValue, setFiltredValue] = useState('')
+  const [filteredCustomers, setFilteredCustomers] = useState([])
+
+
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
   const [page, setPage] = useState(parseInt(searchParams.get('page')))
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])
-  const { data, isLoading } = useGetAllCustomersQuery({
+  const { data = [], isLoading } = useGetAllCustomersQuery({
     filter,
   })
+  console.log({ data })
   const items = currentItems.length !== 0 ? currentItems : data
   const totalData = data?.length
-  const totalLifetime = items
+    // const totalLifetime = items
     ?.map(item => currency(item.monthly_amount).value ?? 0)
     .reduce((a, b) => a + b, 0)
   const totalMonthly = items
     ?.map(item => currency(item.monthly).value ?? 0)
     .reduce((a, b) => a + b, 0)
   // console.log({ totalLifetime, totalMonthly, items })
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      setFilteredCustomers(data)
+    }
+  }, [data?.length])
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -136,6 +142,32 @@ export const CustomersTableV1 = ({ filter }) => {
   }, [data?.length])
 
   const { selectedRow, saveSelectedRow } = useSelectedRow('selectedRow')
+
+
+  useEffect(() => {
+    if (filtredValue === '') {
+      setFilteredCustomers(data)
+      setSearchParams({
+        page: 1,
+        size: 10,
+      })
+      setTotalCurrentItems(totalData)
+      return
+    };
+    const newCustomer = data.filter(customer => {
+      return customer.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        customer.uuid?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        customer.fullname?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
+        customer.email_contact?.toString().toLowerCase().includes(filtredValue.toLowerCase())
+    })
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setFilteredCustomers(newCustomer)
+    setTotalCurrentItems(newCustomer.length)
+
+  }, [filtredValue])
 
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
@@ -300,24 +332,24 @@ export const CustomersTableV1 = ({ filter }) => {
       render: (text, record) =>
         <Tooltip
           placement='topLeft'
-          title={`${record.name} ${record.last_name}`}
+          title={`${record.fullname}`}
         >
           {renderTextHighlighter({
-            text: `${record?.name} ${record.last_name}`,
+            text: `${record?.fullname}`,
             isHighlighted: searchedColumn['clientName'],
             highlightedText: searchText['clientName'],
           })}
         </Tooltip>
       ,
       onFilter: (value, record) =>
-        `${record?.name} ${record.last_name}`
+        `${record?.fullname}`
           .toString()
           .toLowerCase()
           .includes(value.toLowerCase()),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return `${a.name} ${a.last_name}`.localeCompare(
-            `${b.name} ${b.last_name}`,
+          return `${a.fullname}`.localeCompare(
+            `${b.fullname}`,
           )
         },
       }),
@@ -524,20 +556,18 @@ export const CustomersTableV1 = ({ filter }) => {
             </Space>
           }
         >
-          <a >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: '#858faf',
-                fontSize: '10px'
-              }}
-            >
-              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-              TOOLBOX
-            </div>
-          </a>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              color: '#858faf',
+              fontSize: '10px'
+            }}
+          >
+            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+            TOOLBOX
+          </div>
         </Popover>
       ),
     },
@@ -585,21 +615,49 @@ export const CustomersTableV1 = ({ filter }) => {
               <DollarOutlined spin />
             )}
           </Typography.Title> */}
+
         </div>
-        <Link to='/new-quote'>
-          <Button
-            type='primary'
-            shape='round'
-            icon={<UserAddOutlined />}
-            size='middle'
+
+
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Link to='/new-quote' style={{ marginRight: '20px' }}>
+            <Button
+              type='primary'
+              shape='round'
+              icon={<UserAddOutlined />}
+              size='middle'
+              style={{
+                alignSelf: 'flex-end',
+              }}
+            >
+              Add New Customer
+            </Button>
+          </Link>
+          <Typography.Title level={5}>
+            Search:
+          </Typography.Title>
+          {/* {console.log({ memberships })} */}
+          <Input.Search
+            disabled={!data}
+            onSearch={(value) => setFiltredValue(value)}
+            value={filtredValue}
+            onChange={(e) => setFiltredValue(e.target.value)}
+            size='large'
             style={{
-              alignSelf: 'flex-end',
+              width: '300px',
+              marginLeft: '15px'
             }}
-          >
-            Add New Customer
-          </Button>
-        </Link>
+          />
+
+        </div>
       </div>
+
       <Divider dashed />
       <Button
         type='default'
@@ -613,7 +671,7 @@ export const CustomersTableV1 = ({ filter }) => {
         key={tableKey}
         rowKey='id'
         columns={columns}
-        dataSource={data}
+        dataSource={filteredCustomers}
         bordered
         loading={isLoading}
         onChange={handleChange}

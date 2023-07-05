@@ -2,7 +2,6 @@ import { Modal } from 'antd'
 import React from 'react'
 import { useState } from 'react'
 import { useCss } from 'react-use'
-import { date, stringFallback } from '../../../helpers'
 
 export const AFTimeLine = ({
   completed_at,
@@ -32,7 +31,7 @@ export const AFTimeLine = ({
   })
   return (
     <>
-      <a onClick={handleOpen}>{completed_at || create_at}</a>
+      <button className='buttonLink' onClick={handleOpen}>{completed_at || create_at}</button>
       <Modal
         title={`Timeline. Authorization Form: ${authorization_form_type === 'ACH' ? 'ACH' : 'Credit Card'
           }`}

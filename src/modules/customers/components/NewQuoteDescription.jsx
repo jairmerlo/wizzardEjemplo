@@ -1,7 +1,6 @@
 import { Descriptions } from 'antd'
 import { useFormikContext } from 'formik'
-import React, { useEffect, useState } from 'react'
-import { applyCouponToProgram } from '../helpers'
+import React from 'react'
 import { NewQuoteProducts } from './NewQuoteProducts'
 
 export const NewQuoteDescription = ({ programs = [] }) => {

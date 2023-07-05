@@ -2,7 +2,6 @@ import { Modal, Skeleton, Table } from 'antd'
 import currency from 'currency.js'
 import { API } from '../../../api'
 import {
-  date,
   getColumnProps,
   getColumnSearchProps,
   getColumnSortProps,
@@ -10,7 +9,7 @@ import {
 } from '../../../helpers'
 import { useColumnSearch } from '../../../hooks'
 import { useGetCustomerV2BillingQuery } from '../../../app/api/billing'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FilePdfOutlined } from '@ant-design/icons'
 
 export const BillingHistoryTable = ({ dataSource, customerId }) => {
@@ -21,13 +20,18 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
   console.log({ data })
 
   const [pdfs, setPdfS] = useState([])
+  const [receipts, setReceipt] = useState([])
+  const [isModalReceiptOpen, setIsModalReceiptOpen] = useState(false)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleOk = () => {
+    setIsModalReceiptOpen(false)
     setIsModalOpen(false)
   }
 
   const handleCancel = () => {
+    setIsModalReceiptOpen(false)
     setIsModalOpen(false)
   }
 
@@ -45,6 +49,21 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
 
     // window.open(url, '_blank')
   }
+
+  const hadleViewReceipt = async ({ receipt_url, receipt_number }) => {
+    setReceipt([])
+    setIsModalReceiptOpen(true)
+    const res = await fetch(API._BILLING_HOST + '/get-receipt-pdf', {
+      method: 'post',
+      body: JSON.stringify({
+        url_receipt: receipt_url,
+        receipt_number
+      })
+    }).then(res => res.json())
+    console.log({ res })
+    setReceipt(res)
+  }
+
   const { handleReset, handleSearch, searchInput, searchedColumn, searchText } =
     useColumnSearch({
       membership_id: null,
@@ -109,7 +128,27 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
         onSearch: handleSearch,
       }),
       render: (text, record) => (
-        <button style={{ color: 'blue', border: 'none', backgroundColor: 'white' }} className='underlineHover' onClick={() => handleViewPdf(record.id)}>{text}</button>
+        <button className='underlineHover' onClick={() => handleViewPdf(record.id)}>{text}</button>
+      ),
+      ...getColumnSortProps({
+        dataIndex: 'name',
+      }),
+    },
+    {
+      ...getColumnProps({
+        title: 'Receipt #',
+        dataIndex: 'receipt_number',
+      }),
+      ...getColumnSearchProps({
+        dataIndex: 'receipt_number',
+        searchInput,
+        searchedColumn,
+        searchText,
+        onReset: handleReset,
+        onSearch: handleSearch,
+      }),
+      render: (text, record) => (
+        <button className='underlineHover' onClick={() => hadleViewReceipt(record)}>{text}</button>
       ),
       ...getColumnSortProps({
         dataIndex: 'name',
@@ -149,7 +188,7 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
     },
     {
       ...getColumnProps({
-        title: 'AMOUNT',
+        title: 'Amount',
         dataIndex: 'total',
       }),
       ...getColumnSearchProps({
@@ -182,6 +221,38 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
         loading={isLoading}
       />
       <Modal
+        title='Receipt Billing Information'
+        width='50%'
+        style={{ height: '20px' }}
+        open={isModalReceiptOpen}
+        footer={[]}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {receipts.url && (
+          <object
+            data={receipts.url}
+            type='application/pdf'
+            style={{ width: '100%', height: '700px' }}
+          >
+            <iframe frameBorder='0' width={'100%'} title='pdf'></iframe>
+          </object>
+        )}
+
+        {!receipts.url && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Skeleton.Node active={true} size={'large'} block={true}>
+              <FilePdfOutlined
+                style={{
+                  fontSize: 60,
+                  color: '#bfbfbf',
+                }}
+              />
+            </Skeleton.Node>
+          </div>
+        )}
+      </Modal>
+      <Modal
         title='Payment Billing Information'
         width='50%'
         style={{ height: '20px' }}
@@ -196,7 +267,7 @@ export const BillingHistoryTable = ({ dataSource, customerId }) => {
             type='application/pdf'
             style={{ width: '100%', height: '700px' }}
           >
-            <iframe frameborder='0' width={'100%'} title='pdf'></iframe>
+            <iframe frameBorder='0' width={'100%'} title='pdf'></iframe>
           </object>
         )}
 

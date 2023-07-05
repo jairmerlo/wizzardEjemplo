@@ -1,11 +1,10 @@
 import { Button, Divider, Form, Typography } from 'antd'
 // import { useSelector } from 'react-redux'
 import { ErrorMessage, Formik } from 'formik';
-import { Input as FormikInput, Select, Checkbox } from 'formik-antd'
-import { Link, Outlet, useNavigate, useParams } from 'react-router-dom'
+import { Input as FormikInput, Select } from 'formik-antd'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useCss } from 'react-use';
-import { useEditCustomerMutation, useGetCustomerQuery, useGetNewQuotesOptionsQuery, useGetStatesQuery } from '../../../app/api/billing'
-import { useState } from 'react';
+import { useEditCustomerMutation, useGetCustomerQuery, useGetStatesQuery } from '../../../app/api/billing'
 import * as Yup from 'yup'
 import { useGetBrokerageQuery, useGetProfilesToCustomersQuery } from '../../../app/api/backoffice';
 // import backoffice from '../../../app/api/backoffice'
@@ -49,8 +48,8 @@ export const CustomerEdit = () => {
     const navigate = useNavigate()
     const { customerId } = useParams()
 
-    const { data = {}, isLoading } = useGetCustomerQuery(customerId)
-    console.log({ data })
+    const { data = {} } = useGetCustomerQuery(customerId)
+    // console.log({ data })
     const [editCustomer] = useEditCustomerMutation()
     const { data: profiles = {} } = useGetProfilesToCustomersQuery()
     const { data: brokerages = [] } = useGetBrokerageQuery()
@@ -86,32 +85,6 @@ export const CustomerEdit = () => {
         memberships = []
     } = data
 
-    // if (profile_deployment_v2?.length !== 0) {
-    //     profile_deployment_v2 = profile_deployment_v2?.map(profile => {
-    //         return {
-    //             value: profile.id,
-    //             label: profile.username
-    //         }
-    //     })
-    // }
-    // if (profile_marketing_v2?.length !== 0) {
-    //     profile_marketing_v2 = profile_marketing_v2?.map(profile => {
-    //         return {
-    //             value: profile.id,
-    //             label: profile.username
-    //         }
-    //     })
-    // }
-
-    // if (profile_project_manager_v2?.length !== 0) {
-    //     profile_project_manager_v2 = profile_project_manager_v2?.map(profile => {
-    //         return {
-    //             value: profile.id,
-    //             label: profile.username
-    //         }
-    //     })
-    // }
-
     let optDeployment = []
     let optMarketing = []
     let optManager = []
@@ -125,12 +98,10 @@ export const CustomerEdit = () => {
         optManager = [...profiles.profiles_project_manager]
     }
 
-    // console.log({ memberships })
-
     const optionsMasterMembership = memberships?.map(membership => {
         return {
             value: membership.membership_id,
-            label: membership.membership_id
+            label: `${membership.membership_id} (${membership.wordpress_install_url})`
         }
     })
 
@@ -144,8 +115,6 @@ export const CustomerEdit = () => {
             label: `${last_name}, ${name}`
         },
     ]
-
-
 
     return (
         <div
@@ -191,7 +160,7 @@ export const CustomerEdit = () => {
                         })
 
 
-                        const res = editCustomer({
+                        editCustomer({
                             city: values.city,
                             company: values.company,
                             company_id: values.company_id,
@@ -293,10 +262,14 @@ export const CustomerEdit = () => {
                                             className={item}
                                         />
                                     </Form.Item>
+                                    {console.log({ values })}
                                     <Form.Item label='Display Name as' required>
                                         <Select
                                             name='display_name_as'
-                                            options={optionsName}
+                                            options={values.company === null || values.company === "" ? optionsName : [...optionsName, {
+                                                value: values.company,
+                                                label: values.company
+                                            }]}
                                             placeholder="--Select--"
                                             bordered={false}
                                             className={item}

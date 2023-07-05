@@ -19,7 +19,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
 
     const [billingEnrollment, { isLoading: isLoadingBilling }] = useBillingEnrollmentMutation()
     const { data: programs = [] } = useGetPlanByregistrationKeyQuery({ registration_key })
-    const { data: companyEnrollment = [] } = useGetCompanyByRegistrationKeyQuery({ registration_key })
+    // const { data: companyEnrollment = [] } = useGetCompanyByRegistrationKeyQuery({ registration_key })
 
     // const [company, setCompany] = useState(0)
 
@@ -144,7 +144,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                 }}
                 enableReinitialize
                 initialValues={{
-                    brokerage: companyEnrollment,
+                    // brokerage: companyEnrollment,
                     programas: {},
                     program_code: "",
                     periods_setupfee: 1,
@@ -153,7 +153,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                     startdate_monthly: moment(nextMonth).format('YYYY-MM-DD'),
                 }}
                 validationSchema={Yup.object({
-                    brokerage: Yup.string().required('This field is required.'),
+                    // brokerage: Yup.string().required('This field is required.'),
                     program_code: Yup.string().required('This field is required.'),
                     startdate_setupfee: Yup.date()
                         .min(yesterday, "date must be greater than or equal to current date"),
@@ -167,7 +167,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                             <div
                                 className={form}
                             >
-                                <Form.Item
+                                {/* <Form.Item
                                     label='Brokerage'
                                     required
                                     validateStatus={
@@ -187,7 +187,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                             setFieldValue('program_code', '')
                                         }}
                                     />
-                                </Form.Item>
+                                </Form.Item> */}
                                 <Form.Item
                                     label='Program'
                                     required
@@ -293,9 +293,9 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                     paddingTop: 30,
                                 }}
                             >
-                                <h4>
+                                <Typography.Text level={5}>
                                     Quantity: Amount of setup fee or monthly fee to be paid during that period
-                                </h4>
+                                </Typography.Text>
                                 <div>
                                     <Button className={button} onClick={handleClose}>Cancel</Button>
                                     <Button

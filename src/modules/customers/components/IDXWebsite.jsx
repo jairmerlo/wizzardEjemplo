@@ -1,10 +1,8 @@
 import Typography from 'antd/es/typography/Typography'
 import { IDXCard, IDXCardContent } from '.'
 // import theme from '../../../theme'
-import { useNavigate } from 'react-router-dom'
 
 export const IDXWebsite = ({ title = '', subtitle = '', description = '' }) => {
-  const navigate = useNavigate()
   return (
     <IDXCard style={{ width: '500px' }}>
       <IDXCardContent

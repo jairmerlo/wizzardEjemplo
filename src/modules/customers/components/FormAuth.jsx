@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Space, Typography } from 'antd'
+import { Button, Form, Modal, Space } from 'antd'
 import { Input as FormikInput } from 'formik-antd'
 import { Formik } from 'formik';
 import { useSendAuthorizationFormMutation } from '../../../app/api/billing';
@@ -55,7 +55,7 @@ export const FormAuth = ({ authorization_form_type, registration_key, user_id, o
                         { label7: values.label7, value7: values.value7 },
                     ]
 
-                    const res = await sendAuthorizationForm({
+                    await sendAuthorizationForm({
                         authorization_form_type,
                         registration_key,
                         user_id,

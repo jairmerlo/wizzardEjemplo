@@ -1,14 +1,12 @@
-import { Modal, Space, Table, Tooltip } from "antd"
-import { useGetMembershipQuery } from "../../../app/api/backoffice"
+import { Modal, Table, Tooltip } from "antd"
 
 import {
     getColumnProps,
-    getColumnSortProps,
     showTotal,
 } from '../../../helpers'
 import { useLayoutEffect, useState } from "react"
 import { CopyOutlined, EyeTwoTone } from "@ant-design/icons"
-import { useGetHtmlWizardQuery, useListAgreementByRegkeyQuery } from "../../../app/api/billing"
+import { useGetHtmlWizardQuery } from "../../../app/api/billing"
 import { IDXWebsite } from "./IDXWebsite"
 import { MembershipCreationSuccess } from "."
 
@@ -18,7 +16,7 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
         { registration_key },
     )
 
-    // console.log({ wizard })
+    console.log({ wizard })
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [modalView, setModalView] = useState(false)

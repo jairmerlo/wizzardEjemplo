@@ -1,6 +1,5 @@
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Modal, Space } from 'antd'
-import { Field, Formik } from 'formik';
+import { Button, Checkbox, Form, Modal, Space } from 'antd'
+import { Formik } from 'formik';
 import { Input as FormikInput } from 'formik-antd'
 import { useGetAuthorizationFormsQuery, useResendAuthorizationFormMutation } from '../../../app/api/billing';
 import { useState } from 'react';
@@ -99,7 +98,7 @@ export const FormReSend = ({ authorization_form_type, registration_key, user_id,
 
                     console.log(data[0])
 
-                    const res = await resendAuthorizationForm({
+                    await resendAuthorizationForm({
                         authorization_form_type,
                         registration_key,
                         user_id,

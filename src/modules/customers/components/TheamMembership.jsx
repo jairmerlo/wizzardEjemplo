@@ -1,8 +1,5 @@
-import { EyeTwoTone } from '@ant-design/icons'
-import { Modal, Space, Table, Tooltip } from 'antd'
+import { Table } from 'antd'
 
-import moment from 'moment'
-import { useState } from 'react'
 import { useGetTheamMembershipQuery } from '../../../app/api/backoffice'
 import { getColumnProps, showTotal } from '../../../helpers'
 
@@ -26,38 +23,38 @@ export const TheamMembership = ({ registrationKey }) => {
   //   },
   // )
 
-  const [pdfs, setPdfS] = useState([])
+  // const [pdfs, setPdfS] = useState([])
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
+  // const showModal = () => {
+  //   setIsModalOpen(true)
+  // }
 
-  const handleViewPdf = async id => {
-    // setPdfS([])
-    // setIsModalOpen(true)
-    // const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
-    //   method: 'get',
-    // }).then(res => res.json())
-    // setPdfS(res)
+  // const handleViewPdf = async id => {
+  //   // setPdfS([])
+  //   // setIsModalOpen(true)
+  //   // const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
+  //   //   method: 'get',
+  //   // }).then(res => res.json())
+  //   // setPdfS(res)
 
-    if (theamData.find(data => data.id === id)) {
-      setPdfS(theamData.find(data => data.id === id))
-    } else {
-      setPdfS([])
-    }
+  //   if (theamData.find(data => data.id === id)) {
+  //     setPdfS(theamData.find(data => data.id === id))
+  //   } else {
+  //     setPdfS([])
+  //   }
 
-    setIsModalOpen(true)
-  }
+  //   setIsModalOpen(true)
+  // }
 
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
+  // const handleOk = () => {
+  //   setIsModalOpen(false)
+  // }
 
-  const handleCancel = () => {
-    setIsModalOpen(false)
-  }
+  // const handleCancel = () => {
+  //   setIsModalOpen(false)
+  // }
 
   const columns = [
     {

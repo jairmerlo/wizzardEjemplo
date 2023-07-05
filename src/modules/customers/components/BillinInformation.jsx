@@ -1,10 +1,5 @@
-import { EyeTwoTone } from '@ant-design/icons'
-import { Modal, Space, Table, Tooltip } from 'antd'
-import { Form, Input } from 'antd'
+import { Table } from 'antd'
 
-import moment from 'moment'
-import { Fragment, useState } from 'react'
-import { useCss } from 'react-use'
 import { useBillingInformationQuery } from '../../../app/api/billing'
 
 import { getColumnProps, showTotal } from '../../../helpers'
@@ -65,18 +60,16 @@ export const BillinInformation = ({
   }
 
   return (
-    <>
-      <Table
-        rowKey='id'
-        size='small'
-        columns={columns}
-        dataSource={rows}
-        bordered
-        pagination={{
-          showTotal,
-        }}
-        loading={isLoadingInformation}
-      />
-    </>
+    <Table
+      rowKey='id'
+      size='small'
+      columns={columns}
+      dataSource={rows}
+      bordered
+      pagination={{
+        showTotal,
+      }}
+      loading={isLoadingInformation}
+    />
   )
 }

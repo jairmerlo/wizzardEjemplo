@@ -43,9 +43,9 @@ export const AgreementHistory = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
+  // const showModal = () => {
+  //   setIsModalOpen(true)
+  // }
 
   const handleViewPdf = async id => {
     // setPdfS([])
@@ -84,7 +84,7 @@ export const AgreementHistory = ({
       // content: 'Some descriptions',
       async onOk() {
         try {
-          const res = await idxResendAgreementEmail({
+          await idxResendAgreementEmail({
             registration_key,
             program_name
           }).unwrap()

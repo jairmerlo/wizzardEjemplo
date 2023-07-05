@@ -1621,7 +1621,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           placement='topLeft'
           title={record.price}
         >
-          ${record.price}
+          {record.price}
         </Tooltip>
       ),
       width: 120,

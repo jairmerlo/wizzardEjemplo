@@ -1,11 +1,9 @@
-import React, { useReducer, useRef } from 'react'
+import React, { useReducer } from 'react'
 import {
   Button,
   Divider,
-  Input,
   Space,
   Table,
-  Tag,
   Tooltip,
   Typography,
 } from 'antd'
@@ -13,11 +11,9 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   EyeTwoTone,
-  SearchOutlined,
   UserAddOutlined,
 } from '@ant-design/icons'
-import currency from 'currency.js'
-import { renderTextHighlighter, showTotal, USD } from '../../../helpers'
+import { showTotal, USD } from '../../../helpers'
 import { useGetCustomersQuery } from '../../../app/api/billing'
 import moment from 'moment/moment'
 import { CustomerView } from '.'

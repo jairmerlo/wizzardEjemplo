@@ -6,24 +6,24 @@ import { useCss } from 'react-use'
 import { useGetProductOptionsQuery } from '../../../app/api/billing'
 import { useEffect } from 'react'
 
-const productsData = [
-  {
-    plan_id: '1029', //* program seleccionado
-    item_id: '1462', //* id del product
-    currencies: { currency: 'USD', setup_fee: 999, unit_amount: 299 },
-    category: '23', //* id de group
-    product_category: 'Website Services', //* name de category
-    item_sort: 0, //* order en el que se va asociando los productos, el primero es 0, el segundo es 1
-  },
-  {
-    plan_id: '1029',
-    item_id: '1457',
-    currencies: { currency: 'USD', setup_fee: 0, unit_amount: 99 },
-    category: '12',
-    product_category: 'Website Services',
-    item_sort: 1,
-  },
-]
+// const productsData = [
+//   {
+//     plan_id: '1029', //* program seleccionado
+//     item_id: '1462', //* id del product
+//     currencies: { currency: 'USD', setup_fee: 999, unit_amount: 299 },
+//     category: '23', //* id de group
+//     product_category: 'Website Services', //* name de category
+//     item_sort: 0, //* order en el que se va asociando los productos, el primero es 0, el segundo es 1
+//   },
+//   {
+//     plan_id: '1029',
+//     item_id: '1457',
+//     currencies: { currency: 'USD', setup_fee: 0, unit_amount: 99 },
+//     category: '12',
+//     product_category: 'Website Services',
+//     item_sort: 1,
+//   },
+// ]
 
 export const ProductItem = ({ onRemove, productIndex }) => {
   const { values, errors, touched, setFieldValue } = useFormikContext()
@@ -40,7 +40,7 @@ export const ProductItem = ({ onRemove, productIndex }) => {
     },
   )
   // console.log({ data })
-  let { categories = [], groups = [], products = [] } = data
+  let { categories = [], products = [] } = data
 
   let itemsId = values.products.map(({ item_id }) => item_id)
   products = products.map((product) => {

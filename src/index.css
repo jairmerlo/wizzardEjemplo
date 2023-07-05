@@ -49,6 +49,12 @@
   border-left: 1px solid #ddd;
 }
 
+.underlineHover {
+  color: blue;
+  border: none;
+  background-color: white;
+}
+
 .underlineHover:hover {
   text-decoration: underline;
 }
@@ -59,4 +65,9 @@
 
 .mainTable tr:nth-child(odd) td {
   background-color: #ffffff !important;
+}
+
+.buttonLink {
+  background-color: white;
+  border: none;
 }

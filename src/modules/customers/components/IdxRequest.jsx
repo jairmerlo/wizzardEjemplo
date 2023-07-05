@@ -21,7 +21,7 @@ export const IdxRequest = ({ registration_key }) => {
                     dataIndex: 'status',
                 }),
                 render(text, data) {
-                    if (data?.status === "pending") {
+                    if (data?.status === "Pending") {
                         return <td>Pending Accept IDX Request</td>
                     } else if (data?.status === "Pending Data") {
                         return <td>Pending IDX Request Form</td>
@@ -111,7 +111,7 @@ export const IdxRequest = ({ registration_key }) => {
                     dataIndex: 'status',
                 }),
                 render(text, data) {
-                    if (data?.status === "pending") {
+                    if (data?.status === "Pending") {
                         return <td>Pending Accept IDX Request</td>
                     } else if (data?.status === "Pending Data") {
                         return <td>Pending IDX Request Form</td>

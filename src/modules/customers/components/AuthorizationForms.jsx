@@ -1,21 +1,16 @@
 import {
   CopyOutlined,
   EditOutlined,
-  ExclamationCircleFilled,
-  EyeTwoTone,
-  FileProtectOutlined,
-  RetweetOutlined,
   SendOutlined,
 } from '@ant-design/icons'
-import { Button, Modal, notification, Space, Table, Tooltip } from 'antd'
+import { Space, Table, Tooltip } from 'antd'
 import moment from 'moment'
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import {
-  useReplaceAuthorizationFormMutation,
-  useResendAuthorizationFormMutation,
-  useSendAuthorizationFormMutation,
-} from '../../../app/api/billing'
+// import {
+//   useReplaceAuthorizationFormMutation,
+//   useResendAuthorizationFormMutation,
+//   useSendAuthorizationFormMutation,
+// } from '../../../app/api/billing'
 import { getColumnProps, showTotal, stringFallback } from '../../../helpers'
 import { AFTimeLine } from './AFTimeLine'
 import { DocumentPDF } from './DocumentPDF'
@@ -61,10 +56,10 @@ export const AuthorizationForms = ({
   const principalACH = achData.find(item => item.is_principal === '1')
   const principalCard = cardData.find(item => item.is_principal === '1')
 
-  const { confirm } = Modal
-  const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
-  const [resendAuthorizationForm] = useResendAuthorizationFormMutation()
-  const [replaceAuthorizationForm] = useReplaceAuthorizationFormMutation()
+  // const { confirm } = Modal
+  // const [sendAuthorizationForm] = useSendAuthorizationFormMutation()
+  // const [resendAuthorizationForm] = useResendAuthorizationFormMutation()
+  // const [replaceAuthorizationForm] = useReplaceAuthorizationFormMutation()
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
@@ -80,10 +75,10 @@ export const AuthorizationForms = ({
   const handleOpenReplace = () => setOpenReplace(true)
   const handleCloseReplace = () => setOpenReplace(false)
 
-  const [values, setValues] = useState([])
-  const handleSubmitDinamic = (data) => {
-    setValues(values.push(data))
-  }
+  // const [values, setValues] = useState([])
+  // const handleSubmitDinamic = (data) => {
+  //   setValues(values.push(data))
+  // }
 
   const handleSend = ({ authorization_form_type }) => {
     setAutorization(authorization_form_type)
@@ -277,33 +272,27 @@ export const AuthorizationForms = ({
             }
             {status === 'Waiting for client' || status === 'Completed' || (
               <Tooltip title={'Send'} overlayStyle={{ zIndex: 10000 }}>
-                <a  >
-                  <SendOutlined
-                    onClick={() => handleSend({ authorization_form_type })}
-                    style={{ fontSize: '18px' }}
-                  />
-                </a>
+                <SendOutlined
+                  onClick={() => handleSend({ authorization_form_type })}
+                  style={{ fontSize: '18px' }}
+                />
 
               </Tooltip>
             )}
             {status === 'Waiting for client' && (
               <Tooltip title='Edit' overlayStyle={{ zIndex: 10000 }}>
-                <a>
-                  <EditOutlined
-                    onClick={() => handleResend({ authorization_form_type })}
-                    style={{ fontSize: '18px' }}
-                  />
-                </a>
+                <EditOutlined
+                  onClick={() => handleResend({ authorization_form_type })}
+                  style={{ fontSize: '18px' }}
+                />
               </Tooltip>
             )}
             {status === 'Completed' && (
               <Tooltip title='Replace' overlayStyle={{ zIndex: 10000 }}>
-                <a>
-                  <CopyOutlined
-                    style={{ fontSize: '18px' }}
-                    onClick={() => handleReplace({ authorization_form_type })}
-                  />
-                </a>
+                <CopyOutlined
+                  style={{ fontSize: '18px' }}
+                  onClick={() => handleReplace({ authorization_form_type })}
+                />
               </Tooltip>
             )}
           </Space>

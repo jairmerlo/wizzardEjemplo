@@ -17,7 +17,6 @@ import {
   showTotal,
 } from '../../../helpers'
 import { API } from '../../../api'
-import { useCss } from 'react-use'
 
 export const BillinHistory = ({
   achData = [],
@@ -35,37 +34,67 @@ export const BillinHistory = ({
       },
     )
 
-  console.log({ billinHistoryData })
-
   const [pdfs, setPdfS] = useState([])
+  const [receipts, setReceipt] = useState([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalReceiptOpen, setIsModalReceiptOpen] = useState(false)
+
 
   const handleViewPdf = async ({ id }) => {
     setPdfS([])
     setIsModalOpen(true)
-    console.log({ id })
     const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
       method: 'get',
     }).then(res => res.json())
     setPdfS(res)
   }
 
+  const hadleViewReceipt = async ({ receipt_url, receipt_number }) => {
+    setReceipt([])
+    setIsModalReceiptOpen(true)
+    const res = await fetch(API._BILLING_HOST + '/get-receipt-pdf', {
+      method: 'post',
+      body: JSON.stringify({
+        url_receipt: receipt_url,
+        receipt_number
+      })
+    }).then(res => res.json())
+    console.log({ res })
+    setReceipt(res)
+  }
+
   const handleOk = () => {
     setIsModalOpen(false)
+    setIsModalReceiptOpen(false)
   }
 
   const handleCancel = () => {
     setIsModalOpen(false)
+    setIsModalReceiptOpen(false)
   }
 
   const columns = [
     {
       ...getColumnProps({
-        title: 'INVOICE #',
+        title: 'Invoice #',
         dataIndex: 'invoice_number',
       }),
-      render: (text, id) => <button style={{ color: 'blue', border: 'none', backgroundColor: 'white' }} className='underlineHover' onClick={() => handleViewPdf(id)}>{text}</button>,
+      render: (text, id) => <button className='underlineHover' onClick={() => handleViewPdf(id)}>{text}</button>,
+    },
+    {
+      ...getColumnProps({
+        title: 'Receipt #',
+        dataIndex: 'receipt_number',
+      }),
+      render: (text, record) => (
+        <button
+          className='underlineHover'
+          onClick={() => hadleViewReceipt(record)}
+        >
+          {text}
+        </button>
+      ),
     },
     {
       ...getColumnProps({
@@ -84,7 +113,7 @@ export const BillinHistory = ({
     },
     {
       ...getColumnProps({
-        title: 'AMOUNT',
+        title: 'Amount',
         dataIndex: 'total',
       }),
       render(text, { total }) {
@@ -107,6 +136,39 @@ export const BillinHistory = ({
       />
 
       <Modal
+        title='Receipt Billing Information'
+        width='50%'
+        style={{ height: '20px' }}
+        open={isModalReceiptOpen}
+        footer={[]}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {receipts.url && (
+          <object
+            data={receipts.url}
+            type='application/pdf'
+            style={{ width: '100%', height: '700px' }}
+          >
+            <iframe frameBorder='0' width={'100%'} title='pdf'></iframe>
+          </object>
+        )}
+
+        {!receipts.url && (
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Skeleton.Node active={true} size={'large'} block={true}>
+              <FilePdfOutlined
+                style={{
+                  fontSize: 60,
+                  color: '#bfbfbf',
+                }}
+              />
+            </Skeleton.Node>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
         title='Payment Billing Information'
         width='50%'
         style={{ height: '20px' }}
@@ -121,7 +183,7 @@ export const BillinHistory = ({
             type='application/pdf'
             style={{ width: '100%', height: '700px' }}
           >
-            <iframe frameborder='0' width={'100%'} title='pdf'></iframe>
+            <iframe frameBorder='0' width={'100%'} title='pdf'></iframe>
           </object>
         )}
 

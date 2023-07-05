@@ -2,12 +2,11 @@ import { useEffect, useState } from "react"
 import { useGetNewQuotesOptionsQuery, useGetQuoteBynameQuery, useListMembershipTypeQuery, useModifyQuoteMutation, usePlansFilteredQuery } from "../../../app/api/billing"
 import { Button, Divider, Form, Modal, Typography, notification } from "antd"
 import { Formik, ErrorMessage } from "formik"
-import { Input as FormikInput, Select, Checkbox, Input } from 'formik-antd'
+import { Select, Checkbox, Input } from 'formik-antd'
 import * as Yup from 'yup'
 import { useCss } from "react-use"
 import { getSelectSearchProps } from "../../../helpers"
 import { NewQuoteDescription } from "./NewQuoteDescription"
-import { Link } from "react-router-dom"
 
 
 export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) => {
@@ -61,7 +60,7 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
     const { data: listMembership = [] } = useListMembershipTypeQuery({ bundle_type_id: category })
 
     const { data: dataEdit = {} } = useGetQuoteBynameQuery({ quote_name })
-    const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
+    const { data = {} } = useGetNewQuotesOptionsQuery({
         has_trial: 0,
     })
 
@@ -105,12 +104,10 @@ export const EditQuote = ({ quote_name = "", open = false, cancel = f => f }) =>
 
 
     const {
-        prospects = [],
         brokerages = [],
         boards = [],
         paymentMethods = [],
         coupons = [],
-        states = [],
         listBundle = [],
     } = data
 

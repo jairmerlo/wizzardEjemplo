@@ -3,9 +3,9 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms, IdxRequest, LaunchWebsite, ProductPurchasedTimeline } from '.'
 import { useGetMembershipQuery } from '../../../app/api/backoffice'
-import { useGetAuthorizationFormsQuery, useGetRequestByregKeyQuery, useListAccountInvoiceByRegkeyQuery } from '../../../app/api/billing'
+import { useGetAuthorizationFormsQuery, useGetRequestByregKeyQuery } from '../../../app/api/billing'
 import { Loader } from '../../../components'
-import { getConfig, stringAvatar, stringFallback, date } from '../../../helpers'
+import { getConfig, stringAvatar, stringFallback } from '../../../helpers'
 import { AgentsMembership } from './AgentsMembership'
 import { AgreementHistory } from './AgreementHistory'
 import { BillinHistory } from './BillinHistory'
@@ -13,11 +13,10 @@ import { BillinInformation } from './BillinInformation'
 import { MembershipsTableTrialCustomer } from './MembershipsTableTrialCustomer'
 import { TheamMembership } from './TheamMembership'
 import '../../../icons/style.css'
-import { Deleteicon, EditMemberhipIcon, Requesticon } from '../../memberships/components'
+import { BillingEnrollment, Deleteicon, EditMemberhipIcon, Requesticon } from '../../memberships/components'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
-
   let options = [
     'Billing Information',
     'Billing History',
@@ -31,14 +30,14 @@ export const MembershipDetails = () => {
     // 'Membership Trial',
   ]
 
-  const { data: billinHistoryData = [] } = useListAccountInvoiceByRegkeyQuery(
-    { registration_key: membershipRegKey },
-    {
-      skip: !membershipRegKey,
-    },
-  )
+  // const { data: billinHistoryData = [] } = useListAccountInvoiceByRegkeyQuery(
+  //   { registration_key: membershipRegKey },
+  //   {
+  //     skip: !membershipRegKey,
+  //   },
+  // )
 
-  const { data: membershipData, isLoading: isLoadingM } = useGetMembershipQuery(
+  const { data: membershipData = {}, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
     {
       skip: !membershipRegKey,
@@ -47,19 +46,23 @@ export const MembershipDetails = () => {
 
   console.log({ membershipData })
 
-  const crm = membershipData?.hasCrm
-  const trial = membershipData?.hasTrial
-  const launch = membershipData?.hasLaunch
-  const idxrequest = membershipData?.idx
+  const {
+    hasCrm = 0,
+    hasTrial = 0,
+    hasLaunch = 0,
+    idx = 0,
+    cycle_billing_type = 1,
+  } = membershipData
   // console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
-  if (crm === "1") options.push("Agents")
-  if (trial === 1) options.push("Membership Trial")
-  if (launch === 1) options.push("Launch Website")
-  const { data: dataRegistration = [], isLoading } = useGetRequestByregKeyQuery({
-    registration_key: membershipData?.cpanelRegistrationKey
+  if (hasCrm === "1") options.push("Agents")
+  if (hasTrial === 1) options.push("Membership Trial")
+  if (hasLaunch === 1) options.push("Launch Website")
+
+  const { data: dataRegistration = [] } = useGetRequestByregKeyQuery({
+    registration_key: membershipRegKey
   })
-  if (idxrequest) {
+  if (idx) {
     if (dataRegistration[0]?.status === "Done") {
       options.push("IDX Request Approved")
     } else {
@@ -172,20 +175,18 @@ export const MembershipDetails = () => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        color: '#858faf',
-                        fontSize: '10px'
-                      }}
-                    >
-                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                      LOGIN
-                    </div>
-                  </a>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                    LOGIN
+                  </div>
                 </Tooltip>
               </Popover>
 
@@ -214,20 +215,18 @@ export const MembershipDetails = () => {
               <Requesticon registration_key={membershipData?.cpanelRegistrationKey} id={membershipData.cpanelId} />
 
               <Tooltip title='ONB'>
-                <a>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                    ONB
-                  </div>
-                </a>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    color: '#858faf',
+                    fontSize: '10px'
+                  }}
+                >
+                  <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                  ONB
+                </div>
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
@@ -249,6 +248,11 @@ export const MembershipDetails = () => {
                 </a>
               </Tooltip>
 
+              {
+                !cycle_billing_type && (
+                  <BillingEnrollment registration_key={membershipData?.cpanelRegistrationKey} />
+                )
+              }
 
               <Deleteicon registration_key={membershipData?.cpanelRegistrationKey} />
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
@@ -256,20 +260,18 @@ export const MembershipDetails = () => {
           }
           trigger='hover'
         >
-          <a>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: '#858faf',
-                fontSize: '10px'
-              }}
-            >
-              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-              TOOLBOX
-            </div>
-          </a>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              color: '#858faf',
+              fontSize: '10px'
+            }}
+          >
+            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+            TOOLBOX
+          </div>
         </Popover>
       </div>
       <div
@@ -357,7 +359,7 @@ export const MembershipDetails = () => {
           </Descriptions.Item>
           <Descriptions.Item label='IDX'>
             {
-              idxrequest ? 'Si' : 'No'
+              idx ? 'Si' : 'No'
             }
           </Descriptions.Item>
           <Descriptions.Item label='$ Price'>
@@ -384,7 +386,7 @@ export const MembershipDetails = () => {
               )}
             </Descriptions.Item>
           )}
-          {(trial !== '0') && (
+          {(hasTrial !== '0') && (
             <>
               <Descriptions.Item label='Trial Due'>
                 {membershipData.trialDue ? stringFallback(membershipData.trialDue) : 'No'}
