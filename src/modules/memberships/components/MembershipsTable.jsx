@@ -11,7 +11,6 @@ import {
   Divider,
   Input,
   Popover,
-  Radio,
   Space,
   Table,
   Tooltip,
@@ -34,7 +33,7 @@ import currency from 'currency.js'
 import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon, BillingEnrollment } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
-import { useCss, useEvent } from 'react-use'
+import { useEvent } from 'react-use'
 import '../../../icons/style.css'
 
 const reducer = (state, newState) => ({ ...state, ...newState })
@@ -87,7 +86,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     filter,
   })
 
-  const { data: memberships, total } = data
+  const { data: memberships = [], total } = data
 
   useEffect(() => {
     if (memberships?.length > 0) {
@@ -183,7 +182,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     } else if (filteredRadioGroup.value === 2) {
 
       if (filteredRadioGroup.key === '') return
-
       newMembership = memberships.filter(membership => {
         return membership[filteredRadioGroup.dataIndex]?.toString().toLowerCase().includes(filteredRadioGroup.key.toLowerCase())
       })
@@ -272,9 +270,9 @@ export const MembershipsTable = ({ filter = '' }) => {
   }, [filtredValue])
 
 
-  const containerSortButtons = useCss({
-    display: 'flex'
-  })
+  // const containerSortButtons = useCss({
+  //   display: 'flex'
+  // })
 
   console.log(data, "data")
   // const idx = 'IDX00915'
@@ -448,7 +446,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     ),
     onFilter: (value, record) => {
       const text = record[dataIndex] || ''
-      return text.toString().toLowerCase().includes(value.toLowerCase())
+      return text?.toString().toLowerCase().includes(value.toLowerCase())
     },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
@@ -1910,20 +1908,18 @@ export const MembershipsTable = ({ filter = '' }) => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        color: '#858faf',
-                        fontSize: '10px'
-                      }}
-                    >
-                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                      LOGIN
-                    </div>
-                  </a>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                    LOGIN
+                  </div>
                 </Tooltip>
               </Popover>
 
@@ -1953,20 +1949,18 @@ export const MembershipsTable = ({ filter = '' }) => {
               <Requesticon registration_key={registration_key} id={id} />
 
               <Tooltip title='ONB'>
-                <a >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                    ONB
-                  </div>
-                </a>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    color: '#858faf',
+                    fontSize: '10px'
+                  }}
+                >
+                  <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                  ONB
+                </div>
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
@@ -2002,20 +1996,18 @@ export const MembershipsTable = ({ filter = '' }) => {
           }
 
         >
-          <a>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: '#858faf',
-                fontSize: '10px'
-              }}
-            >
-              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-              TOOLBOX
-            </div>
-          </a>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              color: '#858faf',
+              fontSize: '10px'
+            }}
+          >
+            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+            TOOLBOX
+          </div>
         </Popover>
       ),
       fixed: 'right',

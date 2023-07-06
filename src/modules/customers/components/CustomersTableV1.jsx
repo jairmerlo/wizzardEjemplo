@@ -80,9 +80,9 @@ export const CustomersTableV1 = ({ filter }) => {
   console.log({ data })
   const items = currentItems.length !== 0 ? currentItems : data
   const totalData = data?.length
-    // const totalLifetime = items
-    ?.map(item => currency(item.monthly_amount).value ?? 0)
-    .reduce((a, b) => a + b, 0)
+  // const totalLifetime = items
+  //   ?.map(item => currency(item.monthly_amount).value ?? 0)
+  //   .reduce((a, b) => a + b, 0)
   const totalMonthly = items
     ?.map(item => currency(item.monthly).value ?? 0)
     .reduce((a, b) => a + b, 0)
@@ -279,7 +279,7 @@ export const CustomersTableV1 = ({ filter }) => {
       />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
@@ -343,7 +343,7 @@ export const CustomersTableV1 = ({ filter }) => {
       ,
       onFilter: (value, record) =>
         `${record?.fullname}`
-          .toString()
+          ?.toString()
           .toLowerCase()
           .includes(value.toLowerCase()),
       ...getCustomColumnSortProps({

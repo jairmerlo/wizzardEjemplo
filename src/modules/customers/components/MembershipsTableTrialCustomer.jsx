@@ -232,7 +232,7 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId, re
     ),
     onFilter: (value, record) => {
       const text = record[dataIndex] || ''
-      return text.toString().toLowerCase().includes(value.toLowerCase())
+      return text?.toString().toLowerCase().includes(value.toLowerCase())
     },
     onFilterDropdownOpenChange: visible => {
       if (visible) {

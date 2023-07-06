@@ -118,19 +118,16 @@ export const MembershipDetails = () => {
         </Typography.Title>
         <Popover
           placement='bottom'
-          style={{
-            cursor: 'pointer'
-          }}
-          // trigger="hover"
+          trigger='hover'
           content={
-            <Space size='middle' direction='vertical'>
+            <Space size='middle' direction='vertical' style={{ alignItems: 'center' }}>
               <Popover
                 // trigger="hover"
                 placement='bottom'
 
                 // title={text}
                 content={
-                  <Space size='middle' direction='vertical'>
+                  <Space size='middle' direction='vertical' >
                     {/* eslint-disable jsx-a11y/anchor-is-valid */}
                     <Tooltip title='CPanel'>
                       <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${membershipData.cpanelId}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
@@ -181,7 +178,8 @@ export const MembershipDetails = () => {
                       flexDirection: 'column',
                       alignItems: 'center',
                       color: '#858faf',
-                      fontSize: '10px'
+                      fontSize: '10px',
+                      cursor: 'pointer'
                     }}
                   >
                     <span className='back-office-key' style={{ fontSize: '20px' }}></span>
@@ -258,7 +256,6 @@ export const MembershipDetails = () => {
               {/* eslint-enable jsx-a11y/anchor-is-valid */}
             </Space>
           }
-          trigger='hover'
         >
           <div
             style={{
@@ -327,6 +324,20 @@ export const MembershipDetails = () => {
           }}
         // extra={<Button type='primary'>Edit</Button>}
         >
+          <Descriptions.Item label='Customer'>
+            {stringFallback(fullName)}
+          </Descriptions.Item>
+          <Descriptions.Item label='IDX'>
+            {
+              idx ? 'Yes' : 'No'
+            }
+          </Descriptions.Item>
+          <Descriptions.Item label='Project Name'>
+            {stringFallback(membershipData?.projectName)}
+          </Descriptions.Item>
+          <Descriptions.Item label='Board name'>
+            {stringFallback(membershipData?.boardName)}
+          </Descriptions.Item>
           <Descriptions.Item label='URL'>
             <a
               href={membershipData?.wordpressInstallUrl}
@@ -336,75 +347,51 @@ export const MembershipDetails = () => {
               {membershipData?.wordpressInstallUrl}
             </a>
           </Descriptions.Item>
-          <Descriptions.Item label='Periods'>
-            {stringFallback(membershipData?.periods)}
-          </Descriptions.Item>
-
-          <Descriptions.Item label='Premium'>
-            {stringFallback(
-              membershipData.hasPremium === true ? 'Yes' : 'No',
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label='Published'>
+          <Descriptions.Item label='Published Date'>
             {stringFallback(membershipData?.activatedAt)}
           </Descriptions.Item>
           <Descriptions.Item label='Service/Product'>
             {stringFallback(membershipData?.classAccountingName)}
           </Descriptions.Item>
-          <Descriptions.Item label='Board'>
-            {stringFallback(membershipData.boardName)}
+          <Descriptions.Item label='Initial Billing Date'>
+            {stringFallback(membershipData?.initBillingDate)}
           </Descriptions.Item>
-          <Descriptions.Item label='Customer'>
-            {stringFallback(fullName)}
-          </Descriptions.Item>
-          <Descriptions.Item label='IDX'>
-            {
-              idx ? 'Si' : 'No'
-            }
-          </Descriptions.Item>
-          <Descriptions.Item label='$ Price'>
+          <Descriptions.Item label='Program $'>
             {stringFallback(membershipData?.price)}
           </Descriptions.Item>
-          <Descriptions.Item label='Premium Date'>
-            {stringFallback(membershipData.premium)}
-          </Descriptions.Item>
-          <Descriptions.Item label='$ Setup Fee/ 1st Payment'>
-            {stringFallback(membershipData?.setUpFee)}
+          <Descriptions.Item label='Billing Cycle'>
+            {stringFallback(membershipData?.billingCicle)}
           </Descriptions.Item>
           <Descriptions.Item label='Created'>
             {stringFallback(
               membershipData?.createdAt
             )}
           </Descriptions.Item>
+          <Descriptions.Item label='Last Payment'>
+            {stringFallback(membershipData.lastPayment)}
+          </Descriptions.Item>
           {/* <Descriptions.Item label='$ Lifetime'>
             {stringFallback(membershipData?.amount)}
           </Descriptions.Item> */}
-          {(membershipData?.idxRequestedDate !== null) && (
-            <Descriptions.Item label='IDX Requested' span={2}>
-              {stringFallback(
-                membershipData.idxRequestedDate
-              )}
+          {hasTrial ? (
+            <Descriptions.Item label='Trial Due'>
+              {membershipData.trialDue ? stringFallback(membershipData.trialDue) : 'No'}
             </Descriptions.Item>
-          )}
-          {(hasTrial !== '0') && (
-            <>
-              <Descriptions.Item label='Trial Due'>
-                {membershipData.trialDue ? stringFallback(membershipData.trialDue) : 'No'}
+          ) :
+            (
+              <Descriptions.Item>
               </Descriptions.Item>
-            </>
-          )}
+            )
+          }
 
-          {!membershipData?.hasTrial && (
-            <>
-              <Descriptions.Item label='Last Payment'>
-                {stringFallback(membershipData?.lastPayment)}
-              </Descriptions.Item>
-            </>
-          )}
-
-          {/* <Descriptions.Item label='Balance'>
-                -------
-              </Descriptions.Item> */}
+          <Descriptions.Item label='Next Payment'>
+            {stringFallback(membershipData.nextPayment)}
+          </Descriptions.Item>
+          <Descriptions.Item>
+          </Descriptions.Item>
+          <Descriptions.Item label='Payment Due'>
+            {stringFallback(membershipData.paymentDue)}
+          </Descriptions.Item>
 
 
         </Descriptions>
@@ -432,6 +419,7 @@ export const MembershipDetails = () => {
         />
         {section === 'Billing Information' && (
           <BillinInformation
+            key={0}
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
@@ -445,6 +433,7 @@ export const MembershipDetails = () => {
         )}
         {section === 'Billing History' && (
           <BillinHistory
+            key={1}
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
@@ -458,6 +447,7 @@ export const MembershipDetails = () => {
         )}
         {section === 'Agreements' && (
           <AgreementHistory
+            key={2}
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
@@ -471,18 +461,21 @@ export const MembershipDetails = () => {
         )}
         {section === 'Team' && (
           <TheamMembership
+            key={3}
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
           />
         )}
         {section === 'Agents' && (
           <AgentsMembership
+            key={4}
             userId={getConfig().userId}
             registrationKey={membershipRegKey}
           />
         )}
         {section === 'Authorization Forms' && (
           <AuthorizationForms
+            key={5}
             cardData={authorizationFormsCard}
             achData={authorizationFormsACH}
             userId={getConfig().userId}
@@ -495,22 +488,26 @@ export const MembershipDetails = () => {
         )}
         {section === 'Launch Website' && (
           <LaunchWebsite
+            key={6}
             registrationKey={membershipRegKey}
           />
         )}
         {section === 'Membership Trial' && (
           <MembershipsTableTrialCustomer
+            key={7}
             customerId={membershipData.customerId}
             registrationKey={membershipRegKey}
           />
         )}
         {(section === 'IDX Request' || section === 'IDX Request Approved') && (
           <IdxRequest
+            key={8}
             registration_key={membershipRegKey}
           />
         )}
         {section === 'Product Purchased Timeline' && (
           <ProductPurchasedTimeline
+            key={9}
             registration_key={membershipRegKey}
           />
         )}

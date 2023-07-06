@@ -755,20 +755,18 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
                 trigger='click'
               >
                 <Tooltip title='Login'>
-                  <a >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        color: '#858faf',
-                        fontSize: '10px'
-                      }}
-                    >
-                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                      LOGIN
-                    </div>
-                  </a>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      color: '#858faf',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span className='back-office-key' style={{ fontSize: '20px' }}></span>
+                    LOGIN
+                  </div>
                 </Tooltip>
               </Popover>
 
@@ -798,20 +796,18 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               <Requesticon registration_key={registration_key} id={id} />
 
               <Tooltip title='ONB'>
-                <a >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                    ONB
-                  </div>
-                </a>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    color: '#858faf',
+                    fontSize: '10px'
+                  }}
+                >
+                  <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
+                  ONB
+                </div>
               </Tooltip>
 
               <Tooltip title='Accounting classifications'>
@@ -841,20 +837,18 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           }
           trigger='hover'
         >
-          <a>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: '#858faf',
-                fontSize: '10px'
-              }}
-            >
-              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-              TOOLBOX
-            </div>
-          </a>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              color: '#858faf',
+              fontSize: '10px'
+            }}
+          >
+            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+            TOOLBOX
+          </div>
         </Popover>
       ),
       fixed: 'right',

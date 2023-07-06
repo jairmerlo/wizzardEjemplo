@@ -14,7 +14,7 @@ export const billing = createApi({
   keepUnusedDataFor: 0,
   endpoints: builder => ({
     getCustomers: builder.query({
-      query: ({ page, pageSize }) => ({
+      query: ({ page = 0, pageSize = 0 }) => ({
         url: '/list-customers-v2',
         method: 'POST',
         body: {

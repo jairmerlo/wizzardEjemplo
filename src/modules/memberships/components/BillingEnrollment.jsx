@@ -12,7 +12,7 @@ export const BillingEnrollment = ({ registration_key = "" }) => {
     return (
         <>
             <Tooltip title='Billing Enrollment'>
-                <a onClick={handleOpen}>
+                <button className="buttonLink" onClick={handleOpen}>
                     <div
                         style={{
                             display: 'flex',
@@ -26,7 +26,7 @@ export const BillingEnrollment = ({ registration_key = "" }) => {
                         <p style={{ textAlign: 'center' }}>BILLING
                             <br /> ENROLLMENT</p>
                     </div>
-                </a>
+                </button>
             </Tooltip>
             {open && (
                 <BillingEnrollmentChild open={open} handleClose={handleClose} registration_key={registration_key} />

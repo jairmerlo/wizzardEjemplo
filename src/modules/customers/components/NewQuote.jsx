@@ -6,7 +6,7 @@ import {
   notification,
   Typography,
 } from 'antd'
-import { ErrorMessage, Formik, useFormikContext } from 'formik'
+import { ErrorMessage, Formik } from 'formik'
 import { Select, Input, Form } from 'formik-antd'
 import { Fragment, useEffect, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -15,7 +15,6 @@ import * as Yup from 'yup'
 import {
   useCreateProspectMutation,
   useCreateQuoteMutation,
-  useGetCustomerQuery,
   useGetCustomerV1Query,
   useGetNewQuotesOptionsQuery,
   useListMembershipTypeQuery,

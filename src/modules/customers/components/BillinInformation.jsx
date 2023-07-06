@@ -39,8 +39,8 @@ export const BillinInformation = ({
         text,
         { completed_at, create_at, payment_method, account_number, number },
       ) {
-        if (payment_method === 'ACH') return <td>******{account_number}</td>
-        return <td>******{number}</td>
+        if (payment_method === 'ACH') return <div>******{account_number}</div>
+        return <div>******{number}</div>
       },
     },
   ]
@@ -53,7 +53,7 @@ export const BillinInformation = ({
           dataIndex: '',
         }),
         render(text, { month, year }) {
-          if (month && year) return <td>{`${month} / ${year}`}</td>
+          if (month && year) return <div>{`${month} / ${year}`}</div>
         },
       })
     }

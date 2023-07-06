@@ -1,4 +1,3 @@
-import { PullRequestOutlined } from "@ant-design/icons"
 import { Tooltip } from "antd"
 import { useState } from "react"
 import { Request } from "./Request"
@@ -12,7 +11,7 @@ export const Requesticon = ({ registration_key, id }) => {
     return (
         <>
             <Tooltip title='Request'>
-                <a onClick={handleOpen}>
+                <button className="buttonLink" onClick={handleOpen}>
                     <div
                         style={{
                             display: 'flex',
@@ -25,7 +24,7 @@ export const Requesticon = ({ registration_key, id }) => {
                         <span className='back-office-requests' style={{ fontSize: '20px' }}></span>
                         REQUEST
                     </div>
-                </a>
+                </button>
             </Tooltip>
             {open && (
                 <Request

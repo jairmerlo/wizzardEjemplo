@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useCss } from 'react-use'
 import { useGetLastActionsMembershipQuery } from '../../../app/api/backoffice'
 import { Loader } from '../../../components'
-import { renderTextHighlighter } from '../../../helpers'
 
 export const LastActionCell = ({
   text,
@@ -45,7 +44,7 @@ export const LastActionCell = ({
   })
   return (
     <>
-      <a onClick={handleOpen}>
+      <button className='buttonLink' onClick={handleOpen}>
         <Tooltip title={text}>
           <p
             style={{
@@ -55,7 +54,7 @@ export const LastActionCell = ({
             {text}
           </p>
         </Tooltip>
-      </a>
+      </button>
       <Modal
         title={'Timeline Membership: ' + membershipId}
         open={open}

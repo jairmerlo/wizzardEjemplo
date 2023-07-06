@@ -170,7 +170,7 @@ export const CustomerEdit = () => {
                             last_name: values.last_name,
                             name: values.name,
                             phone: values.phone,
-                            postal_code: values.postal_code.toString(),
+                            postal_code: values.postal_code?.toString(),
                             principal_membership: values.principal_membership,
                             profile_deployment: profileDeployment,
                             profile_marketing: profileMarketin,
