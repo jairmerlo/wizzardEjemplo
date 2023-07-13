@@ -480,7 +480,7 @@ export const CustomersTableV1 = ({ filter }) => {
           placement='bottom'
           title={text}
           content={
-            <Space size='middle' direction='vertical'>
+            <Space size='middle' direction='vertical' style={{ alignItems: 'center' }}>
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
               <Tooltip title='Add Membership'>
                 <Link to={`/new-quote?customerId=${id}`}>

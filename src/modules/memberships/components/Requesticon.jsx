@@ -10,20 +10,10 @@ export const Requesticon = ({ registration_key, id }) => {
 
     return (
         <>
-            <Tooltip title='Request'>
-                <button className="buttonLink" onClick={handleOpen}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            color: '#858faf',
-                            fontSize: '10px'
-                        }}
-                    >
-                        <span className='back-office-requests' style={{ fontSize: '20px' }}></span>
-                        REQUEST
-                    </div>
+            <Tooltip title='Request' className='itemGridToolbox'>
+                <button className="itemButtonActions" onClick={handleOpen}>
+                    <span className='back-office-requests' style={{ fontSize: '20px' }}></span>
+                    REQUEST
                 </button>
             </Tooltip>
             {open && (

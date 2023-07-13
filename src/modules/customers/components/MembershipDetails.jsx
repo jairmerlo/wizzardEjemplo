@@ -1,4 +1,4 @@
-import { Descriptions, Popover, Segmented, Space, Tooltip, Typography } from 'antd'
+import { Button, Descriptions, Popover, Segmented, Space, Tooltip, Typography } from 'antd'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthorizationForms, IdxRequest, LaunchWebsite, ProductPurchasedTimeline } from '.'
@@ -13,7 +13,7 @@ import { BillinInformation } from './BillinInformation'
 import { MembershipsTableTrialCustomer } from './MembershipsTableTrialCustomer'
 import { TheamMembership } from './TheamMembership'
 import '../../../icons/style.css'
-import { BillingEnrollment, Deleteicon, EditMemberhipIcon, Requesticon } from '../../memberships/components'
+import { Actions, BillingEnrollment, Deleteicon, EditMemberhipIcon, Requesticon } from '../../memberships/components'
 
 export const MembershipDetails = () => {
   const { membershipRegKey } = useParams()
@@ -23,7 +23,7 @@ export const MembershipDetails = () => {
     'Authorization Forms',
     'Agreements',
     'Team',
-    'Product Purchased Timeline'
+    'Product Timeline'
     // 'IDX Request'
     // 'Launch Website'
     // 'Agents',
@@ -36,6 +36,19 @@ export const MembershipDetails = () => {
   //     skip: !membershipRegKey,
   //   },
   // )
+
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const [currentRegKey, setCurrentRegKey] = useState('')
+  const [billingCicle, setBillingCicle] = useState(1)
+  const [currentId, setCurrentId] = useState('')
+  const handleClickModalActions = (regkey, id, cycle_billing_type) => {
+    setCurrentRegKey(regkey)
+    setBillingCicle(cycle_billing_type)
+    setCurrentId(id)
+    handleOpen()
+  }
 
   const { data: membershipData = {}, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
@@ -50,8 +63,12 @@ export const MembershipDetails = () => {
     hasCrm = 0,
     hasTrial = 0,
     hasLaunch = 0,
-    idx = 0,
-    cycle_billing_type = 1,
+    showIdx = 0,
+    idx = false,
+    boardName = "N/A",
+    cycleBillingType = 1,
+    cpanelRegistrationKey = '',
+    cpanelId = ''
   } = membershipData
   // console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
@@ -62,7 +79,7 @@ export const MembershipDetails = () => {
   const { data: dataRegistration = [] } = useGetRequestByregKeyQuery({
     registration_key: membershipRegKey
   })
-  if (idx) {
+  if (showIdx) {
     if (dataRegistration[0]?.status === "Done") {
       options.push("IDX Request Approved")
     } else {
@@ -116,160 +133,23 @@ export const MembershipDetails = () => {
         <Typography.Title level={5} style={{ margin: 0 }}>
           Membership View
         </Typography.Title>
-        <Popover
-          placement='bottom'
-          trigger='hover'
-          content={
-            <Space size='middle' direction='vertical' style={{ alignItems: 'center' }}>
-              <Popover
-                // trigger="hover"
-                placement='bottom'
-
-                // title={text}
-                content={
-                  <Space size='middle' direction='vertical' >
-                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
-                    <Tooltip title='CPanel'>
-                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${membershipData.cpanelId}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
-                          CPanel
-                        </div>
-                      </a>
-                    </Tooltip>
-
-                    <Tooltip title='Wordpress'>
-                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${membershipData.cpanelId}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
-                          Wordpress
-                        </div>
-                      </a>
-                    </Tooltip>
-
-
-                    {/* <Cpanelicon registration_key={registration_key} /> */}
-
-                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
-                  </Space>
-                }
-                trigger='click'
-              >
-                <Tooltip title='Login'>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                    LOGIN
-                  </div>
-                </Tooltip>
-              </Popover>
-
-              <Tooltip title='Details'>
-                <a
-                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${membershipData?.cpanelRegistrationKey}`}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
-                    VIEW
-                  </div>
-                </a>
-              </Tooltip>
-              <EditMemberhipIcon registration_key={membershipData?.cpanelRegistrationKey} />
-
-              {/* <SendMembershipicon registration_key={registration_key} /> */}
-
-              <Requesticon registration_key={membershipData?.cpanelRegistrationKey} id={membershipData.cpanelId} />
-
-              <Tooltip title='ONB'>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    color: '#858faf',
-                    fontSize: '10px'
-                  }}
-                >
-                  <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                  ONB
-                </div>
-              </Tooltip>
-
-              <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${membershipData.cpanelId}`} target='_blank' rel="noreferrer">
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
-                    <p style={{ textAlign: 'center' }}>ACCOUNTING
-                      <br /> CLASSIFICATIONS</p>
-                  </div>
-                </a>
-              </Tooltip>
-
-              {
-                !cycle_billing_type && (
-                  <BillingEnrollment registration_key={membershipData?.cpanelRegistrationKey} />
-                )
-              }
-
-              <Deleteicon registration_key={membershipData?.cpanelRegistrationKey} />
-              {/* eslint-enable jsx-a11y/anchor-is-valid */}
-            </Space>
+        <Button
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            color: '#858faf',
+            fontSize: '10px',
+            border: 'none',
+            backgroundColor: 'transparent',
+          }}
+          onClick={
+            () => handleClickModalActions(cpanelRegistrationKey, cpanelId, cycleBillingType)
           }
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              color: '#858faf',
-              fontSize: '10px'
-            }}
-          >
-            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-            TOOLBOX
-          </div>
-        </Popover>
+          <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+          TOOLBOX
+        </Button>
       </div>
       <div
         style={{
@@ -327,17 +207,27 @@ export const MembershipDetails = () => {
           <Descriptions.Item label='Customer'>
             {stringFallback(fullName)}
           </Descriptions.Item>
-          <Descriptions.Item label='IDX'>
-            {
-              idx ? 'Yes' : 'No'
-            }
+          {/* <Descriptions.Item>
+          </Descriptions.Item> */}
+          <Descriptions.Item>
+
           </Descriptions.Item>
           <Descriptions.Item label='Project Name'>
             {stringFallback(membershipData?.projectName)}
           </Descriptions.Item>
-          <Descriptions.Item label='Board name'>
-            {stringFallback(membershipData?.boardName)}
-          </Descriptions.Item>
+          {
+            boardName === "N/A" ?
+              (
+                <Descriptions.Item>
+
+                </Descriptions.Item>
+              )
+              : (
+                <Descriptions.Item label='Board name'>
+                  {stringFallback(membershipData?.boardName)}
+                </Descriptions.Item>
+              )
+          }
           <Descriptions.Item label='URL'>
             <a
               href={membershipData?.wordpressInstallUrl}
@@ -505,13 +395,21 @@ export const MembershipDetails = () => {
             registration_key={membershipRegKey}
           />
         )}
-        {section === 'Product Purchased Timeline' && (
+        {section === 'Product Timeline' && (
           <ProductPurchasedTimeline
             key={9}
             registration_key={membershipRegKey}
           />
         )}
       </div>
+
+      <Actions
+        open={open}
+        handleClose={handleClose}
+        currentId={currentId}
+        currentRegKey={currentRegKey}
+        billingCicle={billingCicle}
+      />
     </div>
   )
 }

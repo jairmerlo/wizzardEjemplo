@@ -65,7 +65,7 @@ export const MembershipsTableTrialCustomer = ({ filter = 'trial', customerId, re
     }
   )
 
-  console.log({ dataLastAction })
+  // console.log({ dataLastAction })
   const [openModal, setOpenModal] = useState(false)
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(

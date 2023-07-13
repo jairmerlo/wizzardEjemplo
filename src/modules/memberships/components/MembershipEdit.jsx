@@ -162,7 +162,7 @@ export const MembershipEdit = ({
   }
 
   const { data: { data: theamProfiles = {} } = {} } = useGetTheamProfilesQuery(
-    undefined,
+    {},
     {
       skip: !open,
     },

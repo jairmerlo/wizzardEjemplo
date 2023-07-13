@@ -9,20 +9,10 @@ export const Deleteicon = ({ registration_key }) => {
     const handleClose = () => setOpen(false)
     return (
         <>
-            <Tooltip title='Delete'>
-                <button className="buttonLink" onClick={handleOpen}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            color: '#858faf',
-                            fontSize: '10px'
-                        }}
-                    >
-                        <span className='back-office-delete' style={{ fontSize: '20px' }}></span>
-                        DELETE
-                    </div>
+            <Tooltip title='Delete' className='itemGridToolbox'>
+                <button className="itemButtonActions" onClick={handleOpen}>
+                    <span className='back-office-delete' style={{ fontSize: '20px' }}></span>
+                    DELETE
                 </button>
             </Tooltip>
             {open && (

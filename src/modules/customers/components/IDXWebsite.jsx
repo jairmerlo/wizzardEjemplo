@@ -1,8 +1,9 @@
-import Typography from 'antd/es/typography/Typography'
+import { Typography } from 'antd'
 import { IDXCard, IDXCardContent } from '.'
 // import theme from '../../../theme'
 
-export const IDXWebsite = ({ title = '', subtitle = '', description = '' }) => {
+export const IDXWebsite = ({ title = '', subtitle = '', description = '', daysTrial = 0 }) => {
+  console.log({ daysTrial })
   return (
     <IDXCard style={{ width: '500px' }}>
       <IDXCardContent
@@ -11,6 +12,13 @@ export const IDXWebsite = ({ title = '', subtitle = '', description = '' }) => {
           flexDirection: 'column',
         }}
       >
+        {
+          daysTrial >= 1 && (
+            <Typography.Title level={2} style={{ fontWeight: 'bold' }}>
+              {daysTrial}-Days Free Trial
+            </Typography.Title>
+          )
+        }
         <Typography.Title
           level={1}
           className='Title'

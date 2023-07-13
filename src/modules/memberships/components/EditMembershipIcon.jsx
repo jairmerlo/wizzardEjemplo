@@ -9,20 +9,10 @@ export const EditMemberhipIcon = ({ registration_key }) => {
   const handleClose = () => setOpen(false)
   return (
     <>
-      <Tooltip title='Edit'>
-        <button className='buttonLink' onClick={handleOpen}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              color: '#858faf',
-              fontSize: '10px'
-            }}
-          >
-            <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
-            EDIT
-          </div>
+      <Tooltip title='Edit' className='itemGridToolbox'>
+        <button className='itemButtonActions' onClick={handleOpen}>
+          <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+          EDIT
         </button>
       </Tooltip>
       {open && (

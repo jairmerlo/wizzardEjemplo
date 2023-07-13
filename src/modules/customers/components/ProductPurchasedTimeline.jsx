@@ -1,14 +1,27 @@
-import { Modal, Table, Tooltip } from "antd"
+import { Button, DatePicker, Input, Modal, Space, Table, Tooltip } from "antd"
 
 import {
     getColumnProps,
+    renderTextHighlighter,
     showTotal,
 } from '../../../helpers'
-import { useLayoutEffect, useState } from "react"
-import { CopyOutlined, EyeTwoTone } from "@ant-design/icons"
+import { useLayoutEffect, useReducer, useRef, useState } from "react"
+import { CopyOutlined, EyeTwoTone, SearchOutlined } from "@ant-design/icons"
 import { useGetHtmlWizardQuery } from "../../../app/api/billing"
 import { IDXWebsite } from "./IDXWebsite"
 import { MembershipCreationSuccess } from "."
+import moment from "moment"
+
+const reducer = (state, newState) => ({ ...state, ...newState })
+const SEARCH_TEXT_INITIAL_STATE = {
+    product_service: null,
+    create_at: null,
+}
+
+const SEARCHED_COLUMN_INITIAL_STATE = {
+    product_service: null,
+    create_at: null,
+}
 
 export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
 
@@ -22,7 +35,26 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
     const [modalView, setModalView] = useState(false)
     const [pdfs, setPdfS] = useState([])
     const [views, setViews] = useState([])
-    console.log({ views })
+    const [searchText, setSearchText] = useReducer(
+        reducer,
+        SEARCH_TEXT_INITIAL_STATE,
+    )
+    const [searchedColumn, setSearchedColumn] = useReducer(
+        reducer,
+        SEARCHED_COLUMN_INITIAL_STATE,
+    )
+    const searchInput = useRef(null)
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm()
+        setSearchText({ [dataIndex]: selectedKeys[0] })
+        setSearchedColumn({ [dataIndex]: true })
+    }
+    const handleReset = (clearFilters, confirm, dataIndex) => {
+        clearFilters()
+        confirm({ closeDropdown: true })
+        setSearchedColumn({ [dataIndex]: false })
+        setSearchText({ [dataIndex]: '' })
+    }
 
     const handleViewPdf = id => {
         // setPdfS([])
@@ -77,30 +109,180 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
         })
     }, [pdfs])
 
+    const getColumnSortProps = dataIndex => {
+        return {
+            sorter: (a, b) => {
+                return (a[dataIndex] || '').localeCompare(b[dataIndex] || '')
+            },
+            ellipsis: true,
+        }
+    }
+
+    const getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({
+            setSelectedKeys,
+            selectedKeys,
+            confirm,
+            clearFilters,
+            close,
+        }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+                onKeyDown={e => e.stopPropagation()}
+            >
+                <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e =>
+                        setSelectedKeys(e.target.value ? [e.target.value] : [])
+                    }
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type='primary'
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size='small'
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() =>
+                            clearFilters && handleReset(clearFilters, confirm, dataIndex)
+                        }
+                        size='small'
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <SearchOutlined
+                style={{
+                    color: filtered ? '#1890ff' : undefined,
+                }}
+            />
+        ),
+        onFilter: (value, record) => {
+            const text = record[dataIndex] || ''
+            return text?.toString().toLowerCase().includes(value.toLowerCase())
+        },
+        onFilterDropdownOpenChange: visible => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100)
+            }
+        },
+        render: (text = '') =>
+            renderTextHighlighter({
+                text: text,
+                isHighlighted: searchedColumn[dataIndex],
+                highlightedText: searchText[dataIndex],
+            }),
+        width: 200,
+    })
+    // console.log(moment(moment('Jun 20, 2023 15:16:21')).format('DD-MM-YYYY'))
+
+    const getDateColumnSearchProps = dataIndex => ({
+        filterDropdown: ({
+            setSelectedKeys,
+            selectedKeys,
+            confirm,
+            clearFilters,
+        }) => (
+            <div
+                style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}
+            >
+                <DatePicker
+                    value={selectedKeys[0]}
+                    onChange={e => {
+                        // console.log(e.format('DD-MM-YYYY'))
+                        setSelectedKeys([e])
+                    }}
+                    allowClear={true}
+                    style={{ width: '100%' }}
+                />
+                <Space>
+                    <Button
+                        type='primary'
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size='small'
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => handleReset(clearFilters, confirm, dataIndex)}
+                        size='small'
+                        style={{ width: 90 }}
+                    >
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: filtered => (
+            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) => {
+            // console.log(moment(moment(record[dataIndex])).format('DD-MM-YYYY'))
+            // console.log(value.format('DD-MM-YYYY'))
+            return (
+                moment(moment(record[dataIndex])).format('DD-MM-YYYY') ===
+                value.format('DD-MM-YYYY')
+            )
+        },
+    })
+
+    const getCustomColumnSortProps = ({ sorter }) => {
+        return {
+            sorter,
+            ellipsis: true,
+        }
+    }
+
     const columns = [
         {
-            ...getColumnProps({
-                title: 'Product/Service',
-                dataIndex: 'product_service',
-            })
+            title: 'Name',
+            dataIndex: 'product_service',
+            ...getColumnSearchProps('product_service'),
+            ...getColumnSortProps('product_service'),
+            // defaultSortOrder: 'descend',
+            width: 250
         },
         {
-            ...getColumnProps({
-                title: 'Initial Price',
-                dataIndex: 'total_initial_payment',
-            })
-        },
-        {
-            ...getColumnProps({
-                title: 'Monthly Price',
-                dataIndex: 'montlhy_dues',
-            })
-        },
-        {
-            ...getColumnProps({
-                title: 'Date',
-                dataIndex: 'create_at',
-            })
+            title: 'Transaction date',
+            dataIndex: 'create_at',
+            ...getDateColumnSearchProps('create_at'),
+            ...getCustomColumnSortProps({
+                sorter: (a, b) => {
+                    return moment(
+                        moment(a.create_at || '01/01/1970 01:01:01', 'MM/DD/YYYY hh:mm:ss'),
+                    ).diff(moment(b.create_at || '01/01/1970 01:01:01', 'MM/DD/YYYY hh:mm:ss'))
+                },
+            }),
+            render: (text, render) => (
+                <div>
+                    {render.create_at} {render.end_date_trial ? `- ${render.end_date_trial}` : ''}
+                </div>
+            ),
+            width: 250
+            // defaultSortOrder: 'descend',
         },
         {
             title: 'Agreement',
@@ -113,6 +295,7 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
                     <CopyOutlined style={{ fontSize: '18px' }} />
                 </Tooltip>
             ),
+            width: 50
         },
         {
             title: 'View',
@@ -125,6 +308,7 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
                     <EyeTwoTone style={{ fontSize: '18px' }} />
                 </Tooltip>
             ),
+            width: 50
         },
     ]
 
@@ -215,6 +399,7 @@ export const ProductPurchasedTimeline = ({ registration_key = 0 }) => {
                         title={views.program_title}
                         subtitle={views.program_subtitle}
                         description={views.program_description}
+                        daysTrial={views.trial_length}
                     />
                 </div>
             </Modal>

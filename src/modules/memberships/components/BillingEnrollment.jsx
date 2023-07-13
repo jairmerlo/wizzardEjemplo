@@ -11,21 +11,11 @@ export const BillingEnrollment = ({ registration_key = "" }) => {
 
     return (
         <>
-            <Tooltip title='Billing Enrollment'>
-                <button className="buttonLink" onClick={handleOpen}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            color: '#858faf',
-                            fontSize: '10px'
-                        }}
-                    >
-                        <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
-                        <p style={{ textAlign: 'center' }}>BILLING
-                            <br /> ENROLLMENT</p>
-                    </div>
+            <Tooltip title='Billing Enrollment' className='itemGridToolbox'>
+                <button className="itemButtonActions" onClick={handleOpen}>
+                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <p style={{ textAlign: 'center' }}>BILLING
+                        <br /> ENROLLMENT</p>
                 </button>
             </Tooltip>
             {open && (

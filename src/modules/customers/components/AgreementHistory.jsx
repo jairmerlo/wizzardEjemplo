@@ -17,7 +17,7 @@ export const AgreementHistory = ({
 }) => {
   const { data: agreementHistoryData = [], isLoading: isLoadingH } =
     useListAgreementByRegkeyQuery(
-      { registration_key: registrationKey },
+      { registration_key: '8f1234b0-f0da-4efc-a455-55e31732245a' },
       {
         skip: !registrationKey,
       },

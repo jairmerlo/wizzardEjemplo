@@ -10,6 +10,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Modal,
   Popover,
   Space,
   Table,
@@ -30,7 +31,7 @@ import {
 import moment from 'moment/moment'
 import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
 import currency from 'currency.js'
-import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon, BillingEnrollment } from '.'
+import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon, BillingEnrollment, Actions } from '.'
 import numbro from 'numbro'
 import { useSearchParams } from 'react-router-dom'
 import { useEvent } from 'react-use'
@@ -64,8 +65,18 @@ export const MembershipsTable = ({ filter = '' }) => {
   })
   const [filtreredMembership, setFiltreredMembership] = useState([])
   const [filtredValue, setFiltredValue] = useState('')
-
-
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const [currentRegKey, setCurrentRegKey] = useState('')
+  const [billingCicle, setBillingCicle] = useState(1)
+  const [currentId, setCurrentId] = useState('')
+  const handleClickModalActions = (regkey, id, cycle_billing_type) => {
+    setCurrentRegKey(regkey)
+    setBillingCicle(cycle_billing_type)
+    setCurrentId(id)
+    handleOpen()
+  }
   // const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
   // const [sortAscending, setSortAscending] = useState('')
   // const [sortDescending, setSortDescending] = useState('')
@@ -78,7 +89,6 @@ export const MembershipsTable = ({ filter = '' }) => {
 
   const [filteredRadioGroup, setFilteredRadioGroup] = useState({ value: 0, dataIndex: '', key: '' })
   const [filteredNumber, setFilteredNumber] = useState({ less: 0, greater: 0, dataIndex: '', value: '' })
-  // console.log({ filteredNumber })
   useEvent('scroll', onScroll)
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
@@ -86,7 +96,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     filter,
   })
 
-  const { data: memberships = [], total } = data
+  const { data: memberships = [], total = 0 } = data
 
   useEffect(() => {
     if (memberships?.length > 0) {
@@ -192,8 +202,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     })
     setFiltreredMembership(newMembership)
     setTotalCurrentItems(newMembership.length)
-    console.log({ newMembership })
-
   }, [filteredRadioGroup])
 
   useEffect(() => {
@@ -222,7 +230,6 @@ export const MembershipsTable = ({ filter = '' }) => {
       newMembership = memberships.filter(membership => {
         let number = membership[filteredNumber.dataIndex].match(/\d+/g)
         let numberPart = parseFloat(number.join(""))
-        // console.log(filteredNumber.less, numberPart)
         return filteredNumber.less < numberPart
       })
 
@@ -238,8 +245,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     })
     setFiltreredMembership(newMembership)
     setTotalCurrentItems(newMembership.length)
-    console.log({ newMembership })
-
   }, [filteredNumber])
 
   useEffect(() => {
@@ -269,14 +274,7 @@ export const MembershipsTable = ({ filter = '' }) => {
 
   }, [filtredValue])
 
-
-  // const containerSortButtons = useCss({
-  //   display: 'flex'
-  // })
-
   console.log(data, "data")
-  // const idx = 'IDX00915'
-  // console.log(idx.split('0').slice(-1))
 
   useEffect(() => {
     if (memberships?.length !== 0) {
@@ -330,7 +328,6 @@ export const MembershipsTable = ({ filter = '' }) => {
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
-    // console.log('Various parameters', pagination, filters, sorter)
     setTotalCurrentItems(currentDataSource?.length)
     setCurrentItems(currentDataSource)
   }
@@ -477,17 +474,22 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }
 
-
-
-
   const launch_website_columns = [
     {
       ...getColumnProps({
         title: 'Launch W Requested',
-        dataIndex: 'launch_website',
+        dataIndex: 'request_publish_date',
       }),
-      ...getColumnSearchProps('launch_website'),
-      ...getColumnSortProps('launch_website'),
+      ...getDateColumnSearchProps('request_publish_date'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.request_publish_date || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
+              moment(b.request_publish_date || 'Jan 01, 1970', 'MMM DD, YYYY'))
+        },
+      }),
+      defaultSortOrder: 'descend',
+      // ...getDateColumnSearchProps('request_publish_date'),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -495,7 +497,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         >
           {record.request_publish_date}
         </Tooltip>
-      )
+      ),
     },
     {
       title: 'Last Action',
@@ -505,6 +507,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (text, record) => (
         <LastActionCell
           text={text}
+          date={record.last_action_date}
           isHighlighted={searchedColumn['last_action']}
           highlightedText={searchText['last_action']}
           registration_key={record.registration_key}
@@ -686,168 +689,25 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      width: 90,
-      render: (text, { registration_key, id }) => (
-        <Popover
-          placement='bottom'
-          title={text}
-          content={
-            <Space size='middle' direction='vertical'>
-              {/* eslint-disable jsx-a11y/anchor-is-valid */}
-              <Popover
-                placement='bottom'
-                title={text}
-                content={
-                  <Space size='middle' direction='vertical'>
-                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
-                    <Tooltip title='CPanel'>
-                      <a
-                        // href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`}
-                        href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`}
-                        target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
-                          CPanel
-                        </div>
-                      </a>
-                    </Tooltip>
-
-                    <Tooltip title='Wordpress'>
-                      <a
-                        // href={`https://cpanel.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} 
-                        href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`}
-                        target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
-                          Wordpress
-                        </div>
-                      </a>
-                    </Tooltip>
-
-
-                    {/* <Cpanelicon registration_key={registration_key} /> */}
-
-                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
-                  </Space>
-                }
-                trigger='click'
-              >
-                <Tooltip title='Login'>
-                  <a href>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        color: '#858faf',
-                        fontSize: '10px'
-                      }}
-                    >
-                      <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                      LOGIN
-                    </div>
-                  </a>
-                </Tooltip>
-              </Popover>
-
-              <Tooltip title='Details'>
-                <a
-                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
-                    VIEW
-                  </div>
-                </a>
-              </Tooltip>
-              <EditMemberhipIcon registration_key={registration_key} />
-
-              {/* <SendMembershipicon registration_key={registration_key} /> */}
-
-              <Requesticon registration_key={registration_key} />
-
-              <Tooltip title='ONB'>
-                <a href>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                    ONB
-                  </div>
-                </a>
-              </Tooltip>
-
-              <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`} target='_blank' rel='noreferrer'>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
-                    <p style={{ textAlign: 'center' }}>ACCOUNTING
-                      <br /> CLASSIFICATIONS</p>
-                  </div>
-                </a>
-              </Tooltip>
-
-
-              <Deleteicon registration_key={registration_key} />
-              {/* eslint-enable jsx-a11y/anchor-is-valid */}
-            </Space>
+      width: 100,
+      render: (text, { registration_key, id, cycle_billing_type }) => (
+        <Button
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            color: '#858faf',
+            fontSize: '10px',
+            border: 'none',
+            backgroundColor: 'transparent',
+          }}
+          onClick={
+            () => handleClickModalActions(registration_key, id, cycle_billing_type)
           }
-          trigger='click'
         >
-          <a href>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                color: '#858faf',
-                fontSize: '10px'
-              }}
-            >
-              <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-              TOOLBOX
-            </div>
-          </a>
-        </Popover>
+          <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+          TOOLBOX
+        </Button>
       ),
     },
   ]
@@ -917,6 +777,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       render: (text, record) => (
         <LastActionCell
           text={text}
+          date={record.last_action_date}
           isHighlighted={searchedColumn['last_action']}
           highlightedText={searchText['last_action']}
           registration_key={record.registration_key}
@@ -1851,164 +1712,25 @@ export const MembershipsTable = ({ filter = '' }) => {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      width: 85,
+      width: 100,
       render: (text, { registration_key, id, cycle_billing_type }) => (
-        <Popover
-          placement='bottom'
-          trigger='hover'
-          content={
-            <Space size='middle' direction='vertical'>
-              {/* eslint-disable jsx-a11y/anchor-is-valid */}
-              <Popover
-                placement='bottom'
-                title={text}
-                content={
-                  <Space size='middle' direction='vertical'>
-                    {/* eslint-disable jsx-a11y/anchor-is-valid */}
-                    <Tooltip title='CPanel'>
-                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/cpanel/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-rocket' style={{ fontSize: '20px' }}></span>
-                          CPanel
-                        </div>
-                      </a>
-                    </Tooltip>
-
-                    <Tooltip title='Wordpress'>
-                      <a href={`https://backoffice.idxboost${window.MODE}/customers/memberships/login/wordpress/${id}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            color: '#000',
-                            fontSize: '15px'
-                          }}
-                        >
-                          <span className='back-office-wordpress' style={{ fontSize: '20px' }}></span>
-                          Wordpress
-                        </div>
-                      </a>
-                    </Tooltip>
-
-
-                    {/* <Cpanelicon registration_key={registration_key} /> */}
-
-                    {/* eslint-enable jsx-a11y/anchor-is-valid */}
-                  </Space>
-                }
-                trigger='click'
-              >
-                <Tooltip title='Login'>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-key' style={{ fontSize: '20px' }}></span>
-                    LOGIN
-                  </div>
-                </Tooltip>
-              </Popover>
-
-
-              <Tooltip title='Details'>
-                <a
-                  href={`${window.location.origin}/customers/v2/customers#/membership-details/${registration_key}`}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
-                    VIEW
-                  </div>
-                </a>
-              </Tooltip>
-              <EditMemberhipIcon registration_key={registration_key} />
-
-              {/* <SendMembershipicon registration_key={registration_key} /> */}
-
-              <Requesticon registration_key={registration_key} id={id} />
-
-              <Tooltip title='ONB'>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    color: '#858faf',
-                    fontSize: '10px'
-                  }}
-                >
-                  <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
-                  ONB
-                </div>
-              </Tooltip>
-
-              <Tooltip title='Accounting classifications'>
-                <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${id}`} target='_blank' rel='noreferrer'>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
-                    }}
-                  >
-                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
-                    <p style={{ textAlign: 'center' }}>ACCOUNTING
-                      <br /> CLASSIFICATIONS</p>
-                  </div>
-                </a>
-              </Tooltip>
-
-              {
-                !cycle_billing_type && (
-                  <BillingEnrollment registration_key={registration_key} />
-                )
-              }
-
-              <Deleteicon registration_key={registration_key} />
-
-
-              {/* eslint-enable jsx-a11y/anchor-is-valid */}
-            </Space>
+        <Button
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            color: '#858faf',
+            fontSize: '10px',
+            border: 'none',
+            backgroundColor: 'transparent',
+          }}
+          onClick={
+            () => handleClickModalActions(registration_key, id, cycle_billing_type)
           }
-
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              color: '#858faf',
-              fontSize: '10px'
-            }}
-          >
-            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
-            TOOLBOX
-          </div>
-        </Popover>
+          <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+          TOOLBOX
+        </Button>
       ),
       fixed: 'right',
     },
@@ -2022,8 +1744,8 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(
-            moment(a.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'),
-          ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
+            moment(a.idx_requested_date || 'Jan 01, 1970', 'MMM DD, YYYY')
+          ).diff(moment(b.idx_requested_date || 'Jan 01, 1970', 'MMM DD, YYYY'))
         },
       }),
       render: (text, record) => (
@@ -2036,6 +1758,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       ),
       width: 160,
       fixed: 'left',
+      defaultSortOrder: 'descend',
     },
     ...columns,
   ]
@@ -2108,7 +1831,6 @@ export const MembershipsTable = ({ filter = '' }) => {
           <Typography.Title level={5}>
             Search:
           </Typography.Title>
-          {/* {console.log({ memberships })} */}
           <Input.Search
             disabled={!memberships}
             onSearch={(value) => setFiltredValue(value)}
@@ -2177,6 +1899,13 @@ export const MembershipsTable = ({ filter = '' }) => {
           showTotal,
         }}
         scroll={{ x: '100%' }}
+      />
+      <Actions
+        open={open}
+        handleClose={handleClose}
+        currentId={currentId}
+        currentRegKey={currentRegKey}
+        billingCicle={billingCicle}
       />
     </div>
   )

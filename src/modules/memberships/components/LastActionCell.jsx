@@ -6,6 +6,7 @@ import { Loader } from '../../../components'
 
 export const LastActionCell = ({
   text,
+  date = '',
   isHighlighted,
   highlightedText,
   registration_key,
@@ -48,10 +49,13 @@ export const LastActionCell = ({
         <Tooltip title={text}>
           <p
             style={{
-              whiteSpace: "pre-wrap"
+              whiteSpace: 'pre-wrap',
+              textAlign: 'start'
             }}
           >
             {text}
+            <br />
+            {date}
           </p>
         </Tooltip>
       </button>
