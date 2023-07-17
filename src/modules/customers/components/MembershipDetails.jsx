@@ -40,15 +40,6 @@ export const MembershipDetails = () => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const [currentRegKey, setCurrentRegKey] = useState('')
-  const [billingCicle, setBillingCicle] = useState(1)
-  const [currentId, setCurrentId] = useState('')
-  const handleClickModalActions = (regkey, id, cycle_billing_type) => {
-    setCurrentRegKey(regkey)
-    setBillingCicle(cycle_billing_type)
-    setCurrentId(id)
-    handleOpen()
-  }
 
   const { data: membershipData = {}, isLoading: isLoadingM } = useGetMembershipQuery(
     { registration_key: membershipRegKey },
@@ -68,8 +59,10 @@ export const MembershipDetails = () => {
     boardName = "N/A",
     cycleBillingType = 1,
     cpanelRegistrationKey = '',
-    cpanelId = ''
+    cpanelId = '',
+    membershipId = ''
   } = membershipData
+
   // console.log({ membershipData })
   // console.log(membershipData?.hasCrm, membershipData?.hasTrial, "variables")
   if (hasCrm === "1") options.push("Agents")
@@ -143,9 +136,7 @@ export const MembershipDetails = () => {
             border: 'none',
             backgroundColor: 'transparent',
           }}
-          onClick={
-            () => handleClickModalActions(cpanelRegistrationKey, cpanelId, cycleBillingType)
-          }
+          onClick={handleOpen}
         >
           <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
           TOOLBOX
@@ -406,9 +397,10 @@ export const MembershipDetails = () => {
       <Actions
         open={open}
         handleClose={handleClose}
-        currentId={currentId}
-        currentRegKey={currentRegKey}
-        billingCicle={billingCicle}
+        currentId={cpanelId}
+        currentRegKey={cpanelRegistrationKey}
+        membershipID={membershipId}
+        billingCicle={cycleBillingType}
       />
     </div>
   )

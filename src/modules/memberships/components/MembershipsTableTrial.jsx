@@ -1,10 +1,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import {
   Button,
+  Checkbox,
   DatePicker,
   Divider,
   Input,
   Popover,
+  Radio,
   Space,
   Table,
   Tooltip,
@@ -62,6 +64,8 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   })
   const pageSize = parseInt(searchParams.get('size'))
   const page = parseInt(searchParams.get('page'))
+  const [value, setValue] = useState(1);
+  const [currenMembershipID, setCurrenMembershipID] = useState('')
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
@@ -69,10 +73,11 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   const [currentRegKey, setCurrentRegKey] = useState('')
   const [billingCicle, setBillingCicle] = useState(1)
   const [currentId, setCurrentId] = useState('')
-  const handleClickModalActions = (regkey, id, cycle_billing_type) => {
+  const handleClickModalActions = (regkey, id, cycle_billing_type, memberships_id) => {
     setCurrentRegKey(regkey)
     setBillingCicle(cycle_billing_type)
     setCurrentId(id)
+    setCurrenMembershipID(memberships_id)
     handleOpen()
   }
 
@@ -178,6 +183,11 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     }
   }, [memberships?.length])
 
+  const onChange = (e) => {
+    console.log('radio checked', e.target.value);
+    setValue(e.target.value);
+  };
+
   const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -221,8 +231,9 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value, record) => {
+      console.log(moment(moment(record[dataIndex])).format('DD-MM-YYYY'))
       return (
-        moment(moment(record[dataIndex], 'MM-DD-YYYY')).format('DD-MM-YYYY') ===
+        moment(moment(record[dataIndex])).format('DD-MM-YYYY') ===
         value.format('DD-MM-YYYY')
       )
     },
@@ -402,10 +413,17 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     },
     {
       title: 'Created',
-      dataIndex: 'created_at_date_time',
-      key: 'created_at_date_time',
-      ...getColumnSearchProps('last_action'),
-      ...getColumnSortProps('last_action'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      ...getDateColumnSearchProps('created_at'),
+      // ...getCustomColumnSortProps('last_action'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.created_at || 'Jan 01, 1970', 'MMM DD, YYYY')
+          ).diff(moment(b.created_at || 'Jan 01, 1970', 'MMM DD, YYYY'))
+        },
+      }),
       render: (date, record) => (
         <Tooltip
           placement='topLeft'
@@ -520,30 +538,6 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       ...getColumnSortProps('client_name'),
       width: 150,
     },
-    // {
-    //   title: 'Email',
-    //   dataIndex: 'email',
-    //   key: 'email',
-    //   ...getColumnSearchProps('email'),
-    //   ...getColumnSortProps('email'),
-    // },
-    // {
-    //   title: 'URL',
-    //   dataIndex: 'wordpress_install_url',
-    //   key: 'wordpress_install_url',
-    //   ...getColumnSearchProps('wordpress_install_url'),
-    //   render: url => (
-    //     <a href={url} target='_blank' rel='noreferrer'>
-    //       {renderTextHighlighter({
-    //         text: url,
-    //         isHighlighted: searchedColumn['wordpress_install_url'],
-    //         highlightedText: searchText['wordpress_install_url'],
-    //       })}
-    //     </a>
-    //   ),
-    //   ...getColumnSortProps('wordpress_install_url'),
-    // },
-
     {
       title: 'Published Status',
       key: 'publication_dtate',
@@ -670,51 +664,12 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         </Tooltip>
       )
     },
-    // {
-    //   title: 'Periods',
-    //   dataIndex: 'periods',
-    //   key: 'periods',
-    //   ...getColumnSearchProps('periods'),
-    //   ...getCustomColumnSortProps({
-    //     sorter: (a, b) => {
-    //       return parseFloat(a.periods || 0) - parseFloat(b.periods || 0)
-    //     },
-    //   }),
-    //   width: 120,
-    // },
-    // {
-    //   title: '$ Monthly',
-    //   dataIndex: 'amount',
-    //   key: 'amount',
-    //   ...getColumnSearchProps('amount'),
-    //   width: 120,
-    //   // render: monthlyAmount =>
-    //   //   monthlyAmount ? (
-    //   //     renderTextHighlighter({
-    //   //       text: USD(monthlyAmount),
-    //   //       isHighlighted: searchedColumn['monthly_amount'],
-    //   //       highlightedText: searchText['monthly_amount'],
-    //   //     })
-    //   //   ) : (
-    //   //     <NoDataCell />
-    //   //   ),
-    //   // onFilter: (value, record) =>
-    //   //   USD(record['monthly_amount'])
-    //   //     .toString()
-    //   //     .toLowerCase()
-    //   //     .includes(value.toLowerCase()),
-    //   // ...getCustomColumnSortProps({
-    //   //   sorter: (a, b) => {
-    //   //     return parseFloat(a.monthly_amount) - parseFloat(b.monthly_amount)
-    //   //   },
-    //   // }),
-    // },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
       width: 100,
-      render: (text, { id, registration_key, cycle_billing_type }) => (
+      render: (text, { id, registration_key, cycle_billing_type, memberships_id }) => (
         <Button
           style={{
             display: 'flex',
@@ -726,7 +681,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
             backgroundColor: 'transparent',
           }}
           onClick={
-            () => handleClickModalActions(registration_key, id, cycle_billing_type)
+            () => handleClickModalActions(registration_key, id, cycle_billing_type, memberships_id)
           }
         >
           <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
@@ -769,6 +724,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               <DollarOutlined spin />
             )}
           </Typography.Title>
+
           {/* <Link to='/new-quote'>
             <Button
               type='primary'
@@ -806,6 +762,12 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           />
         </div>
       </div>
+      {/* <Radio.Group onChange={onChange} value={value}>
+        <Radio value={1}>On Going</Radio>
+        <Radio value={2}>Trial Due</Radio>
+        <Radio value={3}>Canceled</Radio>
+        <Radio value={4}>Unsuccessful Payment</Radio>
+      </Radio.Group> */}
       <Divider dashed />
       <Button
         type='default'
@@ -851,6 +813,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         currentId={currentId}
         currentRegKey={currentRegKey}
         billingCicle={billingCicle}
+        membershipID={currenMembershipID}
       />
     </div>
   )

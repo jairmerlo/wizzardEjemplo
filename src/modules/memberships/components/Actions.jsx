@@ -1,14 +1,16 @@
-import { Modal, Popover, Space, Tooltip } from 'antd'
+import { Divider, Modal, Popover, Space, Tooltip, Typography } from 'antd'
 import React from 'react'
 import { EditMemberhipIcon } from './EditMembershipIcon'
 import { Requesticon } from './Requesticon'
 import { BillingEnrollment } from './BillingEnrollment'
 import { Deleteicon } from './Deleteicon'
 
-export const Actions = ({ open, handleClose, currentId, currentRegKey, billingCicle }) => {
+export const Actions = ({
+    open, handleClose, currentId, currentRegKey, billingCicle, membershipID = '', IdOMB = '',
+}) => {
     return (
         <Modal
-            title="Actions"
+            title={`Membership ID: ${membershipID}`}
             open={open}
             //   onOk={handleOk}
             okButtonProps={{
@@ -26,6 +28,7 @@ export const Actions = ({ open, handleClose, currentId, currentRegKey, billingCi
             centered
             destroyOnClose
         >
+            <Divider />
             <div className='modalActions'>
                 <Popover
                     className='itemGridToolbox'
@@ -100,12 +103,13 @@ export const Actions = ({ open, handleClose, currentId, currentRegKey, billingCi
                 <Requesticon registration_key={currentRegKey} id={currentId} />
 
                 <Tooltip title='ONB' className='itemGridToolbox'>
-                    <div
+                    <a
+                        href={`${window.location.origin}/clients/onBoarding/edit/${currentRegKey}/${IdOMB}`}
                         className='itemButtonActions'
                     >
                         <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
                         ONB
-                    </div>
+                    </a>
                 </Tooltip>
                 <Tooltip title='Accounting classifications' className='itemGridToolbox'>
                     <a href={`${window.location.origin}/accounting/memberships/accounting_classification/${currentId}`} target='_blank'

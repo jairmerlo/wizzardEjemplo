@@ -71,10 +71,12 @@ export const MembershipsTable = ({ filter = '' }) => {
   const [currentRegKey, setCurrentRegKey] = useState('')
   const [billingCicle, setBillingCicle] = useState(1)
   const [currentId, setCurrentId] = useState('')
-  const handleClickModalActions = (regkey, id, cycle_billing_type) => {
+  const [currenMembershipID, setCurrenMembershipID] = useState('')
+  const handleClickModalActions = (regkey, id, cycle_billing_type, memberships_id) => {
     setCurrentRegKey(regkey)
     setBillingCicle(cycle_billing_type)
     setCurrentId(id)
+    setCurrenMembershipID(memberships_id)
     handleOpen()
   }
   // const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
@@ -376,7 +378,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     ),
     onFilter: (value, record) => {
       return (
-        moment(moment(record[dataIndex], 'MM-DD-YYYY')).format('DD-MM-YYYY') ===
+        moment(moment(record[dataIndex])).format('DD-MM-YYYY') ===
         value.format('DD-MM-YYYY')
       )
     },
@@ -641,8 +643,8 @@ export const MembershipsTable = ({ filter = '' }) => {
       ,
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
-            moment(b.created_at, 'MM-DD-YYYY'),
+          return moment(moment(a.created_at || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
+            moment(b.created_at || 'Jan 01, 1970', 'MMM DD, YYYY'),
           )
         },
       }),
@@ -690,7 +692,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'actions',
       key: 'actions',
       width: 100,
-      render: (text, { registration_key, id, cycle_billing_type }) => (
+      render: (text, { registration_key, id, cycle_billing_type, memberships_id }) => (
         <Button
           style={{
             display: 'flex',
@@ -702,7 +704,7 @@ export const MembershipsTable = ({ filter = '' }) => {
             backgroundColor: 'transparent',
           }}
           onClick={
-            () => handleClickModalActions(registration_key, id, cycle_billing_type)
+            () => handleClickModalActions(registration_key, id, cycle_billing_type, memberships_id)
           }
         >
           <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
@@ -1337,8 +1339,8 @@ export const MembershipsTable = ({ filter = '' }) => {
       ...getDateColumnSearchProps('created_at'),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return moment(moment(a.created_at, 'MM-DD-YYYY')).diff(
-            moment(b.created_at, 'MM-DD-YYYY'),
+          return moment(moment(a.created_at || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
+            moment(b.created_at || 'Jan 01, 1970', 'MMM DD, YYYY'),
           )
         },
       }),
@@ -1545,6 +1547,14 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'setup_fee',
       key: 'setup_fee',
       ...getColumnSearchProps('setup_fee'),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return (
+            parseFloat(currency(a.setup_fee).value) -
+            parseFloat(currency(b.setup_fee).value)
+          )
+        },
+      }),
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
@@ -1553,7 +1563,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           {record.setup_fee}
         </Tooltip>
       ),
-      width: 100,
+      width: 140,
     },
     {
       title: "Periods"
@@ -1713,7 +1723,7 @@ export const MembershipsTable = ({ filter = '' }) => {
       dataIndex: 'actions',
       key: 'actions',
       width: 100,
-      render: (text, { registration_key, id, cycle_billing_type }) => (
+      render: (text, { registration_key, id, cycle_billing_type, memberships_id }) => (
         <Button
           style={{
             display: 'flex',
@@ -1725,7 +1735,7 @@ export const MembershipsTable = ({ filter = '' }) => {
             backgroundColor: 'transparent',
           }}
           onClick={
-            () => handleClickModalActions(registration_key, id, cycle_billing_type)
+            () => handleClickModalActions(registration_key, id, cycle_billing_type, memberships_id)
           }
         >
           <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
@@ -1906,6 +1916,7 @@ export const MembershipsTable = ({ filter = '' }) => {
         currentId={currentId}
         currentRegKey={currentRegKey}
         billingCicle={billingCicle}
+        membershipID={currenMembershipID}
       />
     </div>
   )

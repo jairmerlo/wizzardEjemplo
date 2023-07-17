@@ -295,8 +295,10 @@ export const CustomersTableV1 = ({ filter }) => {
 
   const getColumnSortProps = dataIndex => {
     return {
-      sorter: (a, b) => {
-        return a[dataIndex].localeCompare(b[dataIndex])
+      sorter: (a = '', b = '') => {
+        const letterF = a[dataIndex] || ''
+        const letterG = b[dataIndex] || ''
+        return letterF.localeCompare(letterG)
       },
       ellipsis: true,
     }

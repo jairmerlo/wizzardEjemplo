@@ -6,6 +6,7 @@ import { Input, Select } from "formik-antd"
 import { getSelectSearchProps } from "../../../helpers"
 import { Button, Divider, Form, Modal, Typography, notification } from "antd"
 import moment from "moment"
+import { useState } from "react"
 
 
 export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, registration_key = "" }) => {
@@ -13,6 +14,9 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
     // const [setupfee, setSetupfee] = useState(0)
     // const [monthly, setMonthly] = useState(0)
 
+    const [openModal, setOpenModal] = useState(false)
+    const handleOpenModal = () => setOpenModal(true)
+    const handleCloseModal = () => setOpenModal(false)
 
     const [billingEnrollment, { isLoading: isLoadingBilling }] = useBillingEnrollmentMutation()
     const { data: programs = [] } = useGetPlanByregistrationKeyQuery({ registration_key })
@@ -118,6 +122,11 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
             <Formik
                 onSubmit={values => {
                     console.log({ values })
+                    if (!openModal) {
+                        setOpenModal(true)
+                        return
+                    }
+
                     billingEnrollment({
                         registration_key,
                         program_code: values.program_code,
@@ -131,7 +140,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                         .then(({ data }) => {
                             notification.success({
                                 message: `Success`,
-                                description: data[1],
+                                description: "The subscription invoice will be issued and will be sent in approximately 1 hour.",
                                 placement: 'bottomRight',
                             })
                             handleClose()
@@ -164,27 +173,6 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                             <div
                                 className={form}
                             >
-                                {/* <Form.Item
-                                    label='Brokerage'
-                                    required
-                                    validateStatus={
-                                        errors.brokerage && touched.brokerage && 'error'
-                                    }
-                                    help={<ErrorMessage name='brokerage' />}
-                                >
-                                    <Select
-                                        disabled
-                                        className={item}
-                                        name='brokerage'
-                                        // options={brokerages}
-                                        bordered={false}
-                                        {...getSelectSearchProps()}
-                                        onChange={value => {
-                                            // setCompany(value)
-                                            setFieldValue('program_code', '')
-                                        }}
-                                    />
-                                </Form.Item> */}
                                 <Form.Item
                                     label='Program'
                                     required
@@ -297,6 +285,7 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                     <Button className={button} onClick={handleClose}>Cancel</Button>
                                     <Button
                                         type='primary'
+                                        // onClick={handleSubmit}
                                         onClick={handleSubmit}
                                         loading={isLoadingBilling}
                                         className={button}
@@ -307,6 +296,44 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                                         Save
                                     </Button>
                                 </div>
+                                <Modal
+                                    title="Are you sure?"
+                                    open={openModal}
+                                    okButtonProps={{
+                                        style: {
+                                            display: 'none',
+                                        },
+                                    }}
+                                    cancelButtonProps={{
+                                        style: {
+                                            display: 'none',
+                                        },
+                                    }}
+                                    onCancel={handleCloseModal}
+                                    width={400}
+                                    centered
+                                    destroyOnClose
+                                >
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end'
+                                        }}
+                                    >
+                                        <Button className={button} onClick={handleCloseModal}>Cancel</Button>
+                                        <Button
+                                            type='primary'
+                                            onClick={handleSubmit}
+                                            loading={isLoadingBilling}
+                                            className={button}
+                                            style={{
+                                                backgroundImage: 'linear-gradient(to right,#ef3d4e,#ae2865)'
+                                            }}
+                                        >
+                                            Ok
+                                        </Button>
+                                    </div>
+                                </Modal>
                             </div>
                         </Form>
                     </>
