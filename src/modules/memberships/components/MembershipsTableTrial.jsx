@@ -115,6 +115,18 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     setSearchText({ [dataIndex]: '' })
   }
 
+  const handleSearch2 = (selectedKeys, confirm, dataIndex) => {
+    confirm()
+    setSearchText({ [dataIndex]: selectedKeys[0] })
+    setSearchedColumn({ [dataIndex[0]]: true })
+  }
+  const handleReset2 = (clearFilters, confirm, dataIndex) => {
+    clearFilters()
+    confirm({ closeDropdown: true })
+    setSearchedColumn({ [dataIndex[0]]: false })
+    setSearchText({ [dataIndex[0]]: '' })
+  }
+
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
     // console.log('Various parameters', pagination, filters, sorter)
@@ -259,7 +271,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch2(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
             display: 'block',
@@ -268,7 +280,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         <Space>
           <Button
             type='primary'
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch2(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size='small'
             style={{
@@ -279,7 +291,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           </Button>
           <Button
             onClick={() =>
-              clearFilters && handleReset(clearFilters, confirm, dataIndex)
+              clearFilters && handleReset2(clearFilters, confirm, dataIndex)
             }
             size='small'
             style={{
@@ -299,21 +311,23 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       />
     ),
     onFilter: (value, record) => {
-      const text = record[dataIndex] || ''
-      return text.toString().toLowerCase().includes(value.toLowerCase())
+      const searchString = value.toLowerCase();
+      return dataIndex.some(data => {
+        const text = record[data] || '';
+        return text.toString().toLowerCase().includes(searchString);
+      });
     },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
-    render: (text = '') =>
-      renderTextHighlighter({
-        text: text,
-        isHighlighted: searchedColumn[dataIndex],
-        highlightedText: searchText[dataIndex],
-      }),
-    width: 200,
+    render: (text = '', record) => {
+      const concatenatedText = dataIndex
+        .map(data => record[data] || '')
+        .join(' ');
+      return ({ concatenatedText })
+    },
   })
 
   const getColumnSortProps = (dataIndex, opts) => {
@@ -412,6 +426,67 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       fixed: 'left',
     },
     {
+      title: 'Membership ID',
+      dataIndex: 'memberships_id',
+      key: 'memberships_id',
+      ...getColumnSearchProps(['memberships_id']),
+      ...getColumnSortProps('memberships_id'),
+      width: 150,
+      render: (text, record) => (
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
+          rel='noreferrer'
+        >
+          <Tooltip
+            placement='topLeft'
+            title={record.memberships_id}
+          >
+            {record.memberships_id}
+          </Tooltip>
+        </a>
+      )
+    },
+    {
+      title: 'Client Name',
+      dataIndex: 'client_name',
+      key: 'client_name',
+      ...getColumnSearchProps(['client_name', 'project_name']),
+      render: (clientName, record) => (
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
+          rel='noreferrer'
+        >
+          <Tooltip
+            placement='topLeft'
+            title={clientName}
+          >
+            {clientName}
+            <br />
+            {record.project_name}
+          </Tooltip>
+        </a>
+      ),
+      ...getColumnSortProps('client_name'),
+      width: 150,
+    },
+    {
+      title: 'Product/Service',
+      key: 'class_accounting_name',
+      dataIndex: 'class_accounting_name',
+      ...getColumnSearchProps(['class_accounting_name']),
+      ...getColumnSortProps('class_accounting_name'),
+      fixed: 'left',
+      width: 150,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.class_accounting_name}
+        >
+          {record.class_accounting_name}
+        </Tooltip>
+      )
+    },
+    {
       title: 'Created',
       dataIndex: 'created_at',
       key: 'created_at',
@@ -439,7 +514,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       title: 'Last Action',
       dataIndex: 'last_action',
       key: 'last_action',
-      ...getColumnSearchProps('last_action'),
+      ...getColumnSearchProps(['last_action']),
       ...getColumnSortProps('last_action'),
       fixed: 'left',
       width: 150,
@@ -458,7 +533,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      ...getColumnSearchProps('status'),
+      ...getColumnSearchProps(['status']),
       ...getColumnSortProps('status'),
       fixed: 'left',
       width: 120,
@@ -472,195 +547,36 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       )
     },
     {
-      title: 'Product/Service',
-      key: 'class_accounting_name',
-      dataIndex: 'class_accounting_name',
-      ...getColumnSearchProps('class_accounting_name'),
-      ...getColumnSortProps('class_accounting_name'),
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      ...getColumnSearchProps(['email']),
+      ...getColumnSortProps('email'),
       fixed: 'left',
-      width: 150,
+      width: 200,
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.class_accounting_name}
+          title={record.email}
         >
-          {record.class_accounting_name}
-        </Tooltip>
-      )
-    },
-
-    {
-      title: 'Membership ID',
-      dataIndex: 'memberships_id',
-      key: 'memberships_id',
-      ...getColumnSearchProps('memberships_id'),
-      ...getColumnSortProps('memberships_id'),
-      width: 150,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.memberships_id}
-        >
-          {record.memberships_id}
+          {record.email}
         </Tooltip>
       )
     },
     {
-      title: 'Client Name',
-      dataIndex: 'client_name',
-      key: 'client_name',
-      ...getColumnSearchProps('client_name'),
-      render: (clientName, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-          rel='noreferrer'
-        >
-          <Tooltip
-            placement='topLeft'
-            title={
-              <>
-                {renderTextHighlighter({
-                  text: clientName,
-                  isHighlighted: searchedColumn['client_name'],
-                  highlightedText: searchText['client_name'],
-                })}
-              </>
-            }
-          >
-            {renderTextHighlighter({
-              text: clientName,
-              isHighlighted: searchedColumn['client_name'],
-              highlightedText: searchText['client_name'],
-            })}
-          </Tooltip>
-        </a>
-      ),
-      ...getColumnSortProps('client_name'),
-      width: 150,
-    },
-    {
-      title: 'Published Status',
-      key: 'publication_dtate',
-      dataIndex: 'publication_dtate',
-      ...getColumnFilterProps({
-        filters: [
-          {
-            text: 'Unpublished',
-            value: 'Unpublished',
-          },
-        ],
-        dataIndex: 'publication_dtate',
-      }),
-      width: 120,
+      title: 'Url',
+      dataIndex: 'wordpress_install_url',
+      key: 'wordpress_install_url',
+      ...getColumnSearchProps(['wordpress_install_url']),
+      ...getColumnSortProps('wordpress_install_url'),
+      // fixed: 'left',
+      width: 400,
       render: (text, record) => (
         <Tooltip
           placement='topLeft'
-          title={record.publication_dtate}
+          title={record.wordpress_install_url}
         >
-          {record.publication_dtate}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'IDX',
-      key: 'idx',
-      dataIndex: 'idx',
-      ...getColumnFilterProps({
-        filters: [
-          {
-            text: 'No',
-            value: 'No',
-          },
-          {
-            text: 'Active',
-            value: 'Active',
-          },
-        ],
-        dataIndex: 'idx',
-      }),
-      width: 80,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.idx}
-        >
-          {record.idx}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'IDX Requested',
-      key: 'idx_requested_date',
-      dataIndex: 'idx_requested_date',
-      ...getDateColumnSearchProps('idx_requested_date'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'),
-          ).diff(moment(b.idx_requested_date || '01/01/1970', 'MM/DD/YYYY'))
-        },
-      }),
-      width: 120,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.idx_requested_date}
-        >
-          {record.idx_requested_date}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Board',
-      key: 'board_name',
-      dataIndex: 'board_name',
-      ...getColumnSearchProps('board_name'),
-      ...getColumnSortProps('board_name'),
-      ellipsis: true,
-      width: 120,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.board_name}
-        >
-          {record.board_name}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Premium Requested',
-      key: 'premium',
-      dataIndex: 'premium',
-      ...getColumnSearchProps('premium'),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.premium}
-        >
-          {record.premium}
-        </Tooltip>
-      )
-    },
-    {
-      title: '$ Price',
-      dataIndex: 'price',
-      key: 'price',
-      ...getColumnSearchProps('price'),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.price).value) -
-            parseFloat(currency(b.price).value)
-          )
-        },
-      }),
-      width: 120,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.price}
-        >
-          {record.price}
+          {record.wordpress_install_url}
         </Tooltip>
       )
     },

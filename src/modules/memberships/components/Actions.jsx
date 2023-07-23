@@ -4,6 +4,7 @@ import { EditMemberhipIcon } from './EditMembershipIcon'
 import { Requesticon } from './Requesticon'
 import { BillingEnrollment } from './BillingEnrollment'
 import { Deleteicon } from './Deleteicon'
+import { AddPayment } from './AddPayment'
 
 export const Actions = ({
     open, handleClose, currentId, currentRegKey, billingCicle, membershipID = '', IdOMB = '',
@@ -126,6 +127,7 @@ export const Actions = ({
                         <BillingEnrollment registration_key={currentRegKey} />
                     )
                 }
+                <AddPayment registration_key={currentRegKey} />
 
                 <Deleteicon registration_key={currentRegKey} />
             </div>

@@ -219,6 +219,58 @@ export const backoffice = createApi({
         }
       },
     }),
+    addPayment: builder.mutation({
+      // query: ([{ id, username }, body]) => ({
+      //   url: `/memberships/v2/edit/${id}/${username}`,
+      //   body,
+      //   method: 'POST',
+      // }),
+      queryFn: async ({
+        registration_key,
+        paidDate,
+        amount,
+        invoiceNumber,
+        invoicePeriodInit,
+        invoicePeriodEnd,
+        sourcePayment,
+        programName,
+        programCode,
+        attachFile,
+        note
+      }) => {
+        // console.log(id, username, { body }, "edit")
+        try {
+          const res = await fetch(
+            API._BACKOFFICE + `/addPayment`,
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                registrationKey: registration_key,
+                paidDate,
+                amount,
+                invoiceNumber,
+                invoicePeriodInit,
+                invoicePeriodEnd,
+                sourcePayment,
+                programName,
+                programCode,
+                attachFile,
+                note
+              }),
+            },
+          )
+          const data = await res.json()
+          return {
+            data,
+          }
+        } catch (error) {
+          console.log({ error })
+          return {
+            error: 'Error',
+          }
+        }
+      },
+    }),
     getTheamProfiles: builder.query({
       queryFn: async () => {
         try {
@@ -291,6 +343,7 @@ export const {
   useGetAgentsMembershipQuery,
   useGetLastActionsMembershipQuery,
   useEditMembershipMutation,
+  useAddPaymentMutation,
   useGetTheamProfilesQuery,
   useGetProfilesToCustomersQuery,
   useGetBrokerageQuery,

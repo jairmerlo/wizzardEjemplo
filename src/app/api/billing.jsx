@@ -401,6 +401,37 @@ export const billing = createApi({
         },
       }),
     }),
+    // addPayment: builder.mutation({
+    //   query: ({
+    //     registration_key,
+    //     paidDate,
+    //     amount,
+    //     invoiceNumber,
+    //     invoicePeriodInit,
+    //     invoicePeriodEnd,
+    //     sourcePayment,
+    //     programName,
+    //     programCode,
+    //     attachFile,
+    //     note
+    //   }) => ({
+    //     url: '/addPayment',
+    //     method: 'POST',
+    //     body: {
+    //       registration_key,
+    //       paidDate,
+    //       amount,
+    //       invoiceNumber,
+    //       invoicePeriodInit,
+    //       invoicePeriodEnd,
+    //       sourcePayment,
+    //       programName,
+    //       programCode,
+    //       attachFile,
+    //       note
+    //     },
+    //   }),
+    // }),
     editCustomer: builder.mutation({
       query: ({
         city,
@@ -557,6 +588,38 @@ export const billing = createApi({
               value: code,
               setupfee: total_setup,
               monthly: total_amount
+            })),
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getPlanByregistrationKeyV2: builder.query({
+      queryFn: async (
+        { registration_key },
+        _api,
+        _extraOptions,
+        fetchWithBQ,
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + '/get-plan-byregistration_key',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                registration_key,
+              }),
+            },
+          ).then(res => res.json())
+
+          return {
+            data: res.map(({ name, code, total_amount, total_setup }) => ({
+              label: name,
+              value: name,
+              code
             })),
           }
         } catch (error) {
@@ -829,12 +892,27 @@ export const billing = createApi({
           }).then(res => res.json())
 
           return { data: res }
-          // {
-          //   data: res.map(({ id, name }) => ({
-          //     label: name,
-          //     value: id
-          //   })),
-          // }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getProviderAccount: builder.query({
+      queryFn: async (
+      ) => {
+        try {
+          const res = await fetch(API._BILLING_HOST + '/merchant_provider_account/list', {
+            method: 'POST',
+          }).then(res => res.json())
+
+          return {
+            data: res.map(({ name }) => ({
+              label: name,
+              value: name,
+            })),
+          }
         } catch (error) {
           return {
             error,
@@ -865,10 +943,12 @@ export const {
   useIdxResendAgreementEmailMutation,
   useReplaceAuthorizationFormMutation,
   useWebsitePublishedEmailMutation,
+  // useAddPaymentMutation,
   useEditCustomerMutation,
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
   useGetPlanByregistrationKeyQuery,
+  useGetPlanByregistrationKeyV2Query,
   useGetCompanyByRegistrationKeyQuery,
   useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
@@ -879,6 +959,7 @@ export const {
   useGetPlanBycompanyIdQuery,
   useListMembershipTypeQuery,
   useGetQuoteBynameQuery,
+  useGetProviderAccountQuery,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,
