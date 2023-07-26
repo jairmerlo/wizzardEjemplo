@@ -8,7 +8,6 @@ export const BillingEnrollment = ({ registration_key = "" }) => {
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
 
-
     return (
         <>
             <Tooltip title='Billing Enrollment' className='itemGridToolbox'>
@@ -19,7 +18,11 @@ export const BillingEnrollment = ({ registration_key = "" }) => {
                 </button>
             </Tooltip>
             {open && (
-                <BillingEnrollmentChild open={open} handleClose={handleClose} registration_key={registration_key} />
+                <BillingEnrollmentChild 
+                open={open} 
+                handleClose={handleClose} 
+                registration_key={registration_key} 
+                />
             )}
         </>
     )

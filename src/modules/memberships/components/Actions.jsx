@@ -7,7 +7,7 @@ import { Deleteicon } from './Deleteicon'
 import { AddPayment } from './AddPayment'
 
 export const Actions = ({
-    open, handleClose, currentId, currentRegKey, billingCicle, membershipID = '', IdOMB = '',
+    open, handleClose, currentId, currentRegKey, billingCicle, membershipID = '', userId = '',
 }) => {
     return (
         <Modal
@@ -105,7 +105,7 @@ export const Actions = ({
 
                 <Tooltip title='ONB' className='itemGridToolbox'>
                     <a
-                        href={`${window.location.origin}/clients/onBoarding/edit/${currentRegKey}/${IdOMB}`}
+                        href={`${window.location.origin}/clients/onBoarding/check/onBoarding/${currentRegKey}/users_index`}
                         className='itemButtonActions'
                     >
                         <span className='back-office-menu' style={{ fontSize: '20px' }}></span>
@@ -124,7 +124,7 @@ export const Actions = ({
                 </Tooltip>
                 {
                     !billingCicle && (
-                        <BillingEnrollment registration_key={currentRegKey} />
+                        <BillingEnrollment registration_key={currentRegKey} userId={userId} />
                     )
                 }
                 <AddPayment registration_key={currentRegKey} />

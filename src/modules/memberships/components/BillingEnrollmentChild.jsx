@@ -3,26 +3,20 @@ import { ErrorMessage, Formik } from "formik"
 import * as Yup from 'yup'
 import { useCss } from "react-use"
 import { Input, Select } from "formik-antd"
-import { getSelectSearchProps } from "../../../helpers"
+import { getConfig, getSelectSearchProps } from "../../../helpers"
 import { Button, Divider, Form, Modal, Typography, notification } from "antd"
 import moment from "moment"
 import { useState } from "react"
 
 
 export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, registration_key = "" }) => {
-    // const navigate = useNavigate()
-    // const [setupfee, setSetupfee] = useState(0)
-    // const [monthly, setMonthly] = useState(0)
-
+    const userId = getConfig().userId
+    console.log({userId})
     const [openModal, setOpenModal] = useState(false)
-    const handleOpenModal = () => setOpenModal(true)
     const handleCloseModal = () => setOpenModal(false)
 
     const [billingEnrollment, { isLoading: isLoadingBilling }] = useBillingEnrollmentMutation()
     const { data: programs = [] } = useGetPlanByregistrationKeyQuery({ registration_key })
-    // const { data: companyEnrollment = [] } = useGetCompanyByRegistrationKeyQuery({ registration_key })
-
-    // const [company, setCompany] = useState(0)
 
     const form = useCss({
         display: 'grid',
@@ -78,29 +72,14 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
         },
     })
 
-    // const { data = {}, refetch } = useGetNewQuotesOptionsQuery({
-    //     has_trial: 0,
-    // })
-    // const {
-    //     brokerages = [],
-    //     // programs = []
-    // } = data
-
-    // const { data: programs = [] } = useGetPlanBycompanyIdQuery({
-    //     company
-    // })
-
     const today = new Date();
     const nextMonth = new Date()
     nextMonth.setMonth(nextMonth.getMonth() + 1)
     let yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    // console.log({ programs })
-
     return (
         <Modal
-            // title={`Membership: ${membershipId}`}
             open={open}
             okButtonProps={{
                 style: {
@@ -135,7 +114,8 @@ export const BillingEnrollmentChild = ({ open = false, handleClose = f => f, reg
                         startdate_setupfee: values.startdate_setupfee,
                         periods_monthly: values.periods_monthly,
                         monthly: values.programas.monthly,
-                        startdate_monthly: values.startdate_monthly
+                        startdate_monthly: values.startdate_monthly,
+                        user_id: userId
                     })
                         .then(({ data }) => {
                             notification.success({

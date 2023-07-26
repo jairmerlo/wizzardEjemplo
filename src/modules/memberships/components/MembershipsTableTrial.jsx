@@ -64,7 +64,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
   })
   const pageSize = parseInt(searchParams.get('size'))
   const page = parseInt(searchParams.get('page'))
-  const [value, setValue] = useState(1);
+  const [radioBoxFIltred, setradioBoxFIltred] = useState('trial_on_going')
   const [currenMembershipID, setCurrenMembershipID] = useState('')
 
   const [open, setOpen] = useState(false)
@@ -83,7 +83,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
-    filter,
+    filter:radioBoxFIltred,
   })
   const { data: memberships, total } = data
   const [currentItems, setCurrentItems] = useState([])
@@ -154,11 +154,10 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
     // setTotalCurrentItems(total)
     // setCurrentItems([])
   }
-
   useEffect(() => {
-    if (memberships?.length > 0) {
-      setFiltreredMembership(memberships)
-    }
+    setFiltreredMembership(memberships)
+    // if (memberships?.length > 0) {
+    // }
   }, [memberships?.length])
 
   useEffect(() => {
@@ -197,7 +196,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
 
   const onChange = (e) => {
     console.log('radio checked', e.target.value);
-    setValue(e.target.value);
+    setradioBoxFIltred(e.target.value);
   };
 
   const getDateColumnSearchProps = dataIndex => ({
@@ -382,7 +381,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               }
             >
               {/* {moment(date).fromNow(true) + ' left'} */}
-              {date}
+              {record.trial_due}
             </Tooltip>
           ) : (
             <Tooltip
@@ -398,7 +397,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
               }
             >
               <span style={{ color: 'red' }}>
-                {date}
+                {record.trial_due}
               </span>
             </Tooltip>
           )
@@ -423,7 +422,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       }),
       defaultSortOrder: 'ascend',
       width: 120,
-      fixed: 'left',
+      // fixed: 'left',
     },
     {
       title: 'Membership ID',
@@ -475,7 +474,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       dataIndex: 'class_accounting_name',
       ...getColumnSearchProps(['class_accounting_name']),
       ...getColumnSortProps('class_accounting_name'),
-      fixed: 'left',
+      // fixed: 'left',
       width: 150,
       render: (text, record) => (
         <Tooltip
@@ -507,7 +506,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           {record.created_at}
         </Tooltip>
       ),
-      fixed: 'left',
+      // fixed: 'left',
       width: 120,
     },
     {
@@ -516,7 +515,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       key: 'last_action',
       ...getColumnSearchProps(['last_action']),
       ...getColumnSortProps('last_action'),
-      fixed: 'left',
+      // fixed: 'left',
       width: 150,
       render: (text, record) => (
         <Tooltip
@@ -529,30 +528,14 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
         </Tooltip>
       )
     },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      ...getColumnSearchProps(['status']),
-      ...getColumnSortProps('status'),
-      fixed: 'left',
-      width: 120,
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.status}
-        >
-          {record.status}
-        </Tooltip>
-      )
-    },
+    
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
       ...getColumnSearchProps(['email']),
       ...getColumnSortProps('email'),
-      fixed: 'left',
+      // fixed: 'left',
       width: 200,
       render: (text, record) => (
         <Tooltip
@@ -564,7 +547,7 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
       )
     },
     {
-      title: 'Url',
+      title: 'URL',
       dataIndex: 'wordpress_install_url',
       key: 'wordpress_install_url',
       ...getColumnSearchProps(['wordpress_install_url']),
@@ -577,6 +560,23 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           title={record.wordpress_install_url}
         >
           {record.wordpress_install_url}
+        </Tooltip>
+      )
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      ...getColumnSearchProps(['status']),
+      ...getColumnSortProps('status'),
+      // fixed: 'left',
+      width: 120,
+      render: (text, record) => (
+        <Tooltip
+          placement='topLeft'
+          title={record.status}
+        >
+          {record.status}
         </Tooltip>
       )
     },
@@ -678,12 +678,12 @@ export const MembershipsTableTrial = ({ filter = 'trial' }) => {
           />
         </div>
       </div>
-      {/* <Radio.Group onChange={onChange} value={value}>
-        <Radio value={1}>On Going</Radio>
-        <Radio value={2}>Trial Due</Radio>
-        <Radio value={3}>Canceled</Radio>
-        <Radio value={4}>Unsuccessful Payment</Radio>
-      </Radio.Group> */}
+      <Radio.Group onChange={onChange} value={radioBoxFIltred}>
+        <Radio value={'trial_on_going'}>On Going</Radio>
+        <Radio value={'trial_due'}>Trial Due</Radio>
+        <Radio value={'trial_canceled'}>Canceled</Radio>
+        <Radio value={'trial_unsuccessful_payment'}>Unsuccessful Payment</Radio>
+      </Radio.Group>
       <Divider dashed />
       <Button
         type='default'

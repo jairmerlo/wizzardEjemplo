@@ -1,35 +1,36 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { API } from '../../api'
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { API } from "../../api"
 
 export const backoffice = createApi({
-  reducerPath: 'backoffice',
+  reducerPath: "backoffice",
   baseQuery: fetchBaseQuery({
     baseUrl: API._BACKOFFICE,
     headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
       // 'Access-Control-Allow-Credentials': true,
       // 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE',
     },
   }),
   refetchOnMountOrArgChange: true,
   keepUnusedDataFor: 0,
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getAllMemberships: builder.query({
       queryFn: async (
-        { filter, customerId },
+        { filter, customerId, users },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const data = await fetch(API._BACKOFFICE + '/listActiveMemberships', {
-            method: 'post',
+          const data = await fetch(API._BACKOFFICE + "/listActiveMemberships", {
+            method: "post",
             body: JSON.stringify({
               filter,
               customerId,
+              users,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
           // console.log({ data })
           return {
             data,
@@ -47,15 +48,41 @@ export const backoffice = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getMembership', {
-            method: 'post',
+          const res = await fetch(API._BACKOFFICE + "/getMembership", {
+            method: "post",
             body: JSON.stringify({
               registration_key,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
+          const { data } = res
+          return {
+            data,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getListPayments: builder.query({
+      useErrorBoundary: true,
+      queryFn: async (
+        { registrationKey },
+        _api,
+        _extraOptions,
+        fetchWithBQ
+      ) => {
+        try {
+          const res = await fetch(API._BACKOFFICE + "/listPayments", {
+            method: "post",
+            body: JSON.stringify({
+              registrationKey,
+            }),
+          }).then((res) => res.json())
           const { data } = res
           return {
             data,
@@ -73,15 +100,15 @@ export const backoffice = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getLaunchWebsite', {
-            method: 'post',
+          const res = await fetch(API._BACKOFFICE + "/getLaunchWebsite", {
+            method: "post",
             body: JSON.stringify({
               registration_key,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
           const { data } = res
           return {
             data,
@@ -95,13 +122,14 @@ export const backoffice = createApi({
     }),
     getIdxRequest: builder.query({
       useErrorBoundary: true,
-      queryFn: async (
-        { idRequest },
-      ) => {
+      queryFn: async ({ idRequest }) => {
         try {
-          const res = await fetch(API._BACKOFFICE + `/memberships/v2/membership_aprove/${idRequest}`, {
-            method: 'post',
-          }).then(res => res.json())
+          const res = await fetch(
+            API._BACKOFFICE + `/memberships/v2/membership_aprove/${idRequest}`,
+            {
+              method: "post",
+            }
+          ).then((res) => res.json())
           const data = res
           return {
             data,
@@ -118,18 +146,18 @@ export const backoffice = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const { data } = await fetch(
-            API._BACKOFFICE + '/getLastActionsMembership',
+            API._BACKOFFICE + "/getLastActionsMembership",
             {
-              method: 'post',
+              method: "post",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
           return {
             data,
           }
@@ -145,15 +173,15 @@ export const backoffice = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getTeamMembership', {
-            method: 'post',
+          const res = await fetch(API._BACKOFFICE + "/getTeamMembership", {
+            method: "post",
             body: JSON.stringify({
               registration_key,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
           const { data } = res
           return {
             data,
@@ -171,15 +199,15 @@ export const backoffice = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getAgentsMembership', {
-            method: 'post',
+          const res = await fetch(API._BACKOFFICE + "/getAgentsMembership", {
+            method: "post",
             body: JSON.stringify({
               registration_key,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
           const { data } = res
           return {
             data,
@@ -203,9 +231,9 @@ export const backoffice = createApi({
           const res = await fetch(
             API._BACKOFFICE + `/memberships/v2/edit/${id}/${username}`,
             {
-              method: 'POST',
+              method: "POST",
               body: JSON.stringify(body),
-            },
+            }
           )
           const data = await res.json()
           return {
@@ -214,7 +242,7 @@ export const backoffice = createApi({
         } catch (error) {
           console.log({ error })
           return {
-            error: 'Error',
+            error: "Error",
           }
         }
       },
@@ -236,29 +264,26 @@ export const backoffice = createApi({
         programName,
         programCode,
         attachFile,
-        note
+        note,
       }) => {
         // console.log(id, username, { body }, "edit")
         try {
-          const res = await fetch(
-            API._BACKOFFICE + `/addPayment`,
-            {
-              method: 'POST',
-              body: JSON.stringify({
-                registrationKey: registration_key,
-                paidDate,
-                amount,
-                invoiceNumber,
-                invoicePeriodInit,
-                invoicePeriodEnd,
-                sourcePayment,
-                programName,
-                programCode,
-                attachFile,
-                note
-              }),
-            },
-          )
+          const res = await fetch(API._BACKOFFICE + `/addPayment`, {
+            method: "POST",
+            body: JSON.stringify({
+              registrationKey: registration_key,
+              paidDate,
+              amount,
+              invoiceNumber,
+              invoicePeriodInit,
+              invoicePeriodEnd,
+              sourcePayment,
+              programName,
+              programCode,
+              attachFile,
+              note,
+            }),
+          })
           const data = await res.json()
           return {
             data,
@@ -266,7 +291,7 @@ export const backoffice = createApi({
         } catch (error) {
           console.log({ error })
           return {
-            error: 'Error',
+            error: "Error",
           }
         }
       },
@@ -274,8 +299,8 @@ export const backoffice = createApi({
     getTheamProfiles: builder.query({
       queryFn: async () => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getTheamProfiles', {
-            method: 'POST',
+          const res = await fetch(API._BACKOFFICE + "/getTheamProfiles", {
+            method: "POST",
           })
           const data = await res.json()
           return {
@@ -284,7 +309,7 @@ export const backoffice = createApi({
         } catch (error) {
           console.log({ error })
           return {
-            error: 'Error',
+            error: "Error",
           }
         }
       },
@@ -292,8 +317,8 @@ export const backoffice = createApi({
     getProfilesToCustomers: builder.query({
       queryFn: async () => {
         try {
-          const res = await fetch(API._BACKOFFICE + '/getProfilesToCustomers', {
-            method: 'POST',
+          const res = await fetch(API._BACKOFFICE + "/getProfilesToCustomers", {
+            method: "POST",
           })
           const data = await res.json()
           return {
@@ -302,7 +327,7 @@ export const backoffice = createApi({
         } catch (error) {
           console.log({ error })
           return {
-            error: 'Error',
+            error: "Error",
           }
         }
       },
@@ -310,8 +335,8 @@ export const backoffice = createApi({
     getBrokerage: builder.query({
       queryFn: async () => {
         try {
-          const res = await fetch(API._PACKAGE_BUILDER + '/company-list', {
-            method: 'GET',
+          const res = await fetch(API._PACKAGE_BUILDER + "/company-list", {
+            method: "GET",
           })
           let data = await res.json()
           data = data.map(({ name, id }) => ({
@@ -324,7 +349,7 @@ export const backoffice = createApi({
         } catch (error) {
           console.log({ error })
           return {
-            error: 'Error',
+            error: "Error",
           }
         }
       },
@@ -337,6 +362,7 @@ export default backoffice
 export const {
   useGetAllMembershipsQuery,
   useGetMembershipQuery,
+  useGetListPaymentsQuery,
   useGetLaunchWebsiteQuery,
   useGetIdxRequestQuery,
   useGetTheamMembershipQuery,

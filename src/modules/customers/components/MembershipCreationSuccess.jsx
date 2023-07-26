@@ -163,10 +163,14 @@ export const MembershipCreationSuccess = ({
             label='Setup Fee'
             text={`${sign === '$' ? '$' : ''} ${setupfeeAmount} ${sign === '%' ? '%' : ''} ( Discount)`}
           />
-          <YourProductItem
-            label='Monthly Fee'
-            text={`${sign === '$' ? '$' : ''} ${monthlyfeeAmount} ${sign === '%' ? '%' : ''} ( Discount)`}
-          />
+          {
+            (monthlyfeeAmount > 1 ) && (
+              <YourProductItem
+                label='Monthly Fee'
+                text={`${sign === '$' ? '$' : ''} ${monthlyfeeAmount} ${sign === '%' ? '%' : ''} ( Discount)`}
+              />
+            )
+          }
         </IDXCardContent>
       )}
     </IDXCard>

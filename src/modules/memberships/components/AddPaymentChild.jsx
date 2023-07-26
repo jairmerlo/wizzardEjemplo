@@ -152,10 +152,10 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                 enableReinitialize
                 initialValues={{
                     paidDate: moment(new Date()).format('YYYY-MM-DD'),
-                    amount: 0,
-                    invoiceNumber: 0,
-                    invoicePeriodInit: moment(new Date()).format('YYYY-MM-DD'),
-                    invoicePeriodEnd: moment(new Date()).format('YYYY-MM-DD'),
+                    amount: '',
+                    invoiceNumber: "",
+                    invoicePeriodInit: moment(new Date()).format('YYYY-MM'),
+                    invoicePeriodEnd: moment(new Date()).format('YYYY-MM'),
                     sourcePayment: "",
                     programName: "",
                     programCode: "",
@@ -164,8 +164,8 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                 }}
                 validationSchema={Yup.object({
                     paidDate: Yup.date().required('This field is required.'),
-                    amount: Yup.number().required('This field is required.'),
-                    invoiceNumber: Yup.number().required('This field is required.'),
+                    amount: Yup.string().required('This field is required.'),
+                    invoiceNumber: Yup.string().required('This field is required.'),
                     invoicePeriodInit: Yup.date().required('This field is required.'),
                     invoicePeriodEnd: Yup.date().required('This field is required.'),
                     sourcePayment: Yup.string().required('This field is required.'),
@@ -198,8 +198,12 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                                 <Input
                                     name='amount'
                                     className={item}
-                                    type="number"
-                                    min={0}
+                                    type="text"
+                                    onChange={ (e) => {
+                                        const rawValue = e.target.value
+                                        const formattedValue = parseFloat(rawValue.replace(/,/g, '')).toLocaleString();
+                                        setFieldValue('amount', formattedValue);
+                                    }}
                                 />
                             </Form.Item>
                             <Form.Item
@@ -211,8 +215,7 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                                 <Input
                                     name='invoiceNumber'
                                     className={item}
-                                    type="number"
-                                    min={0}
+                                    type="text"
                                 />
                             </Form.Item>
                         </div>
@@ -229,7 +232,7 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                                 <Input
                                     name='invoicePeriodInit'
                                     className={item}
-                                    type='date'
+                                    type='month'
                                 />
                             </Form.Item>
                             <Form.Item
@@ -241,7 +244,7 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                                 <Input
                                     name='invoicePeriodEnd'
                                     className={item}
-                                    type='date'
+                                    type='month'
                                 />
                             </Form.Item>
                         </div>
@@ -327,7 +330,7 @@ export const AddPaymentChild = ({ open = false, handleClose = f => f, registrati
                                 type='primary'
                                 // onClick={handleSubmit}
                                 onClick={handleSubmit}
-                                // loading={isLoadingBilling}
+                                loading={isLoadingPayment}
                                 className={button}
                                 style={{
                                     backgroundImage: 'linear-gradient(to right,#ef3d4e,#ae2865)'

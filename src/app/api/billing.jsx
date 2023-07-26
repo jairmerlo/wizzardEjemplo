@@ -352,7 +352,7 @@ export const billing = createApi({
       }),
     }),
     billingEnrollment: builder.mutation({
-      query: ({ registration_key, program_code, periods_setupfee = 0, setupfee, startdate_setupfee, periods_monthly, monthly, startdate_monthly }) => ({
+      query: ({ registration_key, user_id,program_code, periods_setupfee = 0, setupfee, startdate_setupfee, periods_monthly, monthly, startdate_monthly }) => ({
         url: '/program-enrollment',
         method: 'POST',
         body: {
@@ -363,7 +363,8 @@ export const billing = createApi({
           startdate_setupfee,
           periods_monthly,
           monthly,
-          startdate_monthly
+          startdate_monthly,
+          user_id
         },
       }),
     }),

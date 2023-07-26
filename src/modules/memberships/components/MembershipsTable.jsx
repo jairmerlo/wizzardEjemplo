@@ -4,7 +4,7 @@ import React, {
   useReducer,
   useRef,
   useState,
-} from 'react'
+} from "react"
 import {
   Button,
   DatePicker,
@@ -16,26 +16,31 @@ import {
   Table,
   Tooltip,
   Typography,
-} from 'antd'
-import {
-  DollarOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+} from "antd"
+import { DollarOutlined, SearchOutlined } from "@ant-design/icons"
 import {
   capitalize,
   getColumnProps,
+  getConfig,
   renderTextHighlighter,
   showTotal,
   USD,
-} from '../../../helpers'
-import moment from 'moment/moment'
-import { useGetAllMembershipsQuery } from '../../../app/api/backoffice'
-import currency from 'currency.js'
-import { LastActionCell, EditMemberhipIcon, Requesticon, Deleteicon, BillingEnrollment, Actions } from '.'
-import numbro from 'numbro'
-import { useSearchParams } from 'react-router-dom'
-import { useEvent } from 'react-use'
-import '../../../icons/style.css'
+} from "../../../helpers"
+import moment from "moment/moment"
+import { useGetAllMembershipsQuery } from "../../../app/api/backoffice"
+import currency from "currency.js"
+import {
+  LastActionCell,
+  EditMemberhipIcon,
+  Requesticon,
+  Deleteicon,
+  BillingEnrollment,
+  Actions,
+} from "."
+import numbro from "numbro"
+import { useSearchParams } from "react-router-dom"
+import { useEvent } from "react-use"
+import "../../../icons/style.css"
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -58,21 +63,26 @@ const SEARCHED_COLUMN_INITIAL_STATE = {
   created_on: null,
 }
 
-export const MembershipsTable = ({ filter = '' }) => {
+export const MembershipsTable = ({ filter = "" }) => {
   let [searchParams, setSearchParams] = useSearchParams({
     page: 1,
     size: 10,
   })
   const [filtreredMembership, setFiltreredMembership] = useState([])
-  const [filtredValue, setFiltredValue] = useState('')
+  const [filtredValue, setFiltredValue] = useState("")
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const [currentRegKey, setCurrentRegKey] = useState('')
+  const [currentRegKey, setCurrentRegKey] = useState("")
   const [billingCicle, setBillingCicle] = useState(1)
-  const [currentId, setCurrentId] = useState('')
-  const [currenMembershipID, setCurrenMembershipID] = useState('')
-  const handleClickModalActions = (regkey, id, cycle_billing_type, memberships_id) => {
+  const [currentId, setCurrentId] = useState("")
+  const [currenMembershipID, setCurrenMembershipID] = useState("")
+  const handleClickModalActions = (
+    regkey,
+    id,
+    cycle_billing_type,
+    memberships_id
+  ) => {
     setCurrentRegKey(regkey)
     setBillingCicle(cycle_billing_type)
     setCurrentId(id)
@@ -82,20 +92,30 @@ export const MembershipsTable = ({ filter = '' }) => {
   // const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
   // const [sortAscending, setSortAscending] = useState('')
   // const [sortDescending, setSortDescending] = useState('')
-  const [sortColumn, setSortColumn] = useState({ sort: '', dataIndex: '' })
-  const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
-  const [page, setPage] = useState(parseInt(searchParams.get('page')))
+  const [sortColumn, setSortColumn] = useState({ sort: "", dataIndex: "" })
+  const [pageSize, setPageSize] = useState(parseInt(searchParams.get("size")))
+  const [page, setPage] = useState(parseInt(searchParams.get("page")))
   const onScroll = useCallback(() => {
-    localStorage.setItem('scrollY002', window.scrollY.toString())
+    localStorage.setItem("scrollY002", window.scrollY.toString())
   }, [])
 
-  const [filteredRadioGroup, setFilteredRadioGroup] = useState({ value: 0, dataIndex: '', key: '' })
-  const [filteredNumber, setFilteredNumber] = useState({ less: 0, greater: 0, dataIndex: '', value: '' })
-  useEvent('scroll', onScroll)
+  const [filteredRadioGroup, setFilteredRadioGroup] = useState({
+    value: 0,
+    dataIndex: "",
+    key: "",
+  })
+  const [filteredNumber, setFilteredNumber] = useState({
+    less: 0,
+    greater: 0,
+    dataIndex: "",
+    value: "",
+  })
+  useEvent("scroll", onScroll)
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
+    users: [30],
   })
 
   const { data: memberships = [], total = 0 } = data
@@ -106,9 +126,8 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
   }, [memberships?.length])
 
-
   useEffect(() => {
-    if (sortColumn.dataIndex === '') {
+    if (sortColumn.dataIndex === "") {
       setSearchParams({
         page: 1,
         size: 10,
@@ -119,46 +138,52 @@ export const MembershipsTable = ({ filter = '' }) => {
     }
     const membershipCopy = [...memberships]
 
-    if (sortColumn.sort === 'asc') {
+    if (sortColumn.sort === "asc") {
       membershipCopy.sort((a, b) => {
-        if (a[sortColumn.dataIndex] === null && b[sortColumn.dataIndex] === null) {
-          return 0;
+        if (
+          a[sortColumn.dataIndex] === null &&
+          b[sortColumn.dataIndex] === null
+        ) {
+          return 0
         }
         if (a[sortColumn.dataIndex] === null) {
-          return 1;
+          return 1
         }
         if (b[sortColumn.dataIndex] === null) {
-          return -1;
+          return -1
         }
 
         if (a[sortColumn.dataIndex] > b[sortColumn.dataIndex]) {
-          return 1; // cambia a -1 para ordenar de Z-A
+          return 1 // cambia a -1 para ordenar de Z-A
         }
         if (a[sortColumn.dataIndex] < b[sortColumn.dataIndex]) {
-          return -1; // cambia a 1 para ordenar de Z-A
+          return -1 // cambia a 1 para ordenar de Z-A
         }
-        return 0;
-      });
-    } else if (sortColumn.sort === 'desc') {
+        return 0
+      })
+    } else if (sortColumn.sort === "desc") {
       membershipCopy.sort((a, b) => {
-        if (a[sortColumn.dataIndex] === null && b[sortColumn.dataIndex] === null) {
-          return 0;
+        if (
+          a[sortColumn.dataIndex] === null &&
+          b[sortColumn.dataIndex] === null
+        ) {
+          return 0
         }
         if (a[sortColumn.dataIndex] === null) {
-          return 1;
+          return 1
         }
         if (b[sortColumn.dataIndex] === null) {
-          return -1;
+          return -1
         }
 
         if (a[sortColumn.dataIndex] > b[sortColumn.dataIndex]) {
-          return -1; // cambia a -1 para ordenar de Z-A
+          return -1 // cambia a -1 para ordenar de Z-A
         }
         if (a[sortColumn.dataIndex] < b[sortColumn.dataIndex]) {
-          return 1; // cambia a 1 para ordenar de Z-A
+          return 1 // cambia a 1 para ordenar de Z-A
         }
-        return 0;
-      });
+        return 0
+      })
     }
 
     setSearchParams({
@@ -167,11 +192,10 @@ export const MembershipsTable = ({ filter = '' }) => {
     })
     setFiltreredMembership(membershipCopy)
     setTotalCurrentItems(membershipCopy.length)
-
   }, [sortColumn])
 
   useEffect(() => {
-    if (filteredRadioGroup.dataIndex === '') {
+    if (filteredRadioGroup.dataIndex === "") {
       setFiltreredMembership(memberships)
       setSearchParams({
         page: 1,
@@ -184,18 +208,20 @@ export const MembershipsTable = ({ filter = '' }) => {
     let newMembership = []
 
     if (filteredRadioGroup.value === 1) {
-      newMembership = memberships.filter(membership => {
+      newMembership = memberships.filter((membership) => {
         return membership[filteredRadioGroup.dataIndex] !== null
       })
     } else if (filteredRadioGroup.value === 3) {
-      newMembership = memberships.filter(membership => {
+      newMembership = memberships.filter((membership) => {
         return membership[filteredRadioGroup.dataIndex] === null
       })
     } else if (filteredRadioGroup.value === 2) {
-
-      if (filteredRadioGroup.key === '') return
-      newMembership = memberships.filter(membership => {
-        return membership[filteredRadioGroup.dataIndex]?.toString().toLowerCase().includes(filteredRadioGroup.key.toLowerCase())
+      if (filteredRadioGroup.key === "") return
+      newMembership = memberships.filter((membership) => {
+        return membership[filteredRadioGroup.dataIndex]
+          ?.toString()
+          .toLowerCase()
+          .includes(filteredRadioGroup.key.toLowerCase())
       })
     }
     setSearchParams({
@@ -207,7 +233,7 @@ export const MembershipsTable = ({ filter = '' }) => {
   }, [filteredRadioGroup])
 
   useEffect(() => {
-    if (filteredNumber.dataIndex === '') {
+    if (filteredNumber.dataIndex === "") {
       setFiltreredMembership(memberships)
       setSearchParams({
         page: 1,
@@ -220,16 +246,15 @@ export const MembershipsTable = ({ filter = '' }) => {
     let newMembership = []
 
     if (filteredNumber.value === 1) {
-      newMembership = memberships.filter(membership => {
+      newMembership = memberships.filter((membership) => {
         return membership[filteredNumber.dataIndex] !== null
       })
     } else if (filteredNumber.value === 5) {
-      newMembership = memberships.filter(membership => {
+      newMembership = memberships.filter((membership) => {
         return membership[filteredNumber.dataIndex] === null
       })
     } else if (filteredNumber.value === 2) {
-
-      newMembership = memberships.filter(membership => {
+      newMembership = memberships.filter((membership) => {
         let number = membership[filteredNumber.dataIndex].match(/\d+/g)
         let numberPart = parseFloat(number.join(""))
         return filteredNumber.less < numberPart
@@ -250,7 +275,7 @@ export const MembershipsTable = ({ filter = '' }) => {
   }, [filteredNumber])
 
   useEffect(() => {
-    if (filtredValue === '') {
+    if (filtredValue === "") {
       setFiltreredMembership(memberships)
       setSearchParams({
         page: 1,
@@ -258,14 +283,34 @@ export const MembershipsTable = ({ filter = '' }) => {
       })
       setTotalCurrentItems(total)
       return
-    };
-    const newMembership = memberships.filter(membership => {
-      return membership.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        membership.memberships_id?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        membership.client_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        membership.project_name?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        membership.email?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        membership.wordpress_install_url?.toString().toLowerCase().includes(filtredValue.toLowerCase())
+    }
+    const newMembership = memberships.filter((membership) => {
+      return (
+        membership.registration_key
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.memberships_id
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.client_name
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.project_name
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.email
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.wordpress_install_url
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase())
+      )
     })
     setSearchParams({
       page: 1,
@@ -273,7 +318,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     })
     setFiltreredMembership(newMembership)
     setTotalCurrentItems(newMembership.length)
-
   }, [filtredValue])
 
   console.log(data, "data")
@@ -281,27 +325,27 @@ export const MembershipsTable = ({ filter = '' }) => {
   useEffect(() => {
     if (memberships?.length !== 0) {
       window.scrollTo({
-        top: parseInt(localStorage.getItem('scrollY002') || 0),
+        top: parseInt(localStorage.getItem("scrollY002") || 0),
       })
     }
   }, [memberships?.length])
   const [currentItems, setCurrentItems] = useState([])
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
-    ?.map(item => currency(item.price || 0).value ?? 0)
+    ?.map((item) => currency(item.price || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
   const totalMonthly = items
-    ?.map(item => currency(item.amount || 0).value ?? 0)
+    ?.map((item) => currency(item.amount || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
     reducer,
-    SEARCH_TEXT_INITIAL_STATE,
+    SEARCH_TEXT_INITIAL_STATE
   )
   const [searchedColumn, setSearchedColumn] = useReducer(
     reducer,
-    SEARCHED_COLUMN_INITIAL_STATE,
+    SEARCHED_COLUMN_INITIAL_STATE
   )
   const searchInput = useRef(null)
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -313,7 +357,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     clearFilters()
     confirm({ closeDropdown: true })
     setSearchedColumn({ [dataIndex]: false })
-    setSearchText({ [dataIndex]: '' })
+    setSearchText({ [dataIndex]: "" })
   }
   const handleSearch2 = (selectedKeys, confirm, dataIndex) => {
     confirm()
@@ -324,12 +368,12 @@ export const MembershipsTable = ({ filter = '' }) => {
     clearFilters()
     confirm({ closeDropdown: true })
     setSearchedColumn({ [dataIndex[0]]: false })
-    setSearchText({ [dataIndex[0]]: '' })
+    setSearchText({ [dataIndex[0]]: "" })
   }
   const resetFilters = () => {
-    setTableKey(tableKey => tableKey + 1)
+    setTableKey((tableKey) => tableKey + 1)
     setTotalCurrentItems(total)
-    setFilteredRadioGroup({ value: 0, dataIndex: '', key: '' })
+    setFilteredRadioGroup({ value: 0, dataIndex: "", key: "" })
     setSearchParams({
       page: 1,
       size: 10,
@@ -337,7 +381,6 @@ export const MembershipsTable = ({ filter = '' }) => {
     // setSearchText(SEARCH_TEXT_INITIAL_STATE)
     // setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     // setCurrentItems([])
-
   }
 
   const handleChange = (pagination, filters, sorter, { currentDataSource }) => {
@@ -345,7 +388,7 @@ export const MembershipsTable = ({ filter = '' }) => {
     setCurrentItems(currentDataSource)
   }
 
-  const getDateColumnSearchProps = dataIndex => ({
+  const getDateColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -353,30 +396,30 @@ export const MembershipsTable = ({ filter = '' }) => {
       clearFilters,
     }) => (
       <div
-        style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}
+        style={{ padding: 8, display: "flex", flexDirection: "column", gap: 8 }}
       >
         <DatePicker
           value={selectedKeys[0]}
-          onChange={e => {
-            console.log(e.format('DD-MM-YYYY'))
+          onChange={(e) => {
+            console.log(e.format("DD-MM-YYYY"))
             setSelectedKeys([e])
           }}
           allowClear={true}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
         <Space>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
-            size='small'
+            size="small"
             style={{ width: 90 }}
           >
             Search
           </Button>
           <Button
             onClick={() => handleReset(clearFilters, confirm, dataIndex)}
-            size='small'
+            size="small"
             style={{ width: 90 }}
           >
             Reset
@@ -384,17 +427,17 @@ export const MembershipsTable = ({ filter = '' }) => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
-      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) => {
       return (
-        moment(moment(record[dataIndex])).format('DD-MM-YYYY') ===
-        value.format('DD-MM-YYYY')
+        moment(moment(record[dataIndex])).format("DD-MM-YYYY") ===
+        value.format("DD-MM-YYYY")
       )
     },
   })
-  const getColumnSearchProps = dataIndex => ({
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -406,26 +449,26 @@ export const MembershipsTable = ({ filter = '' }) => {
         style={{
           padding: 8,
         }}
-        onKeyDown={e => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <Input
           ref={searchInput}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch2(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => handleSearch2(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
-            size='small'
+            size="small"
             style={{
               width: 90,
             }}
@@ -436,7 +479,7 @@ export const MembershipsTable = ({ filter = '' }) => {
             onClick={() =>
               clearFilters && handleReset2(clearFilters, confirm, dataIndex)
             }
-            size='small'
+            size="small"
             style={{
               width: 90,
             }}
@@ -446,37 +489,37 @@ export const MembershipsTable = ({ filter = '' }) => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
+    filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1890ff' : undefined,
+          color: filtered ? "#1890ff" : undefined,
         }}
       />
     ),
     onFilter: (value, record) => {
-      const searchString = value.toLowerCase();
-      return dataIndex.some(data => {
-        const text = record[data] || '';
-        return text.toString().toLowerCase().includes(searchString);
-      });
+      const searchString = value.toLowerCase()
+      return dataIndex.some((data) => {
+        const text = record[data] || ""
+        return text.toString().toLowerCase().includes(searchString)
+      })
     },
-    onFilterDropdownOpenChange: visible => {
+    onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
-    render: (text = '', record) => {
+    render: (text = "", record) => {
       const concatenatedText = dataIndex
-        .map(data => record[data] || '')
-        .join(' ');
-      return ({ concatenatedText })
-    }
+        .map((data) => record[data] || "")
+        .join(" ")
+      return concatenatedText
+    },
   })
 
-  const getColumnSortProps = dataIndex => {
+  const getColumnSortProps = (dataIndex) => {
     return {
       sorter: (a, b) => {
-        return (a[dataIndex] || '').localeCompare(b[dataIndex] || '')
+        return (a[dataIndex] || "").localeCompare(b[dataIndex] || "")
       },
       ellipsis: true,
     }
@@ -492,240 +535,212 @@ export const MembershipsTable = ({ filter = '' }) => {
   const launch_website_columns = [
     {
       ...getColumnProps({
-        title: 'Launch W Requested',
-        dataIndex: 'request_publish_date',
+        title: "Launch W Requested",
+        dataIndex: "request_publish_date",
       }),
-      ...getDateColumnSearchProps('request_publish_date'),
+      ...getDateColumnSearchProps("request_publish_date"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(
-            moment(a.request_publish_date || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
-              moment(b.request_publish_date || 'Jan 01, 1970', 'MMM DD, YYYY'))
+            moment(a.request_publish_date || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(
+            moment(b.request_publish_date || "Jan 01, 1970", "MMM DD, YYYY")
+          )
         },
       }),
-      defaultSortOrder: 'descend',
+      defaultSortOrder: "descend",
       // ...getDateColumnSearchProps('request_publish_date'),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.request_publish_date_time}
-        >
+        <Tooltip placement="topLeft" title={record.request_publish_date_time}>
           {record.request_publish_date}
         </Tooltip>
       ),
     },
     {
-      title: 'Last Action',
-      dataIndex: 'last_action',
-      key: 'last_action',
-      ...getColumnSearchProps(['last_action']),
+      title: "Membership ID",
+      dataIndex: "memberships_id",
+      key: "memberships_id",
+      ...getColumnSearchProps(["memberships_id"]),
+      ...getColumnSortProps("memberships_id"),
       render: (text, record) => (
-        <LastActionCell
-          text={text}
-          date={record.last_action_date}
-          isHighlighted={searchedColumn['last_action']}
-          highlightedText={searchText['last_action']}
-          registration_key={record.registration_key}
-          membershipId={record.memberships_id}
-        />
+        <a
+          href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
+          rel="noreferrer"
+        >
+          <Tooltip placement="topLeft" title={record.memberships_id}>
+            {record.memberships_id}
+          </Tooltip>
+        </a>
       ),
-      ...getColumnSortProps('last_action'),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      ...getColumnSearchProps(['status']),
-      ...getColumnSortProps('status'),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.status}
-        >
-          {record.status}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Product/Service',
-      key: 'class_accounting_name',
-      dataIndex: 'class_accounting_name',
-      ...getColumnSearchProps(['class_accounting_name']),
-      ...getColumnSortProps('class_accounting_name'),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.class_accounting_name}
-        >
-          {record.class_accounting_name}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Client Name',
-      dataIndex: 'client_name',
-      key: 'client_name',
-      ...getColumnSearchProps(['client_name']),
+      title: "Client Name",
+      dataIndex: "client_name",
+      key: "client_name",
+      ...getColumnSearchProps(["client_name"]),
       render: (clientName, record) => (
         <a
           href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-          rel='noreferrer'
+          rel="noreferrer"
         >
           <Tooltip
-            placement='topLeft'
+            placement="topLeft"
             title={
               <>
                 {renderTextHighlighter({
                   text: clientName,
-                  isHighlighted: searchedColumn['client_name'],
-                  highlightedText: searchText['client_name'],
+                  isHighlighted: searchedColumn["client_name"],
+                  highlightedText: searchText["client_name"],
                 })}
               </>
             }
           >
             {renderTextHighlighter({
               text: clientName,
-              isHighlighted: searchedColumn['client_name'],
-              highlightedText: searchText['client_name'],
+              isHighlighted: searchedColumn["client_name"],
+              highlightedText: searchText["client_name"],
             })}
           </Tooltip>
         </a>
       ),
-      ...getColumnSortProps('client_name'),
+      ...getColumnSortProps("client_name"),
     },
     {
-      title: 'Membership ID',
-      dataIndex: 'memberships_id',
-      key: 'memberships_id',
-      ...getColumnSearchProps(['memberships_id']),
-      ...getColumnSortProps('memberships_id'),
+      title: "Product/Service",
+      key: "class_accounting_name",
+      dataIndex: "class_accounting_name",
+      ...getColumnSearchProps(["class_accounting_name"]),
+      ...getColumnSortProps("class_accounting_name"),
       render: (text, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
-          rel='noreferrer'
-        >
-          <Tooltip
-            placement='topLeft'
-            title={record.memberships_id}
-          >
-            {record.memberships_id}
-          </Tooltip>
-        </a>
-      )
+        <Tooltip placement="topLeft" title={record.class_accounting_name}>
+          {record.class_accounting_name}
+        </Tooltip>
+      ),
     },
     {
-      title: 'URL',
-      dataIndex: 'wordpress_install_url',
-      key: 'wordpress_install_url',
-      ...getColumnSearchProps(['wordpress_install_url']),
-      render: url => (
-        <a href={url} target='_blank' rel='noreferrer'>
+      title: "Created",
+      dataIndex: "created_at",
+      key: "created_at",
+      ...getDateColumnSearchProps("created_at"),
+      render: (date, record) => (
+        // moment(moment(date, 'MM-DD-YYYY')).format('ll')
+
+        <Tooltip placement="topLeft" title={record.created_at_date_time}>
+          {moment(record.created_at).format("MMM DD, YYYY")}
+        </Tooltip>
+      ),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.created_at || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.created_at || "Jan 01, 1970", "MMM DD, YYYY"))
+        },
+      }),
+    },
+    {
+      title: "Last Action",
+      dataIndex: "last_action",
+      key: "last_action",
+      ...getColumnSearchProps(["last_action"]),
+      render: (text, record) => (
+        <LastActionCell
+          text={text}
+          date={record.last_action_date}
+          isHighlighted={searchedColumn["last_action"]}
+          highlightedText={searchText["last_action"]}
+          registration_key={record.registration_key}
+          membershipId={record.memberships_id}
+        />
+      ),
+      ...getColumnSortProps("last_action"),
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      ...getColumnSearchProps(["email"]),
+      ...getColumnSortProps("email"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.email}>
+          {record.email}
+        </Tooltip>
+      ),
+      width: 250,
+    },
+    {
+      title: "URL",
+      dataIndex: "wordpress_install_url",
+      key: "wordpress_install_url",
+      ...getColumnSearchProps(["wordpress_install_url"]),
+      render: (url) => (
+        <a href={url} target="_blank" rel="noreferrer">
           <Tooltip
-            placement='topLeft'
+            placement="topLeft"
             title={
               <>
                 {renderTextHighlighter({
                   text: url,
-                  isHighlighted: searchedColumn['wordpress_install_url'],
-                  highlightedText: searchText['wordpress_install_url'],
+                  isHighlighted: searchedColumn["wordpress_install_url"],
+                  highlightedText: searchText["wordpress_install_url"],
                 })}
               </>
             }
           >
             {renderTextHighlighter({
               text: url,
-              isHighlighted: searchedColumn['wordpress_install_url'],
-              highlightedText: searchText['wordpress_install_url'],
+              isHighlighted: searchedColumn["wordpress_install_url"],
+              highlightedText: searchText["wordpress_install_url"],
             })}
           </Tooltip>
         </a>
       ),
-      ...getColumnSortProps('wordpress_install_url'),
+      ...getColumnSortProps("wordpress_install_url"),
+      width: 250,
     },
     {
-      title: 'Created',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      ...getDateColumnSearchProps('created_at'),
-      render: (date, record) => (
-        // moment(moment(date, 'MM-DD-YYYY')).format('ll')
-
-        <Tooltip
-          placement='topLeft'
-          title={record.created_at_date_time}
-        >
-          {moment(record.created_at).format('MMM DD, YYYY')}
-        </Tooltip>
-
-      )
-      ,
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(moment(a.created_at || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
-            moment(b.created_at || 'Jan 01, 1970', 'MMM DD, YYYY'),
-          )
-        },
-      }),
-    },
-    {
-      ...getColumnProps({
-        title: 'Published',
-        dataIndex: 'published',
-      }),
-      ...getColumnSearchProps(['published']),
-      ...getColumnSortProps('published'),
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      ...getColumnSearchProps(["status"]),
+      ...getColumnSortProps("status"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.published}
-        >
-          {record.published}
+        <Tooltip placement="topLeft" title={record.status}>
+          {record.status}
         </Tooltip>
-      )
+      ),
     },
     {
-      title: '$ Price',
-      dataIndex: 'price',
-      key: 'price',
-      ...getColumnSearchProps(['price']),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return (
-            parseFloat(currency(a.price).value) -
-            parseFloat(currency(b.price).value)
-          )
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.price}
-        >
-          {record.price}
-        </Tooltip>
-      )
-    },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       width: 100,
-      render: (text, { registration_key, id, cycle_billing_type, memberships_id }) => (
+      render: (
+        text,
+        { registration_key, id, cycle_billing_type, memberships_id }
+      ) => (
         <Button
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#858faf',
-            fontSize: '10px',
-            border: 'none',
-            backgroundColor: 'transparent',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            color: "#858faf",
+            fontSize: "10px",
+            border: "none",
+            backgroundColor: "transparent",
           }}
-          onClick={
-            () => handleClickModalActions(registration_key, id, cycle_billing_type, memberships_id)
+          onClick={() =>
+            handleClickModalActions(
+              registration_key,
+              id,
+              cycle_billing_type,
+              memberships_id
+            )
           }
         >
-          <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+          <span
+            className="back-office-tools"
+            style={{ fontSize: "30px" }}
+          ></span>
           TOOLBOX
         </Button>
       ),
@@ -735,39 +750,36 @@ export const MembershipsTable = ({ filter = '' }) => {
   const columns = [
     {
       title: "Membership ID",
-      dataIndex: 'memberships_id',
-      key: 'memberships_id',
-      ...getColumnSearchProps(['memberships_id']),
-      ...getColumnSortProps('memberships_id'),
+      dataIndex: "memberships_id",
+      key: "memberships_id",
+      ...getColumnSearchProps(["memberships_id"]),
+      ...getColumnSortProps("memberships_id"),
       render: (text, record) => (
         <a
           href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
-          rel='noreferrer'
+          rel="noreferrer"
         >
-          <Tooltip
-            title={record.memberships_id}
-            placement='topLeft'
-          >
+          <Tooltip title={record.memberships_id} placement="topLeft">
             {record.memberships_id}
           </Tooltip>
         </a>
       ),
       width: 170,
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Client Name",
-      dataIndex: 'client_name',
-      key: 'client_name',
-      ...getColumnSearchProps(['client_name', 'project_name']),
-      ...getColumnSortProps('client_name'),
+      dataIndex: "client_name",
+      key: "client_name",
+      ...getColumnSearchProps(["client_name", "project_name"]),
+      ...getColumnSortProps("client_name"),
       render: (clientName, record) => (
         <>
           <a
             href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-            rel='noreferrer'
+            rel="noreferrer"
           >
-            <Tooltip placement='topLeft' title={clientName}>
+            <Tooltip placement="topLeft" title={clientName}>
               {clientName}
               <br />
               {record.project_name}
@@ -776,74 +788,66 @@ export const MembershipsTable = ({ filter = '' }) => {
         </>
       ),
       width: 160,
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Product/Service",
-      key: 'class_accounting_name',
-      dataIndex: 'class_accounting_name',
-      ...getColumnSearchProps(['class_accounting_name']),
-      ...getColumnSortProps('class_accounting_name'),
+      key: "class_accounting_name",
+      dataIndex: "class_accounting_name",
+      ...getColumnSearchProps(["class_accounting_name"]),
+      ...getColumnSortProps("class_accounting_name"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.class_accounting_name}
-        >
+        <Tooltip placement="topLeft" title={record.class_accounting_name}>
           {record.class_accounting_name}
         </Tooltip>
       ),
       width: 180,
     },
     {
-      title: 'Created',
-      dataIndex: 'created_at',
-      key: 'created_at',
+      title: "Created",
+      dataIndex: "created_at",
+      key: "created_at",
       render: (date, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.created_at_hour}
-        >
-          {moment(record.created_at).format('MMM DD, YYYY')}
+        <Tooltip placement="topLeft" title={record.created_at_hour}>
+          {moment(record.created_at).format("MMM DD, YYYY")}
         </Tooltip>
       ),
-      ...getDateColumnSearchProps('created_at'),
+      ...getDateColumnSearchProps("created_at"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return moment(moment(a.created_at || 'Jan 01, 1970', 'MMM DD, YYYY')).diff(
-            moment(b.created_at || 'Jan 01, 1970', 'MMM DD, YYYY'),
-          )
+          return moment(
+            moment(a.created_at || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.created_at || "Jan 01, 1970", "MMM DD, YYYY"))
         },
       }),
       width: 120,
     },
     {
       title: "Last Action",
-      dataIndex: 'last_action',
-      key: 'last_action',
-      ...getColumnSearchProps(['last_action']),
-      ...getColumnSortProps('last_action'),
+      dataIndex: "last_action",
+      key: "last_action",
+      ...getColumnSearchProps(["last_action"]),
+      ...getColumnSortProps("last_action"),
       render: (text, record) => (
         <LastActionCell
           text={text}
           date={record.last_action_date}
-          isHighlighted={searchedColumn['last_action']}
-          highlightedText={searchText['last_action']}
+          isHighlighted={searchedColumn["last_action"]}
+          highlightedText={searchText["last_action"]}
           registration_key={record.registration_key}
           membershipId={record.memberships_id}
         />
       ),
       width: 150,
-    }, {
+    },
+    {
       title: "Email",
-      dataIndex: 'email',
-      key: 'email',
-      ...getColumnSearchProps(['email']),
-      ...getColumnSortProps('email'),
+      dataIndex: "email",
+      key: "email",
+      ...getColumnSearchProps(["email"]),
+      ...getColumnSortProps("email"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.email}
-        >
+        <Tooltip placement="topLeft" title={record.email}>
           {record.email}
         </Tooltip>
       ),
@@ -851,25 +855,28 @@ export const MembershipsTable = ({ filter = '' }) => {
     },
     {
       title: "URL",
-      dataIndex: 'wordpress_install_url',
-      key: 'wordpress_install_url',
-      ...getColumnSearchProps(['wordpress_install_url']),
-      ...getColumnSortProps('wordpress_install_url'),
-      render: url => (
-        <a href={url} target='_blank' rel='noreferrer'>
-          <Tooltip placement='topLeft' title={
-            <>
-              {renderTextHighlighter({
-                text: url,
-                isHighlighted: searchedColumn['wordpress_install_url'],
-                highlightedText: searchText['wordpress_install_url'],
-              })}
-            </>
-          }>
+      dataIndex: "wordpress_install_url",
+      key: "wordpress_install_url",
+      ...getColumnSearchProps(["wordpress_install_url"]),
+      ...getColumnSortProps("wordpress_install_url"),
+      render: (url) => (
+        <a href={url} target="_blank" rel="noreferrer">
+          <Tooltip
+            placement="topLeft"
+            title={
+              <>
+                {renderTextHighlighter({
+                  text: url,
+                  isHighlighted: searchedColumn["wordpress_install_url"],
+                  highlightedText: searchText["wordpress_install_url"],
+                })}
+              </>
+            }
+          >
             {renderTextHighlighter({
               text: url,
-              isHighlighted: searchedColumn['wordpress_install_url'],
-              highlightedText: searchText['wordpress_install_url'],
+              isHighlighted: searchedColumn["wordpress_install_url"],
+              highlightedText: searchText["wordpress_install_url"],
             })}
           </Tooltip>
         </a>
@@ -877,104 +884,105 @@ export const MembershipsTable = ({ filter = '' }) => {
       width: 380,
     },
     {
-      title: 'Board',
-      dataIndex: 'board_name',
-      key: 'board_name',
+      title: "Board",
+      dataIndex: "board_name",
+      key: "board_name",
       render: (date, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.board_name}
-        >
+        <Tooltip placement="topLeft" title={record.board_name}>
           {record.board_name}
         </Tooltip>
       ),
-      ...getColumnSearchProps(['board_name']),
-      ...getColumnSortProps('board_name'),
+      ...getColumnSearchProps(["board_name"]),
+      ...getColumnSortProps("board_name"),
       width: 120,
     },
     {
       title: "Status",
-      dataIndex: 'status',
-      key: 'status',
-      ...getColumnSearchProps(['status']),
-      ...getColumnSortProps('status'),
+      dataIndex: "status",
+      key: "status",
+      ...getColumnSearchProps(["status"]),
+      ...getColumnSortProps("status"),
       render: (text, record) => (
-        <Tooltip
-          title={record.status}
-
-        >
+        <Tooltip title={record.status}>
           <p
             style={{
-              whiteSpace: "pre-wrap"
+              whiteSpace: "pre-wrap",
             }}
           >
             {record.status}
-
           </p>
         </Tooltip>
       ),
       width: 150,
     },
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       width: 100,
-      render: (text, { registration_key, id, cycle_billing_type, memberships_id }) => (
+      render: (
+        text,
+        { registration_key, id, cycle_billing_type, memberships_id }
+      ) => (
         <Button
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#858faf',
-            fontSize: '10px',
-            border: 'none',
-            backgroundColor: 'transparent',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            color: "#858faf",
+            fontSize: "10px",
+            border: "none",
+            backgroundColor: "transparent",
           }}
-          onClick={
-            () => handleClickModalActions(registration_key, id, cycle_billing_type, memberships_id)
+          onClick={() =>
+            handleClickModalActions(
+              registration_key,
+              id,
+              cycle_billing_type,
+              memberships_id
+            )
           }
         >
-          <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+          <span
+            className="back-office-tools"
+            style={{ fontSize: "30px" }}
+          ></span>
           TOOLBOX
         </Button>
       ),
-      fixed: 'right',
+      fixed: "right",
     },
   ]
-  const columnsWithoutBoard = columns.filter(({ title }) => title !== 'Board')
+  const columnsWithoutBoard = columns.filter(({ title }) => title !== "Board")
   const idx_requested_columns = [
     {
-      title: 'IDX Requested',
-      key: 'idx_requested_date',
-      dataIndex: 'idx_requested_date',
-      ...getDateColumnSearchProps('idx_requested_date'),
+      title: "IDX Requested",
+      key: "idx_requested_date",
+      dataIndex: "idx_requested_date",
+      ...getDateColumnSearchProps("idx_requested_date"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(
-            moment(a.idx_requested_date || 'Jan 01, 1970', 'MMM DD, YYYY')
-          ).diff(moment(b.idx_requested_date || 'Jan 01, 1970', 'MMM DD, YYYY'))
+            moment(a.idx_requested_date || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.idx_requested_date || "Jan 01, 1970", "MMM DD, YYYY"))
         },
       }),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.idx_requested_date_hour}
-        >
+        <Tooltip placement="topLeft" title={record.idx_requested_date_hour}>
           {record.idx_requested_date}
         </Tooltip>
       ),
       width: 160,
-      fixed: 'left',
-      defaultSortOrder: 'descend',
+      fixed: "left",
+      defaultSortOrder: "descend",
     },
     ...columnsWithoutBoard,
   ]
-  const getColumns = filter => {
+  const getColumns = (filter) => {
     switch (filter) {
-      case 'idx_requested':
+      case "idx_requested":
         return idx_requested_columns
-      case 'launch_website':
+      case "launch_website":
         return launch_website_columns
       default:
         return columns
@@ -985,37 +993,37 @@ export const MembershipsTable = ({ filter = '' }) => {
     <div
       style={{
         padding: 8,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between'
+          display: "flex",
+          justifyContent: "space-between",
         }}
       >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'baseline',
-            gap: '32px',
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "baseline",
+            gap: "32px",
           }}
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
-            Memberships{' '}
+            Memberships{" "}
             {filter
               ? filter
-                .split('_')
-                .map(word => capitalize(word))
-                .join(' ')
-              : 'Active'}{' '}
-            ({numbro(total).format({ thousandSeparated: true }) ?? '...'})
+                  .split("_")
+                  .map((word) => capitalize(word))
+                  .join(" ")
+              : "Active"}{" "}
+            ({numbro(total).format({ thousandSeparated: true }) ?? "..."})
           </Typography.Title>
           <Typography.Title level={5} style={{ margin: 0 }}>
-            Monthly:{' '}
-            {typeof totalPrice === 'number' ? (
+            Monthly:{" "}
+            {typeof totalPrice === "number" ? (
               USD(totalPrice, { precision: 2 })
             ) : (
               <DollarOutlined spin />
@@ -1032,25 +1040,22 @@ export const MembershipsTable = ({ filter = '' }) => {
         </div>
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center'
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <Typography.Title level={5}>
-            Search:
-          </Typography.Title>
+          <Typography.Title level={5}>Search:</Typography.Title>
           <Input.Search
             disabled={!memberships}
             onSearch={(value) => setFiltredValue(value)}
             value={filtredValue}
             onChange={(e) => setFiltredValue(e.target.value)}
-            size='large'
+            size="large"
             style={{
-              width: '300px',
-              marginLeft: '15px'
+              width: "300px",
+              marginLeft: "15px",
             }}
           />
-
         </div>
 
         {/* <Link to='/new-quote'>
@@ -1067,24 +1072,23 @@ export const MembershipsTable = ({ filter = '' }) => {
           </Button>
         </Link> */}
       </div>
-      {
-        (filter === "launch_website") && (
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            We gonna show the last 30 days launch websites
-          </Typography.Title>)
-      }
+      {filter === "launch_website" && (
+        <Typography.Title level={5} style={{ margin: 0 }}>
+          We gonna show the last 30 days launch websites
+        </Typography.Title>
+      )}
       <Divider dashed />
       <Button
-        type='default'
-        style={{ marginBottom: 8, marginLeft: 'auto' }}
+        type="default"
+        style={{ marginBottom: 8, marginLeft: "auto" }}
         onClick={resetFilters}
       >
         Reset
       </Button>
       <Table
-        className='mainTable'
+        className="mainTable"
         key={tableKey}
-        rowKey='id'
+        rowKey="id"
         columns={getColumns(filter)}
         dataSource={filtreredMembership}
         bordered
@@ -1106,7 +1110,7 @@ export const MembershipsTable = ({ filter = '' }) => {
           },
           showTotal,
         }}
-        scroll={{ x: '100%' }}
+        scroll={{ x: "100%" }}
       />
       <Actions
         open={open}
