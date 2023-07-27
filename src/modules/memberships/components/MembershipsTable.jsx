@@ -12,6 +12,7 @@ import {
   Input,
   Modal,
   Popover,
+  Select,
   Space,
   Table,
   Tooltip,
@@ -73,6 +74,11 @@ export const MembershipsTable = ({ filter = "" }) => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const [filterUsers, setFilterUsers] = useState([])
+  const [arrayUsersId, setArrayUsersId] = useState([])
+  const [usersFiltered, setUsersFiltered] = useState([])
+
   const [currentRegKey, setCurrentRegKey] = useState("")
   const [billingCicle, setBillingCicle] = useState(1)
   const [currentId, setCurrentId] = useState("")
@@ -110,20 +116,54 @@ export const MembershipsTable = ({ filter = "" }) => {
     dataIndex: "",
     value: "",
   })
+  const getRepeatedValues = (filterUsersName, users) => {
+    const repeatedValues = []
+
+    for (const name of filterUsersName) {
+      const user = users.find((user) => user.label === name)
+      if (user) {
+        repeatedValues.push(user.value)
+      }
+    }
+
+    return repeatedValues
+  }
   useEvent("scroll", onScroll)
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
-    users: [30],
+    users: arrayUsersId,
   })
-
-  const { data: memberships = [], total = 0 } = data
+  const { data: memberships = [], total = 0, users = [] } = data
+  useEffect(() => {
+    setUsersFiltered(
+      users.map(({ label }) => {
+        return {
+          label,
+          value: label,
+        }
+      })
+    )
+  }, [users?.length])
 
   useEffect(() => {
-    if (memberships?.length > 0) {
-      setFiltreredMembership(memberships)
-    }
+    const usersId = getRepeatedValues(filterUsers, users)
+    setArrayUsersId(usersId)
+    // setFiltredValue((e) => e)
+  }, [filterUsers.length])
+
+  // console.log({ filterUsers })
+
+  useEffect(() => {
+    // if (memberships?.length > 0) {
+    setFiltreredMembership(memberships)
+    setSearchParams({
+      page: 1,
+      size: 10,
+    })
+    setTotalCurrentItems(total)
+    // }
   }, [memberships?.length])
 
   useEffect(() => {
@@ -320,8 +360,6 @@ export const MembershipsTable = ({ filter = "" }) => {
     setTotalCurrentItems(newMembership.length)
   }, [filtredValue])
 
-  console.log(data, "data")
-
   useEffect(() => {
     if (memberships?.length !== 0) {
       window.scrollTo({
@@ -378,6 +416,7 @@ export const MembershipsTable = ({ filter = "" }) => {
       page: 1,
       size: 10,
     })
+    setFilterUsers([])
     // setSearchText(SEARCH_TEXT_INITIAL_STATE)
     // setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     // setCurrentItems([])
@@ -988,7 +1027,6 @@ export const MembershipsTable = ({ filter = "" }) => {
         return columns
     }
   }
-
   return (
     <div
       style={{
@@ -1044,6 +1082,21 @@ export const MembershipsTable = ({ filter = "" }) => {
             alignItems: "center",
           }}
         >
+          <Typography.Title level={5}>Users:</Typography.Title>
+          <Select
+            disabled={!memberships}
+            mode="multiple"
+            value={filterUsers}
+            options={usersFiltered}
+            onChange={(e) => setFilterUsers(e)}
+            // onSearch={(value) => setFiltredValue(value)}
+            // size="large"
+            style={{
+              width: "300px",
+              marginLeft: "15px",
+            }}
+            maxTagCount="responsive"
+          />
           <Typography.Title level={5}>Search:</Typography.Title>
           <Input.Search
             disabled={!memberships}

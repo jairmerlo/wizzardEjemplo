@@ -74,6 +74,13 @@ export const AddPayment = ({ registration_key }) => {
         title: "Attach File",
         dataIndex: "attachFile",
       }),
+      render(text, { attachFile }) {
+        return (
+          <div>
+            {attachFile !== null && <a href={attachFile}>attachFile</a>}
+          </div>
+        )
+      },
     },
   ]
 

@@ -31,7 +31,6 @@ export const backoffice = createApi({
               users,
             }),
           }).then((res) => res.json())
-          // console.log({ data })
           return {
             data,
           }
