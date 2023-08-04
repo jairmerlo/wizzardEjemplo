@@ -69,6 +69,8 @@ export const MembershipsTable = ({ filter = "" }) => {
     page: 1,
     size: 10,
   })
+  const userId = getConfig().userId
+
   const [filtreredMembership, setFiltreredMembership] = useState([])
   const [filtredValue, setFiltredValue] = useState("")
   const [open, setOpen] = useState(false)
@@ -134,8 +136,16 @@ export const MembershipsTable = ({ filter = "" }) => {
   const { data = {}, isLoading } = useGetAllMembershipsQuery({
     filter,
     users: arrayUsersId,
+    userId,
   })
-  const { data: memberships = [], total = 0, users = [] } = data
+  const {
+    data: memberships = [],
+    total = 0,
+    users = [],
+    billingEnrollment = 0,
+    addPayment = 0,
+  } = data
+
   useEffect(() => {
     setUsersFiltered(
       users.map(({ label }) => {
@@ -153,7 +163,7 @@ export const MembershipsTable = ({ filter = "" }) => {
     // setFiltredValue((e) => e)
   }, [filterUsers.length])
 
-  // console.log({ filterUsers })
+  console.log({ data })
 
   useEffect(() => {
     // if (memberships?.length > 0) {
@@ -926,14 +936,14 @@ export const MembershipsTable = ({ filter = "" }) => {
       title: "Board",
       dataIndex: "board_name",
       key: "board_name",
+      ...getColumnSearchProps(["board_name"]),
+      ...getColumnSortProps("board_name"),
+      width: 120,
       render: (date, record) => (
         <Tooltip placement="topLeft" title={record.board_name}>
           {record.board_name}
         </Tooltip>
       ),
-      ...getColumnSearchProps(["board_name"]),
-      ...getColumnSortProps("board_name"),
-      width: 120,
     },
     {
       title: "Status",
@@ -1172,6 +1182,8 @@ export const MembershipsTable = ({ filter = "" }) => {
         currentRegKey={currentRegKey}
         billingCicle={billingCicle}
         membershipID={currenMembershipID}
+        billingEnrollment={billingEnrollment}
+        addPayment={addPayment}
       />
     </div>
   )

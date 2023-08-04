@@ -4,37 +4,38 @@ import React, {
   useReducer,
   useRef,
   useState,
-} from 'react'
+} from "react"
 import {
   Button,
   DatePicker,
   Divider,
   Input,
   Popover,
+  Select,
   Space,
   Table,
   Tooltip,
   Typography,
-} from 'antd'
+} from "antd"
 import {
   DollarOutlined,
   SearchOutlined,
   UserAddOutlined,
-} from '@ant-design/icons'
+} from "@ant-design/icons"
 import {
   capitalize,
   renderTextHighlighter,
   showTotal,
   USD,
-} from '../../../helpers'
-import { useGetAllCustomersQuery } from '../../../app/api/billing'
-import moment from 'moment/moment'
-import { Link, useSearchParams } from 'react-router-dom'
-import currency from 'currency.js'
-import numbro from 'numbro'
-import { useEvent } from 'react-use'
-import { useSelectedRow } from '../../../hooks/useSelectedRow'
-import '../../../icons/style.css'
+} from "../../../helpers"
+import { useGetAllCustomersQuery } from "../../../app/api/billing"
+import moment from "moment/moment"
+import { Link, useSearchParams } from "react-router-dom"
+import currency from "currency.js"
+import numbro from "numbro"
+import { useEvent } from "react-use"
+import { useSelectedRow } from "../../../hooks/useSelectedRow"
+import "../../../icons/style.css"
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -66,17 +67,55 @@ export const CustomersTableV1 = ({ filter }) => {
   // console.log({
   //   page: searchParams.get('page'),
   // })
-  const [filtredValue, setFiltredValue] = useState('')
+  const [filtredValue, setFiltredValue] = useState("")
   const [filteredCustomers, setFilteredCustomers] = useState([])
 
+  const [filterUsers, setFilterUsers] = useState([])
+  const [arrayUsersId, setArrayUsersId] = useState([])
+  const [usersFiltered, setUsersFiltered] = useState([])
 
-  const [pageSize, setPageSize] = useState(parseInt(searchParams.get('size')))
-  const [page, setPage] = useState(parseInt(searchParams.get('page')))
+  const getRepeatedValues = (filterUsersName, users) => {
+    const repeatedValues = []
+
+    for (const name of filterUsersName) {
+      const user = users.find((user) => user.label === name)
+      if (user) {
+        repeatedValues.push(user.value)
+      }
+    }
+
+    return repeatedValues
+  }
+
+  const [pageSize, setPageSize] = useState(parseInt(searchParams.get("size")))
+  const [page, setPage] = useState(parseInt(searchParams.get("page")))
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])
-  const { data = [], isLoading } = useGetAllCustomersQuery({
+  const {
+    data = [],
+    isLoading,
+    users = [],
+  } = useGetAllCustomersQuery({
     filter,
+    users: arrayUsersId,
   })
+
+  useEffect(() => {
+    setUsersFiltered(
+      users.map(({ label }) => {
+        return {
+          label,
+          value: label,
+        }
+      })
+    )
+  }, [users?.length])
+
+  useEffect(() => {
+    const usersId = getRepeatedValues(filterUsers, users)
+    setArrayUsersId(usersId)
+    // setFiltredValue((e) => e)
+  }, [filterUsers.length])
   console.log({ data })
   const items = currentItems.length !== 0 ? currentItems : data
   const totalData = data?.length
@@ -84,7 +123,7 @@ export const CustomersTableV1 = ({ filter }) => {
   //   ?.map(item => currency(item.monthly_amount).value ?? 0)
   //   .reduce((a, b) => a + b, 0)
   const totalMonthly = items
-    ?.map(item => currency(item.monthly).value ?? 0)
+    ?.map((item) => currency(item.monthly).value ?? 0)
     .reduce((a, b) => a + b, 0)
   // console.log({ totalLifetime, totalMonthly, items })
 
@@ -97,11 +136,11 @@ export const CustomersTableV1 = ({ filter }) => {
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
     reducer,
-    SEARCH_TEXT_INITIAL_STATE,
+    SEARCH_TEXT_INITIAL_STATE
   )
   const [searchedColumn, setSearchedColumn] = useReducer(
     reducer,
-    SEARCHED_COLUMN_INITIAL_STATE,
+    SEARCHED_COLUMN_INITIAL_STATE
   )
   const searchInput = useRef(null)
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -113,10 +152,10 @@ export const CustomersTableV1 = ({ filter }) => {
     clearFilters()
     confirm({ closeDropdown: true })
     setSearchedColumn({ [dataIndex]: false })
-    setSearchText({ [dataIndex]: '' })
+    setSearchText({ [dataIndex]: "" })
   }
   const resetFilters = () => {
-    setTableKey(tableKey => tableKey + 1)
+    setTableKey((tableKey) => tableKey + 1)
     setSearchText(SEARCH_TEXT_INITIAL_STATE)
     setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     setTotalCurrentItems(totalData)
@@ -130,22 +169,21 @@ export const CustomersTableV1 = ({ filter }) => {
   }
 
   const onScroll = useCallback(() => {
-    localStorage.setItem('scrollY', window.scrollY.toString())
+    localStorage.setItem("scrollY", window.scrollY.toString())
   }, [])
 
-  useEvent('scroll', onScroll)
+  useEvent("scroll", onScroll)
 
   useEffect(() => {
     if (data?.length !== 0) {
-      window.scrollTo({ top: parseInt(localStorage.getItem('scrollY') || 0) })
+      window.scrollTo({ top: parseInt(localStorage.getItem("scrollY") || 0) })
     }
   }, [data?.length])
 
-  const { selectedRow, saveSelectedRow } = useSelectedRow('selectedRow')
-
+  const { selectedRow, saveSelectedRow } = useSelectedRow("selectedRow")
 
   useEffect(() => {
-    if (filtredValue === '') {
+    if (filtredValue === "") {
       setFilteredCustomers(data)
       setSearchParams({
         page: 1,
@@ -153,12 +191,26 @@ export const CustomersTableV1 = ({ filter }) => {
       })
       setTotalCurrentItems(totalData)
       return
-    };
-    const newCustomer = data.filter(customer => {
-      return customer.registration_key?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        customer.uuid?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        customer.fullname?.toString().toLowerCase().includes(filtredValue.toLowerCase()) ||
-        customer.email_contact?.toString().toLowerCase().includes(filtredValue.toLowerCase())
+    }
+    const newCustomer = data.filter((customer) => {
+      return (
+        customer.registration_key
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        customer.uuid
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        customer.fullname
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        customer.email_contact
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase())
+      )
     })
     setSearchParams({
       page: 1,
@@ -166,10 +218,9 @@ export const CustomersTableV1 = ({ filter }) => {
     })
     setFilteredCustomers(newCustomer)
     setTotalCurrentItems(newCustomer.length)
-
   }, [filtredValue])
 
-  const getDateColumnSearchProps = dataIndex => ({
+  const getDateColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -177,30 +228,30 @@ export const CustomersTableV1 = ({ filter }) => {
       clearFilters,
     }) => (
       <div
-        style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}
+        style={{ padding: 8, display: "flex", flexDirection: "column", gap: 8 }}
       >
         <DatePicker
           value={selectedKeys[0]}
-          onChange={e => {
+          onChange={(e) => {
             // console.log(e.format('DD-MM-YYYY'))
             setSelectedKeys([e])
           }}
           allowClear={true}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
         <Space>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
-            size='small'
+            size="small"
             style={{ width: 90 }}
           >
             Search
           </Button>
           <Button
             onClick={() => handleReset(clearFilters, confirm, dataIndex)}
-            size='small'
+            size="small"
             style={{ width: 90 }}
           >
             Reset
@@ -208,17 +259,17 @@ export const CustomersTableV1 = ({ filter }) => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
-      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) => {
       return (
-        moment(moment(record[dataIndex], 'MM-DD-YYYY')).format('DD-MM-YYYY') ===
-        value.format('DD-MM-YYYY')
+        moment(moment(record[dataIndex], "MM-DD-YYYY")).format("DD-MM-YYYY") ===
+        value.format("DD-MM-YYYY")
       )
     },
   })
-  const getColumnSearchProps = dataIndex => ({
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -230,27 +281,27 @@ export const CustomersTableV1 = ({ filter }) => {
         style={{
           padding: 8,
         }}
-        onKeyDown={e => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
-            size='small'
+            size="small"
             style={{
               width: 90,
             }}
@@ -261,7 +312,7 @@ export const CustomersTableV1 = ({ filter }) => {
             onClick={() =>
               clearFilters && handleReset(clearFilters, confirm, dataIndex)
             }
-            size='small'
+            size="small"
             style={{
               width: 90,
             }}
@@ -271,21 +322,21 @@ export const CustomersTableV1 = ({ filter }) => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => (
+    filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1890ff' : undefined,
+          color: filtered ? "#1890ff" : undefined,
         }}
       />
     ),
     onFilter: (value, record) =>
       record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
+    onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
-    render: text =>
+    render: (text) =>
       renderTextHighlighter({
         text,
         isHighlighted: searchedColumn[dataIndex],
@@ -293,11 +344,11 @@ export const CustomersTableV1 = ({ filter }) => {
       }),
   })
 
-  const getColumnSortProps = dataIndex => {
+  const getColumnSortProps = (dataIndex) => {
     return {
-      sorter: (a = '', b = '') => {
-        const letterF = a[dataIndex] || ''
-        const letterG = b[dataIndex] || ''
+      sorter: (a = "", b = "") => {
+        const letterF = a[dataIndex] || ""
+        const letterG = b[dataIndex] || ""
         return letterF.localeCompare(letterG)
       },
       ellipsis: true,
@@ -312,37 +363,31 @@ export const CustomersTableV1 = ({ filter }) => {
   }
   const columns = [
     {
-      title: 'Customer ID',
-      dataIndex: 'uuid',
-      key: 'uuid',
-      ...getColumnSearchProps('uuid'),
-      ...getColumnSortProps('uuid'),
+      title: "Customer ID",
+      dataIndex: "uuid",
+      key: "uuid",
+      ...getColumnSearchProps("uuid"),
+      ...getColumnSortProps("uuid"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.uuid}
-        >
+        <Tooltip placement="topLeft" title={record.uuid}>
           {record.uuid}
         </Tooltip>
       ),
     },
     {
-      title: 'Client Name',
-      dataIndex: 'clientName',
-      key: 'clientName',
-      ...getColumnSearchProps('clientName'),
-      render: (text, record) =>
-        <Tooltip
-          placement='topLeft'
-          title={`${record.fullname}`}
-        >
+      title: "Client Name",
+      dataIndex: "clientName",
+      key: "clientName",
+      ...getColumnSearchProps("clientName"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={`${record.fullname}`}>
           {renderTextHighlighter({
             text: `${record?.fullname}`,
-            isHighlighted: searchedColumn['clientName'],
-            highlightedText: searchText['clientName'],
+            isHighlighted: searchedColumn["clientName"],
+            highlightedText: searchText["clientName"],
           })}
         </Tooltip>
-      ,
+      ),
       onFilter: (value, record) =>
         `${record?.fullname}`
           ?.toString()
@@ -350,66 +395,55 @@ export const CustomersTableV1 = ({ filter }) => {
           .includes(value.toLowerCase()),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return `${a.fullname}`.localeCompare(
-            `${b.fullname}`,
-          )
+          return `${a.fullname}`.localeCompare(`${b.fullname}`)
         },
       }),
     },
     {
-      title: 'Email',
-      dataIndex: 'email_contact',
-      key: 'email_contact',
-      ...getColumnSearchProps('email_contact'),
-      ...getColumnSortProps('email_contact'),
+      title: "Email",
+      dataIndex: "email_contact",
+      key: "email_contact",
+      ...getColumnSearchProps("email_contact"),
+      ...getColumnSortProps("email_contact"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.email_contact}
-        >
+        <Tooltip placement="topLeft" title={record.email_contact}>
           {record.email_contact}
         </Tooltip>
       ),
     },
     {
-      title: 'Phone',
-      key: 'phone',
-      dataIndex: 'phone',
-      ...getColumnSearchProps('phone'),
-      ...getColumnSortProps('phone'),
+      title: "Phone",
+      key: "phone",
+      dataIndex: "phone",
+      ...getColumnSearchProps("phone"),
+      ...getColumnSortProps("phone"),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.phone}
-        >
+        <Tooltip placement="topLeft" title={record.phone}>
           {record.phone}
         </Tooltip>
       ),
     },
     {
-      title: 'Membership',
-      dataIndex: 'memberships',
-      key: 'memberships',
-      ...getColumnSearchProps('memberships'),
+      title: "Membership",
+      dataIndex: "memberships",
+      key: "memberships",
+      ...getColumnSearchProps("memberships"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return parseFloat(a.memberships) - parseFloat(b.memberships)
         },
       }),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.memberships}
-        >
+        <Tooltip placement="topLeft" title={record.memberships}>
           {record.memberships}
         </Tooltip>
       ),
     },
     {
-      title: 'Monthly',
-      dataIndex: 'monthly',
-      key: 'monthly',
-      ...getColumnSearchProps('monthly'),
+      title: "Monthly",
+      dataIndex: "monthly",
+      key: "monthly",
+      ...getColumnSearchProps("monthly"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return (
@@ -419,10 +453,7 @@ export const CustomersTableV1 = ({ filter }) => {
         },
       }),
       render: (text, record) => (
-        <Tooltip
-          placement='topLeft'
-          title={record.monthly}
-        >
+        <Tooltip placement="topLeft" title={record.monthly}>
           {record.monthly}
         </Tooltip>
       ),
@@ -450,106 +481,120 @@ export const CustomersTableV1 = ({ filter }) => {
     //   ),
     // },
     {
-      title: 'Since',
-      dataIndex: 'created_on',
-      key: 'created_on',
-      ...getDateColumnSearchProps('created_on'),
-      render: date => (
+      title: "Since",
+      dataIndex: "created_on",
+      key: "created_on",
+      ...getDateColumnSearchProps("created_on"),
+      render: (date) => (
         <Tooltip
-          placement='topLeft'
-          title={moment(moment(date, 'MM-DD-YYYY')).format('ll')}
+          placement="topLeft"
+          title={moment(moment(date, "MM-DD-YYYY")).format("ll")}
         >
           {/* {record.monthly_amount} */}
-          {moment(moment(date, 'MM-DD-YYYY')).format('ll')}
+          {moment(moment(date, "MM-DD-YYYY")).format("ll")}
         </Tooltip>
-
       ),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
-          return moment(moment(a.created_on, 'MM-DD-YYYY')).diff(
-            moment(b.created_on, 'MM-DD-YYYY'),
+          return moment(moment(a.created_on, "MM-DD-YYYY")).diff(
+            moment(b.created_on, "MM-DD-YYYY")
           )
         },
       }),
-
     },
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       render: (text, { id, uuid }) => (
         <Popover
-          placement='bottom'
+          placement="bottom"
           title={text}
           content={
-            <Space size='middle' direction='vertical' style={{ alignItems: 'center' }}>
+            <Space
+              size="middle"
+              direction="vertical"
+              style={{ alignItems: "center" }}
+            >
               {/* eslint-disable jsx-a11y/anchor-is-valid */}
-              <Tooltip title='Add Membership'>
+              <Tooltip title="Add Membership">
                 <Link to={`/new-quote?customerId=${id}`}>
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      color: "#858faf",
+                      fontSize: "10px",
                     }}
                   >
-                    <span className='back-office-add-user' style={{ fontSize: '20px' }}></span>
+                    <span
+                      className="back-office-add-user"
+                      style={{ fontSize: "20px" }}
+                    ></span>
                     ADD USER
                   </div>
                 </Link>
               </Tooltip>
-              <Tooltip title='Details'>
+              <Tooltip title="Details">
                 <Link
                   to={`/customer-view/${uuid}`}
                   onClick={() => saveSelectedRow(uuid)}
                 >
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      color: "#858faf",
+                      fontSize: "10px",
                     }}
                   >
-                    <span className='back-office-eye' style={{ fontSize: '20px' }}></span>
+                    <span
+                      className="back-office-eye"
+                      style={{ fontSize: "20px" }}
+                    ></span>
                     DETAILS
                   </div>
                 </Link>
               </Tooltip>
-              <Tooltip title='Edit'>
+              <Tooltip title="Edit">
                 <Link
                   to={`/customer-edit/${id}`}
                   onClick={() => saveSelectedRow(id)}
                 >
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      color: "#858faf",
+                      fontSize: "10px",
                     }}
                   >
-                    <span className='back-office-edit' style={{ fontSize: '20px' }}></span>
+                    <span
+                      className="back-office-edit"
+                      style={{ fontSize: "20px" }}
+                    ></span>
                     EDIT
                   </div>
                 </Link>
               </Tooltip>
-              <Tooltip title='Delete'>
-                <a >
+              <Tooltip title="Delete">
+                <a>
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      color: '#858faf',
-                      fontSize: '10px'
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      color: "#858faf",
+                      fontSize: "10px",
                     }}
                   >
-                    <span className='back-office-delete' style={{ fontSize: '20px' }}></span>
+                    <span
+                      className="back-office-delete"
+                      style={{ fontSize: "20px" }}
+                    ></span>
                     DELETE
                   </div>
                 </a>
@@ -560,14 +605,17 @@ export const CustomersTableV1 = ({ filter }) => {
         >
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              color: '#858faf',
-              fontSize: '10px'
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: "#858faf",
+              fontSize: "10px",
             }}
           >
-            <span className='back-office-tools' style={{ fontSize: '30px' }}></span>
+            <span
+              className="back-office-tools"
+              style={{ fontSize: "30px" }}
+            ></span>
             TOOLBOX
           </div>
         </Popover>
@@ -578,32 +626,32 @@ export const CustomersTableV1 = ({ filter }) => {
     <div
       style={{
         padding: 8,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
       }}
     >
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <div
           style={{
-            display: 'flex',
-            gap: '32px',
-            alignItems: 'baseline',
+            display: "flex",
+            gap: "32px",
+            alignItems: "baseline",
           }}
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
-            {filter ? capitalize(filter) : 'Active'} Customers (
-            {numbro(totalData).format({ thousandSeparated: true }) ?? '...'})
+            {filter ? capitalize(filter) : "Active"} Customers (
+            {numbro(totalData).format({ thousandSeparated: true }) ?? "..."})
           </Typography.Title>
           <Typography.Title level={5} style={{ margin: 0 }}>
-            Monthly:{' '}
-            {typeof totalMonthly === 'number' ? (
+            Monthly:{" "}
+            {typeof totalMonthly === "number" ? (
               USD(totalMonthly, { precision: 2 })
             ) : (
               <DollarOutlined spin />
@@ -617,61 +665,70 @@ export const CustomersTableV1 = ({ filter }) => {
               <DollarOutlined spin />
             )}
           </Typography.Title> */}
-
         </div>
-
-
 
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <Link to='/new-quote' style={{ marginRight: '20px' }}>
+          <Link to="/new-quote" style={{ marginRight: "20px" }}>
             <Button
-              type='primary'
-              shape='round'
+              type="primary"
+              shape="round"
               icon={<UserAddOutlined />}
-              size='middle'
+              size="middle"
               style={{
-                alignSelf: 'flex-end',
+                alignSelf: "flex-end",
               }}
             >
               Add New Customer
             </Button>
           </Link>
-          <Typography.Title level={5}>
-            Search:
-          </Typography.Title>
+          {/* <Typography.Title level={5}>Users:</Typography.Title>
+          <Select
+            disabled={!data}
+            mode="multiple"
+            value={filterUsers}
+            options={usersFiltered}
+            onChange={(e) => setFilterUsers(e)}
+            // onSearch={(value) => setFiltredValue(value)}
+            // size="large"
+            style={{
+              width: "300px",
+              marginLeft: "15px",
+            }}
+            maxTagCount="responsive"
+          /> */}
+          <Typography.Title level={5}>Search:</Typography.Title>
           {/* {console.log({ memberships })} */}
           <Input.Search
             disabled={!data}
             onSearch={(value) => setFiltredValue(value)}
             value={filtredValue}
             onChange={(e) => setFiltredValue(e.target.value)}
-            size='large'
+            size="large"
             style={{
-              width: '300px',
-              marginLeft: '15px'
+              width: "300px",
+              marginLeft: "15px",
             }}
           />
-
         </div>
       </div>
 
       <Divider dashed />
       <Button
-        type='default'
-        style={{ marginBottom: 8, marginLeft: 'auto' }}
+        type="default"
+        style={{ marginBottom: 8, marginLeft: "auto" }}
         onClick={resetFilters}
       >
         Reset
       </Button>
       <Table
-        className='mainTable'
+        className="mainTable"
         key={tableKey}
-        rowKey='id'
+        rowKey="id"
         columns={columns}
         dataSource={filteredCustomers}
         bordered
@@ -679,9 +736,9 @@ export const CustomersTableV1 = ({ filter }) => {
         onChange={handleChange}
         rowSelection={{
           selectedRowKeys: selectedRow,
-          renderCell: () => '',
-          columnTitle: ' ',
-          columnWidth: '8px',
+          renderCell: () => "",
+          columnTitle: " ",
+          columnWidth: "8px",
         }}
         pagination={{
           total: totalCurrentItems || totalData,

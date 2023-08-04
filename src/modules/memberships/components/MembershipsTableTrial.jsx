@@ -255,11 +255,6 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
     }
   }, [memberships?.length])
 
-  const onChange = (e) => {
-    console.log("radio checked", e.target.value)
-    setradioBoxFIltred(e.target.value)
-  }
-
   const getDateColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -416,7 +411,8 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
   }
   const columns = [
     {
-      title: "Trial Due",
+      title: () =>
+        radioBoxFIltred === "trial_on_going" ? "Trial Due" : "Ending Date",
       key: "trial_due",
       dataIndex: "trial_due",
       ...getDateColumnSearchPropsExport({
@@ -427,7 +423,20 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
         finalFormat: "YYYY-MM-DD",
       }),
       render: (date, record) =>
-        date ? (
+        radioBoxFIltred !== "trial_on_going" ? (
+          <Tooltip
+            placement="topLeft"
+            title={
+              <>
+                Trial Date: {record.created_at_date_time}
+                <br />
+                Ending Date: {record.ending_date_trial}
+              </>
+            }
+          >
+            <span style={{ color: "red" }}>{record.ending_date_trial}</span>
+          </Tooltip>
+        ) : date ? (
           moment(moment(date, "YYYY-MM-DD")).isSameOrAfter(moment()) ? (
             <Tooltip
               placement="topLeft"
@@ -476,7 +485,7 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
         },
       }),
       defaultSortOrder: "ascend",
-      width: 120,
+      width: 150,
       // fixed: 'left',
     },
     {
@@ -733,7 +742,14 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
           />
         </div>
       </div>
-      <Radio.Group onChange={onChange} value={radioBoxFIltred}>
+      <Radio.Group
+        onChange={(e) => {
+          setradioBoxFIltred(e.target.value)
+          setFiltredValue("")
+          setFilterUsers([])
+        }}
+        value={radioBoxFIltred}
+      >
         <Radio value={"trial_on_going"}>On Going</Radio>
         <Radio value={"trial_due"}>Trial Due</Radio>
         <Radio value={"trial_canceled"}>Canceled</Radio>

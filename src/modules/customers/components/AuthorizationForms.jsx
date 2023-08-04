@@ -1,5 +1,5 @@
 import { CopyOutlined, EditOutlined, SendOutlined } from "@ant-design/icons"
-import { Space, Table, Tooltip } from "antd"
+import { Space, Table, Tooltip, notification } from "antd"
 import moment from "moment"
 import { useState } from "react"
 // import {
@@ -20,6 +20,7 @@ export const AuthorizationForms = ({
   userId,
   registrationKey,
   onSuccess = (f) => f,
+  authorizationsForms = 0,
 }) => {
   const ACHHistory = achData.map(({ create_at, completed_at, status }) => ({
     completed_at,
@@ -77,6 +78,14 @@ export const AuthorizationForms = ({
   // }
 
   const handleSend = ({ authorization_form_type }) => {
+    if (authorizationsForms === 0) {
+      notification.error({
+        message:
+          "You don't have the necessary permissions to use this function",
+        placement: "bottomRight",
+      })
+      return
+    }
     setAutorization(authorization_form_type)
     handleOpen()
   }

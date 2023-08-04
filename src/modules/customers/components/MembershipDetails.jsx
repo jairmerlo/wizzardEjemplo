@@ -58,16 +58,25 @@ export const MembershipDetails = () => {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+  const userId = getConfig().userId
 
-  const { data: membershipData = {}, isLoading: isLoadingM } =
-    useGetMembershipQuery(
-      { registration_key: membershipRegKey },
-      {
-        skip: !membershipRegKey,
-      }
-    )
+  const { data = {} } = useGetMembershipQuery(
+    { registration_key: membershipRegKey, userId },
+    {
+      skip: !membershipRegKey,
+    }
+  )
 
-  console.log({ membershipData })
+  const {
+    data: membershipData = {},
+    aggrements = 0,
+    authorizationsForms = 0,
+    addPayment = 0,
+    billingEnrollment = 0,
+    isLoading: isLoadingM,
+  } = data
+
+  console.log({ aggrements, authorizationsForms })
 
   const {
     hasCrm = 0,
@@ -351,6 +360,7 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+            aggrements={aggrements}
           />
         )}
         {section === "Team" && (
@@ -376,6 +386,7 @@ export const MembershipDetails = () => {
               refetchACH()
               refetchCard()
             }}
+            authorizationsForms={authorizationsForms}
           />
         )}
         {section === "Launch Website" && (
@@ -405,6 +416,8 @@ export const MembershipDetails = () => {
         currentRegKey={cpanelRegistrationKey}
         membershipID={membershipId}
         billingCicle={cycleBillingType}
+        addPayment={addPayment}
+        billingEnrollment={billingEnrollment}
       />
     </div>
   )

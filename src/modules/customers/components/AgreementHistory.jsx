@@ -1,26 +1,34 @@
-import { ExclamationCircleFilled, EyeTwoTone, RetweetOutlined } from '@ant-design/icons'
-import { Modal, Space, Table, Tooltip, notification } from 'antd'
+import {
+  ExclamationCircleFilled,
+  EyeTwoTone,
+  RetweetOutlined,
+} from "@ant-design/icons"
+import { Modal, Space, Table, Tooltip, notification } from "antd"
 
-import moment from 'moment'
-import { useLayoutEffect, useState } from 'react'
-import { useIdxResendAgreementEmailMutation, useListAgreementByRegkeyQuery } from '../../../app/api/billing'
-import { getColumnProps, showTotal } from '../../../helpers'
+import moment from "moment"
+import { useLayoutEffect, useState } from "react"
+import {
+  useIdxResendAgreementEmailMutation,
+  useListAgreementByRegkeyQuery,
+} from "../../../app/api/billing"
+import { getColumnProps, showTotal } from "../../../helpers"
 
-import '../../../../src/index.css'
+import "../../../../src/index.css"
 
 export const AgreementHistory = ({
   achData = [],
   cardData = [],
   userId,
   registrationKey,
-  onSuccess = f => f,
+  onSuccess = (f) => f,
+  aggrements = 0,
 }) => {
   const { data: agreementHistoryData = [], isLoading: isLoadingH } =
     useListAgreementByRegkeyQuery(
       { registration_key: registrationKey },
       {
         skip: !registrationKey,
-      },
+      }
     )
   console.log({ agreementHistoryData })
 
@@ -38,7 +46,6 @@ export const AgreementHistory = ({
   // )
   const [idxResendAgreementEmail] = useIdxResendAgreementEmailMutation()
 
-
   const [pdfs, setPdfS] = useState([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -47,7 +54,7 @@ export const AgreementHistory = ({
   //   setIsModalOpen(true)
   // }
 
-  const handleViewPdf = async id => {
+  const handleViewPdf = async (id) => {
     // setPdfS([])
     // setIsModalOpen(true)
     // const res = await fetch(API._BILLING_HOST + '/get-invoice-pdf/' + id, {
@@ -55,8 +62,17 @@ export const AgreementHistory = ({
     // }).then(res => res.json())
     // setPdfS(res)
 
-    if (agreementHistoryData.find(data => data.id === id)) {
-      setPdfS(agreementHistoryData.find(data => data.id === id))
+    if (!aggrements) {
+      notification.error({
+        message:
+          "You don't have the necessary permissions to use this function",
+        placement: "bottomRight",
+      })
+      return
+    }
+
+    if (agreementHistoryData.find((data) => data.id === id)) {
+      setPdfS(agreementHistoryData.find((data) => data.id === id))
     } else {
       setPdfS([])
     }
@@ -77,6 +93,14 @@ export const AgreementHistory = ({
   // )}
 
   const handleReSend = (registration_key, program_name) => {
+    if (!aggrements) {
+      notification.error({
+        message:
+          "You don't have the necessary permissions to use this function",
+        placement: "bottomRight",
+      })
+      return
+    }
     confirm({
       title: `Are you sure you want to forward?`,
       icon: <ExclamationCircleFilled />,
@@ -86,43 +110,41 @@ export const AgreementHistory = ({
         try {
           await idxResendAgreementEmail({
             registration_key,
-            program_name
+            program_name,
           }).unwrap()
           notification.success({
             message: `The resend has been successfully.`,
-            placement: 'bottomRight',
+            placement: "bottomRight",
             // description: '',
           })
         } catch (error) {
           console.log({ error })
           notification.error({
-            message: error.data?.message || 'Error',
-            placement: 'bottomRight',
+            message: error.data?.message || "Error",
+            placement: "bottomRight",
             // description: '',
           })
         }
       },
       onCancel() {
-        console.log('Cancel')
+        console.log("Cancel")
       },
     })
   }
 
-
-
   useLayoutEffect(() => {
-    let elemento = document.getElementsByClassName('content')
+    let elemento = document.getElementsByClassName("content")
 
     if (elemento[0]) {
       elemento[0].parentElement.remove()
     }
 
-    Array.from(document.getElementsByTagName('p')).forEach(element => {
+    Array.from(document.getElementsByTagName("p")).forEach((element) => {
       if (
-        element.innerHTML === '&nbsp;' ||
-        element.innerHTML === '[@signature]'
+        element.innerHTML === "&nbsp;" ||
+        element.innerHTML === "[@signature]"
       ) {
-        console.log('removed')
+        console.log("removed")
         element.remove()
       }
     })
@@ -139,49 +161,49 @@ export const AgreementHistory = ({
   const columns = [
     {
       ...getColumnProps({
-        title: 'Date Signed',
-        dataIndex: 'token_date',
+        title: "Date Signed",
+        dataIndex: "token_date",
       }),
       render(text, { token_date }) {
-        return <td>{moment(token_date).format('ll')}</td>
+        return <div>{moment(token_date).format("ll")}</div>
       },
     },
     {
       ...getColumnProps({
-        title: 'Service/Product',
-        dataIndex: 'agreement_name',
+        title: "Service/Product",
+        dataIndex: "agreement_name",
       }),
       render(text, { agreement_name }) {
-        return <td>{agreement_name}</td>
+        return <div>{agreement_name}</div>
       },
     },
     {
       ...getColumnProps({
-        title: 'Agreement Type',
-        dataIndex: 'agreement_type',
+        title: "Agreement Type",
+        dataIndex: "agreement_type",
       }),
       render(text, { agreement_type }) {
-        return <td>{agreement_type}</td>
+        return <div>{agreement_type}</div>
       },
     },
     {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
       render: (text, { id, registration_key, program_name }) => (
-        <Space size='middle'>
+        <Space size="middle">
           <Tooltip
-            title='Details'
+            title="Details"
             overlayStyle={{ zIndex: 10000 }}
             onClick={() => handleViewPdf(id)}
           >
-            <EyeTwoTone style={{ fontSize: '18px' }} />
+            <EyeTwoTone style={{ fontSize: "18px" }} />
           </Tooltip>
-          <Tooltip
-            title='Resend'
-            overlayStyle={{ zIndex: 10000 }}
-          >
-            <RetweetOutlined style={{ fontSize: '18px' }} onClick={() => handleReSend(registration_key, program_name)} />
+          <Tooltip title="Resend" overlayStyle={{ zIndex: 10000 }}>
+            <RetweetOutlined
+              style={{ fontSize: "18px" }}
+              onClick={() => handleReSend(registration_key, program_name)}
+            />
           </Tooltip>
         </Space>
       ),
@@ -190,8 +212,8 @@ export const AgreementHistory = ({
   return (
     <>
       <Table
-        rowKey='id'
-        size='small'
+        rowKey="id"
+        size="small"
         columns={columns}
         dataSource={agreementHistoryData}
         bordered
@@ -201,9 +223,9 @@ export const AgreementHistory = ({
         loading={isLoadingH}
       />
       <Modal
-        title=''
-        width='50%'
-        style={{ height: '20px', top: '10px' }}
+        title=""
+        width="50%"
+        style={{ height: "20px", top: "10px" }}
         open={isModalOpen}
         footer={[]}
         onOk={handleOk}
@@ -215,11 +237,11 @@ export const AgreementHistory = ({
               dangerouslySetInnerHTML={{ __html: pdfs.agreement_content }}
             ></div>
 
-            <div className='ms-wrapper-signature'>
-              <span className='ms-siganture-text'>
+            <div className="ms-wrapper-signature">
+              <span className="ms-siganture-text">
                 {pdfs.membership_agreement_name}
               </span>
-              <div className='ms-info-client'>
+              <div className="ms-info-client">
                 <span>{pdfs.token_date} </span>
                 <span></span>
                 <span>{pdfs.token}</span>

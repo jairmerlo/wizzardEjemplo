@@ -17,7 +17,7 @@ export const backoffice = createApi({
   endpoints: (builder) => ({
     getAllMemberships: builder.query({
       queryFn: async (
-        { filter, customerId, users },
+        { filter, customerId, users, userId },
         _api,
         _extraOptions,
         fetchWithBQ
@@ -29,6 +29,7 @@ export const backoffice = createApi({
               filter,
               customerId,
               users,
+              userId,
             }),
           }).then((res) => res.json())
           return {
@@ -44,19 +45,19 @@ export const backoffice = createApi({
     getMembership: builder.query({
       useErrorBoundary: true,
       queryFn: async (
-        { registration_key },
+        { registration_key, userId },
         _api,
         _extraOptions,
         fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BACKOFFICE + "/getMembership", {
+          const data = await fetch(API._BACKOFFICE + "/getMembership", {
             method: "post",
             body: JSON.stringify({
               registration_key,
+              userId,
             }),
           }).then((res) => res.json())
-          const { data } = res
           return {
             data,
           }

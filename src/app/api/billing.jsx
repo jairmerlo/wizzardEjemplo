@@ -1,22 +1,22 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { API } from '../../api'
-import { sorterAlphabetically } from '../../helpers'
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { API } from "../../api"
+import { sorterAlphabetically } from "../../helpers"
 
 export const billing = createApi({
-  reducerPath: 'billing',
+  reducerPath: "billing",
   baseQuery: fetchBaseQuery({
     baseUrl: API._BILLING_HOST,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   }),
   refetchOnMountOrArgChange: true,
   keepUnusedDataFor: 0,
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getCustomers: builder.query({
       query: ({ page = 0, pageSize = 0 }) => ({
-        url: '/list-customers-v2',
-        method: 'POST',
+        url: "/list-customers-v2",
+        method: "POST",
         body: {
           page: page.toString(),
           limit: pageSize.toString(),
@@ -26,41 +26,42 @@ export const billing = createApi({
       }),
     }),
     getAllCustomers: builder.query({
-      query: ({ filter, user_id }) => ({
-        url: '/list-customers',
-        method: 'POST',
+      query: ({ filter, user_id, users }) => ({
+        url: "/list-customers",
+        method: "POST",
         body: {
           user_id,
-          status: 'Active',
+          status: "Active",
           filter,
+          users,
         },
       }),
     }),
     sendQuote: builder.mutation({
       query: ({ quote_id, user_id, user_name }) => ({
         url: `/send-quote`,
-        method: 'POST',
+        method: "POST",
         body: {
           quote_id,
           user_id,
-          user_name
-        }
+          user_name,
+        },
       }),
     }),
     deleteQuote: builder.mutation({
       query: ({ quoteId }) => ({
         url: `/quote-delete/${quoteId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getCustomer: builder.query({
-      query: id => `/get-customer-v2/${id}`,
+      query: (id) => `/get-customer-v2/${id}`,
     }),
     getCustomerV1: builder.query({
-      query: uuid => `/get-customer/${uuid}`,
+      query: (uuid) => `/get-customer/${uuid}`,
     }),
     getCustomerV2Billing: builder.query({
-      query: customerId => `/get-customer-v2-billing/${customerId}`,
+      query: (customerId) => `/get-customer-v2-billing/${customerId}`,
     }),
     getNewQuotesOptions: builder.query({
       async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
@@ -73,28 +74,28 @@ export const billing = createApi({
             coupons,
             brokerages,
             states,
-            boards = [{ label: 'MIAMI ASSOCIATION OF REALTORS', value: '1' }],
+            boards = [{ label: "MIAMI ASSOCIATION OF REALTORS", value: "1" }],
             listMembership,
-            listBundle
+            listBundle,
           ] = await Promise.all([
-            fetchWithBQ({ url: '/get-next-quote', method: 'POST' }).then(
-              ({ data }) => data,
+            fetchWithBQ({ url: "/get-next-quote", method: "POST" }).then(
+              ({ data }) => data
             ),
             //* el campo prospecto, se muestra name, se envia el id, como prospect_id
-            fetchWithBQ({ url: '/list-prospects', method: 'POST' }).then(
+            fetchWithBQ({ url: "/list-prospects", method: "POST" }).then(
               ({ data }) =>
                 sorterAlphabetically(
                   data.map(({ name, id, email }) => ({
                     label: `${name} (${email})`,
                     value: id,
                   })),
-                  'label',
-                ),
+                  "label"
+                )
             ),
             //* el campo de Program, se muestra el name y se envia el id, como plan_id
             fetchWithBQ({
-              url: '/list-plans',
-              method: 'POST',
+              url: "/list-plans",
+              method: "POST",
               body: JSON.stringify({
                 company: args?.company,
                 has_trial: args?.has_trial,
@@ -108,90 +109,90 @@ export const billing = createApi({
                     has_idx,
                     total_amount,
                     total_setup,
-                  }),
+                  })
                 ),
-                'label',
+                "label"
               )
             }),
             //* el campo payment_method se muestra el name, se envia un array de id, como payment_method
-            fetchWithBQ({ url: '/list-payment_method', method: 'POST' }).then(
+            fetchWithBQ({ url: "/list-payment_method", method: "POST" }).then(
               ({ data }) =>
                 sorterAlphabetically(
                   data.map(({ name, slug }) => ({
                     label: name,
                     value: slug,
                   })),
-                  'label',
-                ),
+                  "label"
+                )
             ),
             //* el campo coupon, se muestra el name, se envia el id, como coupon_id
-            fetchWithBQ({ url: '/list-coupons-v2', method: 'POST' }).then(
+            fetchWithBQ({ url: "/list-coupons-v2", method: "POST" }).then(
               ({ data }) =>
-                [{ label: 'None', value: '' }].slice().concat(
+                [{ label: "None", value: "" }].slice().concat(
                   sorterAlphabetically(
                     data.map(({ name }) => ({
                       label: name,
                       value: name,
                     })),
 
-                    'label',
-                  ),
-                ),
+                    "label"
+                  )
+                )
             ),
             //* el campo de brokerage no se envia al endpoint de crear quota, es solo filtro
             fetch(`${API._PACKAGE_BUILDER}/company-list`)
-              .then(res => res.json())
-              .then(data =>
+              .then((res) => res.json())
+              .then((data) =>
                 sorterAlphabetically(
                   data.map(({ name, id }) => ({
                     label: name,
                     value: id,
                   })),
-                  'label',
-                ),
+                  "label"
+                )
               ),
             fetchWithBQ({
-              url: '/list-state',
-              method: 'POST',
+              url: "/list-state",
+              method: "POST",
             }).then(({ data }) =>
               data.map(({ name, slug }) => ({
                 label: name,
                 value: slug,
-              })),
+              }))
             ),
             fetch(`${API._BACKOFFICE}/getBoards`, {
-              method: 'POST',
+              method: "POST",
             })
-              .then(res => res.json())
-              .then(data =>
-                [{ label: 'None', value: '' }].slice().concat(
+              .then((res) => res.json())
+              .then((data) =>
+                [{ label: "None", value: "" }].slice().concat(
                   sorterAlphabetically(
                     data.map(({ name, id }) => ({
                       label: name,
                       value: id,
                     })),
 
-                    'label',
-                  ),
-                ),
+                    "label"
+                  )
+                )
               ),
             fetchWithBQ({
-              url: '/list-membership-type',
-              method: 'POST',
+              url: "/list-membership-type",
+              method: "POST",
             }).then(({ data }) =>
               data.map(({ name, id }) => ({
                 label: name,
                 value: id,
-              })),
+              }))
             ),
             fetchWithBQ({
-              url: '/list-bundle-type',
-              method: 'POST',
+              url: "/list-bundle-type",
+              method: "POST",
             }).then(({ data }) =>
               data.map(({ name, id }) => ({
                 label: name,
                 value: id,
-              })),
+              }))
             ),
           ])
           return {
@@ -205,13 +206,13 @@ export const billing = createApi({
               coupons,
               states,
               listBundle,
-              listMembership
+              listMembership,
             },
           }
         } catch (error) {
           console.log(error)
           return {
-            error: 'Ocurrio un error inesperado.',
+            error: "Ocurrio un error inesperado.",
           }
         }
       },
@@ -231,8 +232,8 @@ export const billing = createApi({
         user_id,
         user_name,
       }) => ({
-        url: '/create-prospect',
-        method: 'POST',
+        url: "/create-prospect",
+        method: "POST",
         body: {
           name,
           last_name,
@@ -250,10 +251,58 @@ export const billing = createApi({
       }),
     }),
     modifyQuote: builder.mutation({
-      query: ({ id, project_name, prospect_id, customer_id, coupon_id, plan_id, board_id, board_name, user_id, user_name, expiration_date, is_valid, status, send_email, bundle_type_id, payment_method, total_amount, total_setup, membership_type_id, items, show_cupon_wizard, has_trial, trial_length }) => ({
-        url: '/modify-quote',
-        method: 'PUT',
-        body: { id, project_name, prospect_id, customer_id, coupon_id, plan_id, board_id, board_name, user_id, user_name, expiration_date, is_valid, status, send_email, bundle_type_id, payment_method, total_amount, total_setup, membership_type_id, items, show_cupon_wizard, has_trial, trial_length },
+      query: ({
+        id,
+        project_name,
+        prospect_id,
+        customer_id,
+        coupon_id,
+        plan_id,
+        board_id,
+        board_name,
+        user_id,
+        user_name,
+        expiration_date,
+        is_valid,
+        status,
+        send_email,
+        bundle_type_id,
+        payment_method,
+        total_amount,
+        total_setup,
+        membership_type_id,
+        items,
+        show_cupon_wizard,
+        has_trial,
+        trial_length,
+      }) => ({
+        url: "/modify-quote",
+        method: "PUT",
+        body: {
+          id,
+          project_name,
+          prospect_id,
+          customer_id,
+          coupon_id,
+          plan_id,
+          board_id,
+          board_name,
+          user_id,
+          user_name,
+          expiration_date,
+          is_valid,
+          status,
+          send_email,
+          bundle_type_id,
+          payment_method,
+          total_amount,
+          total_setup,
+          membership_type_id,
+          items,
+          show_cupon_wizard,
+          has_trial,
+          trial_length,
+        },
       }),
     }),
     createQuote: builder.mutation({
@@ -280,8 +329,8 @@ export const billing = createApi({
         show_cupon_wizard,
         trial_length,
       }) => ({
-        url: '/create-quote',
-        method: 'POST',
+        url: "/create-quote",
+        method: "POST",
         body: {
           project_name,
           // quote_name,
@@ -310,13 +359,13 @@ export const billing = createApi({
     getStates: builder.query({
       query: () => ({
         url: `/list-state`,
-        method: 'POST'
+        method: "POST",
       }),
     }),
     getAuthorizationForms: builder.query({
       query: ({ id, registration_key, authorization_form_type, order }) => ({
-        url: '/list-authorization-form',
-        method: 'POST',
+        url: "/list-authorization-form",
+        method: "POST",
         body: {
           authorization_form_type,
           order,
@@ -326,35 +375,57 @@ export const billing = createApi({
       }),
     }),
     sendAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id, labels_prices }) => ({
-        url: '/authorization-form-send',
-        method: 'POST',
+      query: ({
+        authorization_form_type,
+        registration_key,
+        user_id,
+        labels_prices,
+      }) => ({
+        url: "/authorization-form-send",
+        method: "POST",
         body: {
           authorization_form_type,
           registration_key,
           user_id,
-          labels_prices
+          labels_prices,
         },
       }),
     }),
     resendAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id, labels_prices, send_email, id }) => ({
-        url: '/authorization-form-re-send',
-        method: 'POST',
+      query: ({
+        authorization_form_type,
+        registration_key,
+        user_id,
+        labels_prices,
+        send_email,
+        id,
+      }) => ({
+        url: "/authorization-form-re-send",
+        method: "POST",
         body: {
           authorization_form_type,
           registration_key,
           user_id,
           labels_prices,
           send_email,
-          id
+          id,
         },
       }),
     }),
     billingEnrollment: builder.mutation({
-      query: ({ registration_key, user_id,program_code, periods_setupfee = 0, setupfee, startdate_setupfee, periods_monthly, monthly, startdate_monthly }) => ({
-        url: '/program-enrollment',
-        method: 'POST',
+      query: ({
+        registration_key,
+        user_id,
+        program_code,
+        periods_setupfee = 0,
+        setupfee,
+        startdate_setupfee,
+        periods_monthly,
+        monthly,
+        startdate_monthly,
+      }) => ({
+        url: "/program-enrollment",
+        method: "POST",
         body: {
           registration_key,
           program_code,
@@ -364,41 +435,46 @@ export const billing = createApi({
           periods_monthly,
           monthly,
           startdate_monthly,
-          user_id
+          user_id,
         },
       }),
     }),
     idxResendAgreementEmail: builder.mutation({
       query: ({ registration_key, program_name }) => ({
-        url: '/idx-resend-agreement-email',
-        method: 'POST',
+        url: "/idx-resend-agreement-email",
+        method: "POST",
         body: {
           registration_key,
-          program_name
+          program_name,
         },
       }),
     }),
     replaceAuthorizationForm: builder.mutation({
-      query: ({ authorization_form_type, registration_key, user_id, labels_prices }) => ({
-        url: '/authorization-form-replace',
-        method: 'POST',
+      query: ({
+        authorization_form_type,
+        registration_key,
+        user_id,
+        labels_prices,
+      }) => ({
+        url: "/authorization-form-replace",
+        method: "POST",
         body: {
           authorization_form_type,
           registration_key,
           user_id,
-          labels_prices
+          labels_prices,
         },
       }),
     }),
     websitePublishedEmail: builder.mutation({
       query: ({ registration_key, domain_name, ip, date }) => ({
-        url: '/website-published-email',
-        method: 'POST',
+        url: "/website-published-email",
+        method: "POST",
         body: {
           registration_key,
           domain_name,
           ip,
-          date
+          date,
         },
       }),
     }),
@@ -454,8 +530,8 @@ export const billing = createApi({
         street2,
         uuid,
       }) => ({
-        url: '/modify-customer',
-        method: 'PUT',
+        url: "/modify-customer",
+        method: "PUT",
         body: {
           city,
           company,
@@ -483,38 +559,38 @@ export const billing = createApi({
         try {
           const [products, categories, groups] = await Promise.all([
             fetchWithBQ({
-              url: '/items-bycompany',
-              method: 'POST',
+              url: "/items-bycompany",
+              method: "POST",
               body: {
                 company_id: args?.company_id,
                 program_id: args?.program_id,
               },
             })
               .then(({ data }) => data)
-              .then(data =>
+              .then((data) =>
                 data.map(({ name, item_id, currencies_format }) => ({
                   label: name,
                   value: item_id,
-                  currencies_format: currencies_format
-                })),
+                  currencies_format: currencies_format,
+                }))
               ),
             fetchWithBQ({
-              url: '/list-bundle-type',
-              method: 'POST',
+              url: "/list-bundle-type",
+              method: "POST",
               body: {
                 company: args?.company,
               },
             })
               .then(({ data }) => data)
-              .then(data =>
-                data.map(({ name }) => ({ label: name, value: name })),
+              .then((data) =>
+                data.map(({ name }) => ({ label: name, value: name }))
               ),
             fetchWithBQ({
-              url: '/product_group/list',
+              url: "/product_group/list",
             })
               .then(({ data }) => data)
-              .then(data =>
-                data.map(({ name }) => ({ label: name, value: '' })),
+              .then((data) =>
+                data.map(({ name }) => ({ label: name, value: "" }))
               ),
           ])
 
@@ -529,9 +605,9 @@ export const billing = createApi({
       },
     }),
     getPdf: builder.query({
-      query: id => ({
-        url: '/get-pdf-access',
-        method: 'POST',
+      query: (id) => ({
+        url: "/get-pdf-access",
+        method: "POST",
         body: {
           id,
         },
@@ -542,18 +618,18 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/list-account-invoice-byregkey',
+            API._BILLING_HOST + "/list-account-invoice-byregkey",
             {
-              method: 'post',
+              method: "post",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res,
@@ -570,25 +646,25 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/get-plan-byregistration_key',
+            API._BILLING_HOST + "/get-plan-byregistration_key",
             {
-              method: 'POST',
+              method: "POST",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res.map(({ name, code, total_amount, total_setup }) => ({
               label: `${code} ${name}`,
               value: code,
               setupfee: total_setup,
-              monthly: total_amount
+              monthly: total_amount,
             })),
           }
         } catch (error) {
@@ -603,24 +679,24 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/get-plan-byregistration_key',
+            API._BILLING_HOST + "/get-plan-byregistration_key",
             {
-              method: 'POST',
+              method: "POST",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res.map(({ name, code, total_amount, total_setup }) => ({
               label: name,
               value: name,
-              code
+              code,
             })),
           }
         } catch (error) {
@@ -635,18 +711,18 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/company-by-registration_key',
+            API._BILLING_HOST + "/company-by-registration_key",
             {
-              method: 'POST',
+              method: "POST",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res,
@@ -659,19 +735,17 @@ export const billing = createApi({
       },
     }),
     getRequestByregKey: builder.query({
-      queryFn: async (
-        { registration_key },
-      ) => {
+      queryFn: async ({ registration_key }) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/get-request-byreg-key',
+            API._BILLING_HOST + "/get-request-byreg-key",
             {
-              method: 'post',
+              method: "post",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res,
@@ -688,18 +762,18 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/get-all-agreement-byrkey',
+            API._BILLING_HOST + "/get-all-agreement-byrkey",
             {
-              method: 'post',
+              method: "post",
               body: JSON.stringify({
                 registration_key,
               }),
-            },
-          ).then(res => res.json())
+            }
+          ).then((res) => res.json())
 
           return {
             data: res,
@@ -716,18 +790,15 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(
-            API._BILLING_HOST + '/get-html-wizard',
-            {
-              method: 'post',
-              body: JSON.stringify({
-                registration_key,
-              }),
-            },
-          ).then(res => res.json())
+          const res = await fetch(API._BILLING_HOST + "/get-html-wizard", {
+            method: "post",
+            body: JSON.stringify({
+              registration_key,
+            }),
+          }).then((res) => res.json())
 
           return {
             data: res,
@@ -743,11 +814,11 @@ export const billing = createApi({
       queryFn: async ({ id }, _api, _extraOptions, fetchWithBQ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + '/get-invoice-pdf/' + id,
+            API._BILLING_HOST + "/get-invoice-pdf/" + id,
             {
-              method: 'get',
-            },
-          ).then(res => res.json())
+              method: "get",
+            }
+          ).then((res) => res.json())
 
           return {
             data: res,
@@ -764,15 +835,15 @@ export const billing = createApi({
         { registration_key },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/billing-information', {
-            method: 'post',
+          const res = await fetch(API._BILLING_HOST + "/billing-information", {
+            method: "post",
             body: JSON.stringify({
               registration_key,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
 
           return {
             data: res,
@@ -786,31 +857,46 @@ export const billing = createApi({
     }),
     plansFiltered: builder.query({
       queryFn: async (
-        { company = 0, bundle_type = 0, membership_type = 0, stripe = true, has_trial = false },
+        {
+          company = 0,
+          bundle_type = 0,
+          membership_type = 0,
+          stripe = true,
+          has_trial = false,
+        },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/plans-filtered', {
-            method: 'post',
+          const res = await fetch(API._BILLING_HOST + "/plans-filtered", {
+            method: "post",
             body: JSON.stringify({
               company,
               bundle_type,
               membership_type,
               stripe,
-              has_trial
+              has_trial,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
           return {
-            data: res.map(({ name, value, total_amount, total_setup, has_idx, trial_quote }) => ({
-              label: name,
-              value,
-              total_amount,
-              total_setup,
-              has_idx,
-              trial_quote
-            })),
+            data: res.map(
+              ({
+                name,
+                value,
+                total_amount,
+                total_setup,
+                has_idx,
+                trial_quote,
+              }) => ({
+                label: name,
+                value,
+                total_amount,
+                total_setup,
+                has_idx,
+                trial_quote,
+              })
+            ),
           }
         } catch (error) {
           return {
@@ -820,28 +906,25 @@ export const billing = createApi({
       },
     }),
     getPlanBycompanyId: builder.query({
-      queryFn: async (
-        { company = 0 },
-        _api,
-        _extraOptions,
-        fetchWithBQ,
-      ) => {
+      queryFn: async ({ company = 0 }, _api, _extraOptions, fetchWithBQ) => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/get-plan-bycompany_id', {
-            method: 'POST',
-            body: JSON.stringify({
-              company,
-            }),
-          }).then(res => res.json())
+          const res = await fetch(
+            API._BILLING_HOST + "/get-plan-bycompany_id",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                company,
+              }),
+            }
+          ).then((res) => res.json())
           return {
             data: res.map(({ name, code, total_amount, total_setup }) => ({
               label: `${code} ${name}`,
               value: code,
               setupfee: total_setup,
-              monthly: total_amount
+              monthly: total_amount,
             })),
           }
-
         } catch (error) {
           return {
             error,
@@ -854,20 +937,20 @@ export const billing = createApi({
         { bundle_type_id = 0 },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/list-membership-type', {
-            method: 'post',
+          const res = await fetch(API._BILLING_HOST + "/list-membership-type", {
+            method: "post",
             body: JSON.stringify({
               bundle_type_id,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
 
           return {
             data: res.map(({ id, name }) => ({
               label: name,
-              value: id
+              value: id,
             })),
           }
         } catch (error) {
@@ -882,15 +965,15 @@ export const billing = createApi({
         { quote_name = "" },
         _api,
         _extraOptions,
-        fetchWithBQ,
+        fetchWithBQ
       ) => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/get-quote-byname', {
-            method: 'POST',
+          const res = await fetch(API._BILLING_HOST + "/get-quote-byname", {
+            method: "POST",
             body: JSON.stringify({
               quote_name,
             }),
-          }).then(res => res.json())
+          }).then((res) => res.json())
 
           return { data: res }
         } catch (error) {
@@ -901,12 +984,14 @@ export const billing = createApi({
       },
     }),
     getProviderAccount: builder.query({
-      queryFn: async (
-      ) => {
+      queryFn: async () => {
         try {
-          const res = await fetch(API._BILLING_HOST + '/merchant_provider_account/list', {
-            method: 'POST',
-          }).then(res => res.json())
+          const res = await fetch(
+            API._BILLING_HOST + "/merchant_provider_account/list",
+            {
+              method: "POST",
+            }
+          ).then((res) => res.json())
 
           return {
             data: res.map(({ name }) => ({
