@@ -37,6 +37,18 @@ export const billing = createApi({
         },
       }),
     }),
+    getAllCustomersV3: builder.query({
+      query: ({ filter, user_id, users }) => ({
+        url: "/list-customers-v3",
+        method: "POST",
+        body: {
+          user_id,
+          status: "Active",
+          filter,
+          users,
+        },
+      }),
+    }),
     sendQuote: builder.mutation({
       query: ({ quote_id, user_id, user_name }) => ({
         url: `/send-quote`,
@@ -1018,6 +1030,7 @@ export const {
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
+  useGetAllCustomersV3Query,
   useGetNewQuotesOptionsQuery,
   useCreateProspectMutation,
   useModifyQuoteMutation,

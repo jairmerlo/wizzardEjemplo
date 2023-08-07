@@ -106,7 +106,13 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
     filter: radioBoxFIltred,
     users: arrayUsersId,
   })
-  const { data: memberships, total = 0, users = [] } = data
+  const {
+    data: memberships,
+    total = 0,
+    users = [],
+    billingEnrollment = 0,
+    addPayment = 0,
+  } = data
   const [currentItems, setCurrentItems] = useState([])
   const items = currentItems.length !== 0 ? currentItems : memberships
   const totalPrice = items
@@ -801,6 +807,8 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
         currentRegKey={currentRegKey}
         billingCicle={billingCicle}
         membershipID={currenMembershipID}
+        billingEnrollment={billingEnrollment}
+        addPayment={addPayment}
       />
     </div>
   )

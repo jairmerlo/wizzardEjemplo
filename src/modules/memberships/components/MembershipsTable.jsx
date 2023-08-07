@@ -814,7 +814,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </a>
       ),
       width: 170,
-      fixed: "left",
+      // fixed: "left",
     },
     {
       title: "Client Name",
@@ -837,7 +837,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </>
       ),
       width: 160,
-      fixed: "left",
+      // fixed: "left",
     },
     {
       title: "Product/Service",
@@ -1022,15 +1022,83 @@ export const MembershipsTable = ({ filter = "" }) => {
         </Tooltip>
       ),
       width: 160,
-      fixed: "left",
+      // fixed: "left",
       defaultSortOrder: "descend",
     },
     ...columnsWithoutBoard,
+  ]
+  const payments_due_columns = [
+    {
+      title: "Balance Due",
+      key: "balance_due",
+      dataIndex: "balance_due",
+      ...getDateColumnSearchProps("balance_due"),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.balance_due || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.balance_due || "Jan 01, 1970", "MMM DD, YYYY"))
+        },
+      }),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.balance_due}>
+          {record.balance_due}
+        </Tooltip>
+      ),
+      width: 160,
+      // fixed: "left",
+      // defaultSortOrder: "descend",
+    },
+    {
+      title: "Last Payment Date",
+      key: "last_payment_date",
+      dataIndex: "last_payment_date",
+      ...getDateColumnSearchProps("last_payment_date"),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.last_payment_date || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.last_payment_date || "Jan 01, 1970", "MMM DD, YYYY"))
+        },
+      }),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.last_payment_date}>
+          {record.last_payment_date}
+        </Tooltip>
+      ),
+      width: 160,
+      // fixed: "left",
+      // defaultSortOrder: "descend",
+    },
+    {
+      title: "Next Payment Date",
+      key: "next_payment_date",
+      dataIndex: "next_payment_date",
+      ...getDateColumnSearchProps("next_payment_date"),
+      ...getCustomColumnSortProps({
+        sorter: (a, b) => {
+          return moment(
+            moment(a.next_payment_date || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.next_payment_date || "Jan 01, 1970", "MMM DD, YYYY"))
+        },
+      }),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.next_payment_date}>
+          {record.next_payment_date}
+        </Tooltip>
+      ),
+      width: 160,
+      // fixed: "left",
+      // defaultSortOrder: "descend",
+    },
+    ...columns,
   ]
   const getColumns = (filter) => {
     switch (filter) {
       case "idx_requested":
         return idx_requested_columns
+      case "payments_due":
+        return payments_due_columns
       case "launch_website":
         return launch_website_columns
       default:

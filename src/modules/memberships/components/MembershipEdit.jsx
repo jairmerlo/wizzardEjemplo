@@ -1,4 +1,4 @@
-import { EditTwoTone, ExclamationCircleFilled } from '@ant-design/icons'
+import { EditTwoTone, ExclamationCircleFilled } from "@ant-design/icons"
 import {
   Button,
   Divider,
@@ -9,141 +9,144 @@ import {
   Input,
   Select as AntdSelect,
   notification,
-  Checkbox as AntdCheckbox
-} from 'antd'
-import { Input as FormikInput, Select, Checkbox } from 'formik-antd'
-import { ErrorMessage, Formik } from 'formik'
-import { useEffect, useMemo, useState } from 'react'
-import { useCss } from 'react-use'
+  Checkbox as AntdCheckbox,
+} from "antd"
+import { Input as FormikInput, Select, Checkbox } from "formik-antd"
+import { ErrorMessage, Formik } from "formik"
+import { useEffect, useMemo, useState } from "react"
+import { useCss } from "react-use"
 import {
   useEditMembershipMutation,
   useGetMembershipQuery,
   useGetTheamProfilesQuery,
-} from '../../../app/api/backoffice'
-import { useGetAllCustomersQuery, useWebsitePublishedEmailMutation } from '../../../app/api/billing'
-import { boolean, getConfig, getSelectSearchProps } from '../../../helpers'
-import moment from 'moment'
-import * as Yup from 'yup'
+} from "../../../app/api/backoffice"
+import {
+  useGetAllCustomersQuery,
+  useWebsitePublishedEmailMutation,
+} from "../../../app/api/billing"
+import { boolean, getConfig, getSelectSearchProps } from "../../../helpers"
+import moment from "moment"
+import * as Yup from "yup"
 const treeData = [
   {
-    title: 'Has CMS Team',
-    key: 'hasCmsTeam',
+    title: "Has CMS Team",
+    key: "hasCmsTeam",
   },
   {
-    title: 'Property Sites',
-    key: 'hasSpw',
+    title: "Property Sites",
+    key: "hasSpw",
   },
   {
-    title: 'Has Cms Blog',
-    key: 'hasCmsBlog',
+    title: "Has Cms Blog",
+    key: "hasCmsBlog",
   },
 ]
 
 const treeDataIDX = [
   {
-    title: 'Map Search Filters',
-    key: 'isSearchFilter',
+    title: "Map Search Filters",
+    key: "isSearchFilter",
   },
   {
-    title: 'Display Filters',
-    key: 'displayFilters',
+    title: "Display Filters",
+    key: "displayFilters",
   },
   {
-    title: 'My Buildings',
-    key: 'hasBuilding',
+    title: "My Buildings",
+    key: "hasBuilding",
   },
   {
-    title: 'Commercial Filters',
-    key: 'hasCommercialListing',
+    title: "Commercial Filters",
+    key: "hasCommercialListing",
   },
   {
-    title: 'Dynamic Remarketing',
-    key: 'hasDynamicRemarketing',
+    title: "Dynamic Remarketing",
+    key: "hasDynamicRemarketing",
   },
 ]
 
 const treeHasVacationRentals = [
-  { title: "Listing Agent's CC Email", key: 'listingAgent' },
+  { title: "Listing Agent's CC Email", key: "listingAgent" },
   {
-    title: 'Has Home Page Vacation Rentals',
-    key: 'hasRentalsQuickSearch',
+    title: "Has Home Page Vacation Rentals",
+    key: "hasRentalsQuickSearch",
   },
   {
-    title: 'Has Quick IDX Vacation Rentals',
-    key: 'hasQuickIDXVacationRentals',
+    title: "Has Quick IDX Vacation Rentals",
+    key: "hasQuickIDXVacationRentals",
   },
 ]
 
 const treeLeadGeneration = [
   {
-    title: 'Registration Settings',
-    key: 'hasRegistrationSettings',
+    title: "Registration Settings",
+    key: "hasRegistrationSettings",
   },
   {
-    title: 'Boost Nurture',
-    key: 'smartPropertyAlert',
+    title: "Boost Nurture",
+    key: "smartPropertyAlert",
   },
   {
-    title: 'IDXBoost Box Ads',
-    key: 'boostBox',
+    title: "IDXBoost Box Ads",
+    key: "boostBox",
   },
   {
-    title: 'Cms Landing / Forms',
-    key: 'hasCmsForm',
+    title: "Cms Landing / Forms",
+    key: "hasCmsForm",
   },
 ]
 
 const treeOthers = [
   {
-    title: 'My Master Plans',
-    key: 'hasMasterPlans',
+    title: "My Master Plans",
+    key: "hasMasterPlans",
   },
   {
-    title: 'Off Market Inventory',
-    key: 'hasMarketInventory',
+    title: "Off Market Inventory",
+    key: "hasMarketInventory",
   },
   {
-    title: 'CRM & Automations',
-    key: 'hasCRMAutomations',
+    title: "CRM & Automations",
+    key: "hasCRMAutomations",
   },
   {
-    title: 'Quiz After Registration',
-    key: 'userShowQuizz',
+    title: "Quiz After Registration",
+    key: "userShowQuizz",
   },
   {
-    title: 'SMS',
-    key: 'hasSms',
+    title: "SMS",
+    key: "hasSms",
   },
   {
-    title: 'Hot Sheet Autocreate User',
-    key: 'leadAutoCreated',
+    title: "Hot Sheet Autocreate User",
+    key: "leadAutoCreated",
   },
   {
-    title: 'Alerts',
-    key: 'hasAlerts',
+    title: "Alerts",
+    key: "hasAlerts",
   },
   {
-    title: 'Generate Schema',
-    key: 'hasGenerateSchema',
+    title: "Generate Schema",
+    key: "hasGenerateSchema",
   },
 ]
 
 export const MembershipEdit = ({
   registration_key,
   open,
-  onClose = f => f,
+  onClose = (f) => f,
 }) => {
   const { confirm } = Modal
   const form = useCss({
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    columnGap: '16px',
-    rowGap: '30px',
-    '& > .ant-form-item': {
-      margin: '0px',
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    columnGap: "16px",
+    rowGap: "30px",
+    "& > .ant-form-item": {
+      margin: "0px",
     },
-    '@media only screen and (max-width: 745px)': {
-      gridTemplateColumns: '1fr',
+    "@media only screen and (max-width: 745px)": {
+      gridTemplateColumns: "1fr",
     },
   })
 
@@ -165,7 +168,7 @@ export const MembershipEdit = ({
     {},
     {
       skip: !open,
-    },
+    }
   )
   const {
     profile_deployment = [],
@@ -177,7 +180,7 @@ export const MembershipEdit = ({
     {},
     {
       skip: !open,
-    },
+    }
   )
   // console.log({ customers })
   const customersOptions = useMemo(
@@ -186,18 +189,19 @@ export const MembershipEdit = ({
         label: `${user_name} (${email_contact})`,
         value: uuid,
       })),
-    [customers.length],
+    [customers.length]
   )
 
   // console.log({ registration_key })
 
-  const { data = {}, isLoading } = useGetMembershipQuery(
+  const { data: rawData = {}, isLoading } = useGetMembershipQuery(
     { registration_key },
     {
       skip: !open,
-    },
+    }
   )
-  const noData = 'No data'
+  const noData = "No data"
+  const { data = {} } = rawData
   console.log({ data }, "data")
   const [
     editMembership,
@@ -209,7 +213,7 @@ export const MembershipEdit = ({
       notification.success({
         message: `Success`,
         description: response?.message,
-        placement: 'bottomRight',
+        placement: "bottomRight",
       })
     }
   }, [isSuccess])
@@ -239,41 +243,41 @@ export const MembershipEdit = ({
     membershipId = noData,
     activatedAt = noData,
     // isProductionMode = noData,
-    projectName = '',
+    projectName = "",
     boardName = noData,
-    hasCmsTeam = '0',
-    hasSpw = '0',
-    hasCmsBlog = '0',
-    isSearchFilter = '0',
-    displayFilters = '0',
-    hasBuilding = '0',
-    hasCommercialListing = '0',
-    hasMasterPlans = '0',
-    hasMarketInventory = '0',
-    hasCRMAutomations = '0',
-    hasDynamicRemarketing = '0',
-    listingAgent = '0',
-    hasRentalsQuickSearch = '0',
-    hasQuickIDXVacationRentals = '0',
-    hasRegistrationSettings = '0',
-    smartPropertyAlert = '0',
-    boostBox = '0',
-    hasCmsForm = '0',
-    userShowQuizz = '0',
-    hasSms = '0',
-    leadAutoCreated = '0',
-    hasAlerts = '0',
-    hasGenerateSchema = '0',
-    hasCms = '0',
-    marketing = '0',
-    hasBasicIdx = '0',
-    hasVacationRentals = '0',
+    hasCmsTeam = "0",
+    hasSpw = "0",
+    hasCmsBlog = "0",
+    isSearchFilter = "0",
+    displayFilters = "0",
+    hasBuilding = "0",
+    hasCommercialListing = "0",
+    hasMasterPlans = "0",
+    hasMarketInventory = "0",
+    hasCRMAutomations = "0",
+    hasDynamicRemarketing = "0",
+    listingAgent = "0",
+    hasRentalsQuickSearch = "0",
+    hasQuickIDXVacationRentals = "0",
+    hasRegistrationSettings = "0",
+    smartPropertyAlert = "0",
+    boostBox = "0",
+    hasCmsForm = "0",
+    userShowQuizz = "0",
+    hasSms = "0",
+    leadAutoCreated = "0",
+    hasAlerts = "0",
+    hasGenerateSchema = "0",
+    hasCms = "0",
+    marketing = "0",
+    hasBasicIdx = "0",
+    hasVacationRentals = "0",
     id,
-    status = 'Request Publish',
+    status = "Request Publish",
   } = data
 
   // console.log({ activatedAt })
-  const WordpressUrl = originalWordpressInstallUrl.split('https://')
+  const WordpressUrl = originalWordpressInstallUrl.split("https://")
   const statusOld = status
   const activatedAtOld = activatedAt
   const [editPassword, setEditPassword] = useState(false)
@@ -294,12 +298,12 @@ export const MembershipEdit = ({
         //   onOk={handleOk}
         okButtonProps={{
           style: {
-            display: 'none',
+            display: "none",
           },
         }}
         cancelButtonProps={{
           style: {
-            display: 'none',
+            display: "none",
           },
         }}
         onCancel={onClose}
@@ -309,13 +313,13 @@ export const MembershipEdit = ({
       >
         <Divider />
         {isLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Spin tip='Loading' size='large' />
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Spin tip="Loading" size="large" />
           </div>
         ) : (
           <Formik
             enableReinitialize
-            onSubmit={values => {
+            onSubmit={(values) => {
               const {
                 cpanelUsername,
                 companyName,
@@ -327,13 +331,13 @@ export const MembershipEdit = ({
                 ...rest
               } = values
               const publicationDate = moment(
-                moment(rest.activatedAt, 'YYYY-MM-DD'),
-              ).format('MM/DD/YYYY')
+                moment(rest.activatedAt, "YYYY-MM-DD")
+              ).format("MM/DD/YYYY")
 
               const body = {
                 ...rest,
                 activatedAt:
-                  publicationDate !== 'Invalid date' ? publicationDate : null,
+                  publicationDate !== "Invalid date" ? publicationDate : null,
               }
               if (editPassword) {
                 editMembership([{ id, username: getConfig().userId }, body])
@@ -350,7 +354,7 @@ export const MembershipEdit = ({
               }
 
               if (activatedAtOld !== body.activatedAt) {
-                const date = moment(body.activatedAt).format('ll')
+                const date = moment(body.activatedAt).format("ll")
                 // const ip = rest.ipConfig
                 // const domainname = WordpressUrl[1]
                 // const key = cpanelRegistrationKey
@@ -358,11 +362,10 @@ export const MembershipEdit = ({
                   registration_key: cpanelRegistrationKey,
                   domain_name: WordpressUrl[1],
                   ip: rest.ipConfig,
-                  date
+                  date,
                 })
                 // console.log({ date, ip, domainname, key })
               }
-
             }}
             initialValues={{
               customerId,
@@ -374,7 +377,7 @@ export const MembershipEdit = ({
               originalWordpressInstallUrl,
               wordpressInstallUrl,
               cpanelRegistrationKey,
-              ipConfig: ipConfig === null ? '' : ipConfig,
+              ipConfig: ipConfig === null ? "" : ipConfig,
               googleRecaptcha,
               googleMapsApiKey,
               googleRecaptchaExtraKey,
@@ -389,8 +392,8 @@ export const MembershipEdit = ({
               forceRegistration: boolean(forceRegistration),
               forceRegistrationForced,
               sinUpLeftClick,
-              activatedAt: moment(moment(activatedAt, 'MM/DD/YYYY')).format(
-                'YYYY-MM-DD',
+              activatedAt: moment(moment(activatedAt, "MM/DD/YYYY")).format(
+                "YYYY-MM-DD"
               ),
               hasCmsTeam: boolean(hasCmsTeam),
               hasSpw: boolean(hasSpw),
@@ -419,66 +422,66 @@ export const MembershipEdit = ({
               marketing: boolean(marketing),
               hasBasicIdx: boolean(hasBasicIdx),
               hasVacationRentals: boolean(hasVacationRentals),
-              cpanelPassword: '',
-              status
+              cpanelPassword: "",
+              status,
             }}
             validationSchema={Yup.object({
               cpanelPassword: editPassword
                 ? Yup.string()
-                  .required('Password is required')
-                  .min(8, 'Password must contain 8 or more characters')
+                    .required("Password is required")
+                    .min(8, "Password must contain 8 or more characters")
                 : undefined,
               ipConfig: Yup.string().matches(
                 /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-                'Is not valid IP',
+                "Is not valid IP"
               ),
             })}
           >
             {({ errors, touched, handleSubmit, setFieldValue, values }) => (
               <>
-                <Form layout='vertical' autoComplete='off'>
+                <Form layout="vertical" autoComplete="off">
                   <Typography.Title level={5}>
                     Installation Properties
                   </Typography.Title>
                   <Divider dashed />
-                  <div className={form} style={{ gap: '16px' }}>
-                    <Form.Item label='Company Template'>
+                  <div className={form} style={{ gap: "16px" }}>
+                    <Form.Item label="Company Template">
                       <FormikInput
-                        name='companyName'
-                        placeholder='Company Template'
+                        name="companyName"
+                        placeholder="Company Template"
                         disabled
                       />
                     </Form.Item>
-                    <Form.Item label='Template Name'>
+                    <Form.Item label="Template Name">
                       <FormikInput
-                        name='templateName'
-                        placeholder='Template Name'
+                        name="templateName"
+                        placeholder="Template Name"
                         disabled
                       />
                     </Form.Item>
-                    <Form.Item label='Cpanel Username'>
+                    <Form.Item label="Cpanel Username">
                       <FormikInput
-                        name='cpanelUsername'
-                        placeholder='Cpanel Username'
+                        name="cpanelUsername"
+                        placeholder="Cpanel Username"
                         disabled
                       />
                     </Form.Item>
                     <Form.Item
-                      label='Cpanel Password'
+                      label="Cpanel Password"
                       required={editPassword}
                       validateStatus={
                         errors.cpanelPassword &&
                         touched.cpanelPassword &&
-                        'error'
+                        "error"
                       }
-                      help={<ErrorMessage name='cpanelPassword' />}
+                      help={<ErrorMessage name="cpanelPassword" />}
                     >
                       <Input.Group compact>
                         <FormikInput
-                          name='cpanelPassword'
-                          style={{ width: 'calc(100% - 31px)' }}
-                          placeholder='**********'
-                          type='password'
+                          name="cpanelPassword"
+                          style={{ width: "calc(100% - 31px)" }}
+                          placeholder="**********"
+                          type="password"
                           disabled={!editPassword}
                         />
                         <Button
@@ -494,100 +497,96 @@ export const MembershipEdit = ({
                         />
                       </Input.Group>
                     </Form.Item>
-                    <Form.Item label='WordPress Install Name'>
+                    <Form.Item label="WordPress Install Name">
                       <FormikInput
-                        name='wordpressInstallName'
-                        placeholder='WordPress Install Name'
+                        name="wordpressInstallName"
+                        placeholder="WordPress Install Name"
                         disabled
                       />
                     </Form.Item>
-                    <Form.Item label='WordPress Username'>
+                    <Form.Item label="WordPress Username">
                       <FormikInput
-                        name='wordpressUsername'
-                        placeholder='WordPress Username'
+                        name="wordpressUsername"
+                        placeholder="WordPress Username"
                         disabled
                       />
                     </Form.Item>
-                    <Form.Item label='Original WordPress URL'>
+                    <Form.Item label="Original WordPress URL">
                       <FormikInput
-                        name='originalWordpressInstallUrl'
-                        placeholder='Original WordPress URL'
+                        name="originalWordpressInstallUrl"
+                        placeholder="Original WordPress URL"
                         disabled
                       />
                     </Form.Item>
-                    <Form.Item label='WordPress URL'>
+                    <Form.Item label="WordPress URL">
                       <FormikInput
-                        name='wordpressInstallUrl'
-                        placeholder='WordPress URL'
+                        name="wordpressInstallUrl"
+                        placeholder="WordPress URL"
                       />
                     </Form.Item>
                   </div>
-                  <Typography.Title level={5} style={{ marginTop: '24px' }}>
+                  <Typography.Title level={5} style={{ marginTop: "24px" }}>
                     Membership's Properties
                   </Typography.Title>
                   <Divider dashed />
-                  <div className={form} style={{ marginBottom: '10px' }}>
-                    <Form.Item label='Project Name'>
+                  <div className={form} style={{ marginBottom: "10px" }}>
+                    <Form.Item label="Project Name">
                       <FormikInput
-                        name='projectName'
-                        placeholder='Project Name'
+                        name="projectName"
+                        placeholder="Project Name"
                       />
                     </Form.Item>
                   </div>
-                  <div className={form} style={{ gap: '16px' }}>
-                    <Form.Item label='Cpanel Registration Key'>
+                  <div className={form} style={{ gap: "16px" }}>
+                    <Form.Item label="Cpanel Registration Key">
                       <FormikInput
-                        name='cpanelRegistrationKey'
-                        placeholder='Cpanel Registration Key'
+                        name="cpanelRegistrationKey"
+                        placeholder="Cpanel Registration Key"
                         disabled
                       />
                     </Form.Item>
                     <Form.Item
-                      label='IP Configuration'
+                      label="IP Configuration"
                       validateStatus={
-                        errors.ipConfig && touched.ipConfig && 'error'
+                        errors.ipConfig && touched.ipConfig && "error"
                       }
-                      help={<ErrorMessage name='ipConfig' />}
+                      help={<ErrorMessage name="ipConfig" />}
                     >
                       <FormikInput
-                        name='ipConfig'
-                        placeholder='xxx.xxx.xxx.xx'
-                        pattern='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+                        name="ipConfig"
+                        placeholder="xxx.xxx.xxx.xx"
+                        pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
                       />
                     </Form.Item>
-                    <Form.Item label='Customer'>
+                    <Form.Item label="Customer">
                       <Select
-                        name='customerId'
+                        name="customerId"
                         options={customersOptions}
                         {...getSelectSearchProps()}
                       />
                     </Form.Item>
-                    <Form.Item label='Publication Date'>
+                    <Form.Item label="Publication Date">
                       <div
                         style={{
-                          display: 'flex'
+                          display: "flex",
                         }}
                       >
-                        <FormikInput
-                          name='activatedAt'
-                          disabled
-                          type='date'
-                        />
-                        <Button onClick={handleOpenDate} >Edit date</Button>
+                        <FormikInput name="activatedAt" disabled type="date" />
+                        <Button onClick={handleOpenDate}>Edit date</Button>
                       </div>
-                      {openData &&
+                      {openData && (
                         <Modal
                           title={``}
                           open={openData}
                           //   onOk={handleOk}
                           okButtonProps={{
                             style: {
-                              display: 'none',
+                              display: "none",
                             },
                           }}
                           cancelButtonProps={{
                             style: {
-                              display: 'none',
+                              display: "none",
                             },
                           }}
                           onCancel={handleCloseDate}
@@ -597,132 +596,151 @@ export const MembershipEdit = ({
                         >
                           <Typography.Title level={4}>
                             Verify DNS
-                            <a href={`https://www.whatsmydns.net/#A/${WordpressUrl[1]}`} target="_blank" rel='noreferrer' style={{ margin: '5px' }}>
+                            <a
+                              href={`https://www.whatsmydns.net/#A/${WordpressUrl[1]}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={{ margin: "5px" }}
+                            >
                               Here!
                             </a>
                           </Typography.Title>
 
                           <br />
-                          <div style={{ margin: '15px 0', display: 'flex', justifyContent: 'space-between' }}>
-                            Did the DNS propagate conrrectly?
-                            <AntdCheckbox onChange={onChangeDNS}>
-                            </AntdCheckbox>
-                          </div>
-                          {console.log({ dnsCorrect })}
-                          {dnsCorrect &&
-                            <FormikInput
-                              style={{
-                                margin: '15px 0',
-                              }}
-                              name='activatedAt'
-                              placeholder='Publication Date'
-                              type='date'
-                            />
-                          }
                           <div
                             style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              gap: '16px',
-                              justifyContent: 'flex-end',
-                              paddingTop: '8px',
+                              margin: "15px 0",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
                           >
-                            <Button onClick={() => {
-                              handleCloseDate()
-                              setDnsCorrect(false)
-                            }}>Cancel</Button>
+                            Did the DNS propagate conrrectly?
+                            <AntdCheckbox onChange={onChangeDNS}></AntdCheckbox>
+                          </div>
+                          {console.log({ dnsCorrect })}
+                          {dnsCorrect && (
+                            <FormikInput
+                              style={{
+                                margin: "15px 0",
+                              }}
+                              name="activatedAt"
+                              placeholder="Publication Date"
+                              type="date"
+                            />
+                          )}
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: "16px",
+                              justifyContent: "flex-end",
+                              paddingTop: "8px",
+                            }}
+                          >
                             <Button
-                              type='primary'
+                              onClick={() => {
+                                handleCloseDate()
+                                setDnsCorrect(false)
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="primary"
                               onClick={() => {
                                 handleCloseDate()
                                 if (dnsCorrect === false) {
-                                  values.activatedAt = 'Invalid date'
+                                  values.activatedAt = "Invalid date"
                                 }
                                 setDnsCorrect(false)
                               }}
 
-                            // disabled={(values.activatedAt === 'Invalid date' || !dnsCorrect) ? true : false}
+                              // disabled={(values.activatedAt === 'Invalid date' || !dnsCorrect) ? true : false}
                             >
                               Save
                             </Button>
                           </div>
                         </Modal>
-                      }
+                      )}
                       <AntdCheckbox
-                        checked={(values.activatedAt === 'Invalid date' || values.activatedAt === null) ? false : true}
+                        checked={
+                          values.activatedAt === "Invalid date" ||
+                          values.activatedAt === null
+                            ? false
+                            : true
+                        }
                         disabled
                       >
                         Production Mode
                       </AntdCheckbox>
                     </Form.Item>
-                    <Form.Item label='Google Recaptcha Public Key'>
+                    <Form.Item label="Google Recaptcha Public Key">
                       <FormikInput
                         disabled
-                        name='googleRecaptcha'
-                        placeholder='Google Recaptcha Public Key'
+                        name="googleRecaptcha"
+                        placeholder="Google Recaptcha Public Key"
                       />
                     </Form.Item>
-                    <Form.Item label='Google Maps API Key'>
+                    <Form.Item label="Google Maps API Key">
                       <FormikInput
                         disabled
-                        name='googleMapsApiKey'
-                        placeholder='Google Maps API Key'
+                        name="googleMapsApiKey"
+                        placeholder="Google Maps API Key"
                       />
                     </Form.Item>
-                    <Form.Item label='Google Recaptcha Private Key'>
+                    <Form.Item label="Google Recaptcha Private Key">
                       <FormikInput
                         disabled
-                        name='googleRecaptchaExtraKey'
-                        placeholder='Google Recaptcha Private Key'
+                        name="googleRecaptchaExtraKey"
+                        placeholder="Google Recaptcha Private Key"
                       />
                     </Form.Item>
                     <div></div>
-                    <Form.Item label='Data Studio URL'>
+                    <Form.Item label="Data Studio URL">
                       <FormikInput
-                        name='dataStudioUrl'
-                        placeholder='Data Studio URL'
+                        name="dataStudioUrl"
+                        placeholder="Data Studio URL"
                       />
                     </Form.Item>
-                    <Form.Item label='Validate Registration'>
-                      <Checkbox name='validateRegistration'>
+                    <Form.Item label="Validate Registration">
+                      <Checkbox name="validateRegistration">
                         <span
                           style={{
-                            whiteSpace: 'nowrap',
+                            whiteSpace: "nowrap",
                           }}
                         >
                           Validate Registration
                         </span>
                       </Checkbox>
                     </Form.Item>
-                    <Form.Item label='Force Registration'>
-                      <Checkbox name='forceRegistration'>
+                    <Form.Item label="Force Registration">
+                      <Checkbox name="forceRegistration">
                         <span
                           style={{
-                            whiteSpace: 'nowrap',
+                            whiteSpace: "nowrap",
                           }}
                         >
                           Force Registration
                         </span>
                       </Checkbox>
                     </Form.Item>
-                    <Form.Item label='Force Registration Forced'>
+                    <Form.Item label="Force Registration Forced">
                       <Select
-                        name='forceRegistrationForced'
-                        placeholder='Force Registration Forced'
+                        name="forceRegistrationForced"
+                        placeholder="Force Registration Forced"
                         options={[
-                          { label: 'Soft', value: '0' },
-                          { label: 'Forced', value: '1' },
+                          { label: "Soft", value: "0" },
+                          { label: "Forced", value: "1" },
                         ]}
                         {...getSelectSearchProps()}
                         disabled={!values.forceRegistration}
                       />
                     </Form.Item>
-                    <Form.Item label='Open Registration After'>
+                    <Form.Item label="Open Registration After">
                       <Select
-                        name='sinUpLeftClick'
-                        placeholder='Open Registration After'
-                        options={Array.from(Array(10).keys()).map(value => ({
+                        name="sinUpLeftClick"
+                        placeholder="Open Registration After"
+                        options={Array.from(Array(10).keys()).map((value) => ({
                           label: `${value + 1}`,
                           value: `${value + 1}`,
                         }))}
@@ -730,70 +748,76 @@ export const MembershipEdit = ({
                         disabled={!values.forceRegistration}
                       />
                     </Form.Item>
-                    <Form.Item label='Domain Status'>
+                    <Form.Item label="Domain Status">
                       <Select
-                        name='status'
-                        placeholder='Select status'
+                        name="status"
+                        placeholder="Select status"
                         options={[
-                          { label: 'Pending Client Change DNS', value: 'Pending_Client_Change_DNS' },
-                          { label: 'Pending Apply Domain to Host', value: 'Pending_Apply_Domain_to_Host' },
-                          { label: 'DNS Error', value: 'DNS_Error' },
+                          {
+                            label: "Pending Client Change DNS",
+                            value: "Pending_Client_Change_DNS",
+                          },
+                          {
+                            label: "Pending Apply Domain to Host",
+                            value: "Pending_Apply_Domain_to_Host",
+                          },
+                          { label: "DNS Error", value: "DNS_Error" },
                         ]}
                       />
                     </Form.Item>
-                    <Form.Item label='Board'>
+                    <Form.Item label="Board">
                       <FormikInput
-                        name='boardName'
+                        name="boardName"
                         // placeholder='Data Studio URL'
                         disabled
                       />
                     </Form.Item>
                   </div>
-                  <Typography.Title level={5} style={{ marginTop: '24px' }}>
-                    Membership's Team{' '}
+                  <Typography.Title level={5} style={{ marginTop: "24px" }}>
+                    Membership's Team{" "}
                   </Typography.Title>
                   <Divider dashed />
-                  <div className={form} style={{ gap: '16px' }}>
-                    <Form.Item label='Profile Deployment Team'>
+                  <div className={form} style={{ gap: "16px" }}>
+                    <Form.Item label="Profile Deployment Team">
                       <Select
-                        mode='multiple'
-                        name='profileDeployment'
+                        mode="multiple"
+                        name="profileDeployment"
                         options={profile_deployment}
                         {...getSelectSearchProps()}
                       />
                     </Form.Item>
-                    <Form.Item label='Profile Marketing Team'>
+                    <Form.Item label="Profile Marketing Team">
                       <Select
-                        mode='multiple'
-                        name='profileMarketing'
+                        mode="multiple"
+                        name="profileMarketing"
                         options={profile_marketing}
                         {...getSelectSearchProps()}
                       />
                     </Form.Item>
-                    <Form.Item label='Profile Project Manager Team'>
+                    <Form.Item label="Profile Project Manager Team">
                       <AntdSelect
-                        mode='multiple'
-                        name='profileProjectManager'
+                        mode="multiple"
+                        name="profileProjectManager"
                         options={profile_project_manager}
                         value={values.profileProjectManager}
-                        onChange={value => {
-                          setFieldValue('profileProjectManager', value)
+                        onChange={(value) => {
+                          setFieldValue("profileProjectManager", value)
                         }}
                         {...getSelectSearchProps()}
                       />
                     </Form.Item>
                   </div>
-                  <Typography.Title level={5} style={{ marginTop: '24px' }}>
+                  <Typography.Title level={5} style={{ marginTop: "24px" }}>
                     User Properties
                   </Typography.Title>
                   <Divider dashed />
-                  <div className={form} style={{ gap: '0px' }}>
+                  <div className={form} style={{ gap: "0px" }}>
                     <div>
                       <Checkbox
-                        name='hasCms'
+                        name="hasCms"
                         style={{
-                          marginLeft: '24px',
-                          marginBottom: '4px',
+                          marginLeft: "24px",
+                          marginBottom: "4px",
                         }}
                       >
                         Website Builder
@@ -801,16 +825,16 @@ export const MembershipEdit = ({
                       {values.hasCms && (
                         <div
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          {treeData.map(item => (
+                          {treeData.map((item) => (
                             <Checkbox
                               name={item.key}
                               style={{
-                                marginLeft: '24px',
-                                marginBottom: '4px',
+                                marginLeft: "24px",
+                                marginBottom: "4px",
                               }}
                             >
                               {item.title}
@@ -821,10 +845,10 @@ export const MembershipEdit = ({
                     </div>
                     <div>
                       <Checkbox
-                        name='marketing'
+                        name="marketing"
                         style={{
-                          marginLeft: '24px',
-                          marginBottom: '4px',
+                          marginLeft: "24px",
+                          marginBottom: "4px",
                         }}
                       >
                         Lead Generation
@@ -832,16 +856,16 @@ export const MembershipEdit = ({
                       {values.marketing && (
                         <div
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          {treeLeadGeneration.map(item => (
+                          {treeLeadGeneration.map((item) => (
                             <Checkbox
                               name={item.key}
                               style={{
-                                marginLeft: '24px',
-                                marginBottom: '4px',
+                                marginLeft: "24px",
+                                marginBottom: "4px",
                               }}
                             >
                               {item.title}
@@ -852,10 +876,10 @@ export const MembershipEdit = ({
                     </div>
                     <div>
                       <Checkbox
-                        name='hasBasicIdx'
+                        name="hasBasicIdx"
                         style={{
-                          marginLeft: '24px',
-                          marginBottom: '4px',
+                          marginLeft: "24px",
+                          marginBottom: "4px",
                         }}
                       >
                         IDX Integration
@@ -863,16 +887,16 @@ export const MembershipEdit = ({
                       {values.hasBasicIdx && (
                         <div
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          {treeDataIDX.map(item => (
+                          {treeDataIDX.map((item) => (
                             <Checkbox
                               name={item.key}
                               style={{
-                                marginLeft: '24px',
-                                marginBottom: '4px',
+                                marginLeft: "24px",
+                                marginBottom: "4px",
                               }}
                             >
                               {item.title}
@@ -883,10 +907,10 @@ export const MembershipEdit = ({
                     </div>
                     <div>
                       <Checkbox
-                        name='hasVacationRentals'
+                        name="hasVacationRentals"
                         style={{
-                          marginLeft: '24px',
-                          marginBottom: '4px',
+                          marginLeft: "24px",
+                          marginBottom: "4px",
                         }}
                       >
                         Has Vacation Rentals
@@ -894,16 +918,16 @@ export const MembershipEdit = ({
                       {values.hasVacationRentals && (
                         <div
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          {treeHasVacationRentals.map(item => (
+                          {treeHasVacationRentals.map((item) => (
                             <Checkbox
                               name={item.key}
                               style={{
-                                marginLeft: '24px',
-                                marginBottom: '4px',
+                                marginLeft: "24px",
+                                marginBottom: "4px",
                               }}
                             >
                               {item.title}
@@ -914,16 +938,16 @@ export const MembershipEdit = ({
                     </div>
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        display: "flex",
+                        flexDirection: "column",
                       }}
                     >
-                      {treeOthers.map(item => (
+                      {treeOthers.map((item) => (
                         <Checkbox
                           name={item.key}
                           style={{
-                            marginLeft: '24px',
-                            marginBottom: '4px',
+                            marginLeft: "24px",
+                            marginBottom: "4px",
                           }}
                         >
                           {item.title}
@@ -934,16 +958,16 @@ export const MembershipEdit = ({
                 </Form>
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '16px',
-                    justifyContent: 'flex-end',
-                    paddingTop: '8px',
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "16px",
+                    justifyContent: "flex-end",
+                    paddingTop: "8px",
                   }}
                 >
                   <Button onClick={onClose}>Cancel</Button>
                   <Button
-                    type='primary'
+                    type="primary"
                     onClick={handleSubmit}
                     loading={isLoadingEdit}
                   >

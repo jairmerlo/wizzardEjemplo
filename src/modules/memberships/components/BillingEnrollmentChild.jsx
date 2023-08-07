@@ -132,7 +132,7 @@ export const BillingEnrollmentChild = ({
               notification.success({
                 message: `Success`,
                 description:
-                  "The subscription invoice will be issued and will be sent in approximately 1 hour.",
+                  "The subscription invoice will be issued and sent in approximately 1 hour. We would like to inform you that you will also receive a copy of the email.",
                 placement: "bottomRight",
               })
               handleClose()

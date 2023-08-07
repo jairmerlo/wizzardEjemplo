@@ -28,7 +28,7 @@ import {
   showTotal,
   USD,
 } from "../../../helpers"
-import { useGetAllCustomersQuery } from "../../../app/api/billing"
+import { useGetAllCustomersV3Query } from "../../../app/api/billing"
 import moment from "moment/moment"
 import { Link, useSearchParams } from "react-router-dom"
 import currency from "currency.js"
@@ -91,14 +91,13 @@ export const CustomersTableV1 = ({ filter }) => {
   const [page, setPage] = useState(parseInt(searchParams.get("page")))
   const [totalCurrentItems, setTotalCurrentItems] = useState()
   const [currentItems, setCurrentItems] = useState([])
-  const {
-    data = [],
-    isLoading,
-    users = [],
-  } = useGetAllCustomersQuery({
+  const { data = {}, isLoading } = useGetAllCustomersV3Query({
     filter,
     users: arrayUsersId,
   })
+  const { data: results = [], users = [] } = data
+  const items = currentItems.length !== 0 ? currentItems : results
+  const totalData = results?.length
 
   useEffect(() => {
     setUsersFiltered(
@@ -117,21 +116,18 @@ export const CustomersTableV1 = ({ filter }) => {
     // setFiltredValue((e) => e)
   }, [filterUsers.length])
   console.log({ data })
-  const items = currentItems.length !== 0 ? currentItems : data
-  const totalData = data?.length
   // const totalLifetime = items
   //   ?.map(item => currency(item.monthly_amount).value ?? 0)
   //   .reduce((a, b) => a + b, 0)
   const totalMonthly = items
-    ?.map((item) => currency(item.monthly).value ?? 0)
+    .map((item) => currency(item.monthly).value ?? 0)
     .reduce((a, b) => a + b, 0)
-  // console.log({ totalLifetime, totalMonthly, items })
 
   useEffect(() => {
-    if (data?.length > 0) {
-      setFilteredCustomers(data)
+    if (results?.length > 0) {
+      setFilteredCustomers(results)
     }
-  }, [data?.length])
+  }, [results?.length])
 
   const [tableKey, setTableKey] = useState(0)
   const [searchText, setSearchText] = useReducer(
@@ -184,7 +180,7 @@ export const CustomersTableV1 = ({ filter }) => {
 
   useEffect(() => {
     if (filtredValue === "") {
-      setFilteredCustomers(data)
+      setFilteredCustomers(results)
       setSearchParams({
         page: 1,
         size: 10,
