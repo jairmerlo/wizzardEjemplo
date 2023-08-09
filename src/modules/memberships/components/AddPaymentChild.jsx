@@ -166,7 +166,7 @@ export const AddPaymentChild = ({
             .then(({ data }) => {
               notification.success({
                 message: `Success`,
-                // description: "The subscription invoice will be issued and will be sent in approximately 1 hour.",
+                description: "Payment successfully added!",
                 placement: "bottomRight",
               })
               handleClose()

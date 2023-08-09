@@ -115,7 +115,7 @@ export const CustomersTableV1 = ({ filter }) => {
     setArrayUsersId(usersId)
     // setFiltredValue((e) => e)
   }, [filterUsers.length])
-  console.log({ data })
+  // console.log({ filteredCustomers })
   // const totalLifetime = items
   //   ?.map(item => currency(item.monthly_amount).value ?? 0)
   //   .reduce((a, b) => a + b, 0)
@@ -124,9 +124,9 @@ export const CustomersTableV1 = ({ filter }) => {
     .reduce((a, b) => a + b, 0)
 
   useEffect(() => {
-    if (results?.length > 0) {
-      setFilteredCustomers(results)
-    }
+    // if (results?.length > 0) {
+    setFilteredCustomers(results)
+    // }
   }, [results?.length])
 
   const [tableKey, setTableKey] = useState(0)
@@ -188,8 +188,12 @@ export const CustomersTableV1 = ({ filter }) => {
       setTotalCurrentItems(totalData)
       return
     }
-    const newCustomer = data.filter((customer) => {
+    const newCustomer = results.filter((customer) => {
       return (
+        customer.email_contact
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
         customer.registration_key
           ?.toString()
           .toLowerCase()
@@ -199,10 +203,6 @@ export const CustomersTableV1 = ({ filter }) => {
           .toLowerCase()
           .includes(filtredValue.toLowerCase()) ||
         customer.fullname
-          ?.toString()
-          .toLowerCase()
-          .includes(filtredValue.toLowerCase()) ||
-        customer.email_contact
           ?.toString()
           .toLowerCase()
           .includes(filtredValue.toLowerCase())
@@ -406,6 +406,7 @@ export const CustomersTableV1 = ({ filter }) => {
           {record.email_contact}
         </Tooltip>
       ),
+      width: 300,
     },
     {
       title: "Phone",
@@ -682,7 +683,7 @@ export const CustomersTableV1 = ({ filter }) => {
               Add New Customer
             </Button>
           </Link>
-          {/* <Typography.Title level={5}>Users:</Typography.Title>
+          <Typography.Title level={5}>Users:</Typography.Title>
           <Select
             disabled={!data}
             mode="multiple"
@@ -696,7 +697,7 @@ export const CustomersTableV1 = ({ filter }) => {
               marginLeft: "15px",
             }}
             maxTagCount="responsive"
-          /> */}
+          />
           <Typography.Title level={5}>Search:</Typography.Title>
           {/* {console.log({ memberships })} */}
           <Input.Search

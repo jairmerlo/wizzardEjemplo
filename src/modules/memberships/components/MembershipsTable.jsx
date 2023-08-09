@@ -814,7 +814,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </a>
       ),
       width: 170,
-      // fixed: "left",
+      fixed: "left",
     },
     {
       title: "Client Name",
@@ -837,7 +837,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </>
       ),
       width: 160,
-      // fixed: "left",
+      fixed: "left",
     },
     {
       title: "Product/Service",
@@ -1027,6 +1027,9 @@ export const MembershipsTable = ({ filter = "" }) => {
     },
     ...columnsWithoutBoard,
   ]
+  const columnsStatusBoard = columns.filter(
+    ({ title }) => title !== "Board" && title !== "Status"
+  )
   const payments_due_columns = [
     {
       title: "Balance Due",
@@ -1046,7 +1049,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </Tooltip>
       ),
       width: 160,
-      // fixed: "left",
+      fixed: "left",
       // defaultSortOrder: "descend",
     },
     {
@@ -1067,7 +1070,7 @@ export const MembershipsTable = ({ filter = "" }) => {
         </Tooltip>
       ),
       width: 160,
-      // fixed: "left",
+      fixed: "left",
       // defaultSortOrder: "descend",
     },
     {
@@ -1088,10 +1091,10 @@ export const MembershipsTable = ({ filter = "" }) => {
         </Tooltip>
       ),
       width: 160,
-      // fixed: "left",
+      fixed: "left",
       // defaultSortOrder: "descend",
     },
-    ...columns,
+    ...columnsStatusBoard,
   ]
   const getColumns = (filter) => {
     switch (filter) {

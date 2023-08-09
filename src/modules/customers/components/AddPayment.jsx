@@ -1,4 +1,4 @@
-import { Modal, Skeleton, Table, Tooltip } from "antd"
+import { Button, Modal, Skeleton, Table, Tooltip } from "antd"
 import { useGetListPaymentsQuery } from "../../../app/api/backoffice"
 import { getColumnProps, showTotal } from "../../../helpers"
 import { EyeTwoTone, FilePdfOutlined } from "@ant-design/icons"
@@ -95,13 +95,13 @@ export const AddPayment = ({ registration_key }) => {
         dataIndex: "attachFile",
       }),
       render: (text, { attachFile }) => (
-        <Tooltip
-          title="Attach File"
-          overlayStyle={{ zIndex: 10000 }}
+        <Button
+          disabled={attachFile !== null ? false : true}
           onClick={() => hadleViewReceipt(attachFile)}
+          style={{ backgroundColor: "transparent", border: "none" }}
         >
-          <EyeTwoTone style={{ fontSize: "18px" }} disabled={attachFile} />
-        </Tooltip>
+          <EyeTwoTone style={{ fontSize: "18px" }} />
+        </Button>
       ),
     },
   ]

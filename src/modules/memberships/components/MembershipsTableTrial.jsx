@@ -606,10 +606,12 @@ export const MembershipsTableTrial = ({ filter = "trial" }) => {
       ...getColumnSortProps("wordpress_install_url"),
       // fixed: 'left',
       width: 400,
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.wordpress_install_url}>
-          {record.wordpress_install_url}
-        </Tooltip>
+      render: (url) => (
+        <a href={url} target="_blank" rel="noreferrer">
+          <Tooltip placement="topLeft" title={url}>
+            {url}
+          </Tooltip>
+        </a>
       ),
     },
     {

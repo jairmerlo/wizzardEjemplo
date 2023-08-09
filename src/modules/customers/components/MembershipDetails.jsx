@@ -76,8 +76,6 @@ export const MembershipDetails = () => {
     isLoading: isLoadingM,
   } = data
 
-  console.log({ aggrements, authorizationsForms })
-
   const {
     hasCrm = 0,
     hasTrial = 0,
