@@ -54,7 +54,7 @@ export const AddPayment = ({ registration_key }) => {
         return (
           <div>
             <strong>Init: </strong>
-            {moment(invoicePeriodInit).format("MMM YYYY")}
+            {invoicePeriodInit}
           </div>
         )
       },
@@ -66,7 +66,7 @@ export const AddPayment = ({ registration_key }) => {
       render(text, { invoicePeriodEnd }) {
         return (
           <div>
-            <strong>End: </strong> {moment(invoicePeriodEnd).format("MMM YYYY")}
+            <strong>End: </strong> {invoicePeriodEnd}
           </div>
         )
       },

@@ -30,7 +30,7 @@ export const BillingEnrollment = ({
             style={{ fontSize: "20px" }}
           ></span>
           <p style={{ textAlign: "center" }}>
-            BILLING
+            STRIPE
             <br /> ENROLLMENT
           </p>
         </button>
