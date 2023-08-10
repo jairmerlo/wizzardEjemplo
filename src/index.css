@@ -24,7 +24,7 @@
 }
 
 .ms-wrapper-signature .ms-siganture-text {
-  font-family: 'Parisienne', cursive;
+  font-family: "Parisienne", cursive;
   font-size: 40px;
 }
 
@@ -90,6 +90,10 @@
   display: grid;
   grid-template-columns: repeat(3, auto);
   grid-template-rows: repeat(3, 100px);
+}
+
+.titleColumnTable:hover {
+  text-decoration: underline;
 }
 
 .itemGridToolbox {

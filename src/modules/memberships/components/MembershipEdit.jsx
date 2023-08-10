@@ -182,7 +182,7 @@ export const MembershipEdit = ({
       skip: !open,
     }
   )
-  // console.log({ customers })
+  console.log({ customers })
   const customersOptions = useMemo(
     () =>
       customers.map(({ user_name, email_contact, uuid }) => ({
