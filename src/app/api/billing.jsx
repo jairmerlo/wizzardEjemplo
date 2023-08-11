@@ -37,6 +37,12 @@ export const billing = createApi({
         },
       }),
     }),
+    getListAbandonedCard: builder.query({
+      query: () => ({
+        url: "/list-abandoned-cart",
+        method: "POST",
+      }),
+    }),
     getAllCustomersV3: builder.query({
       query: ({ filter, user_id, users }) => ({
         url: "/list-customers-v3",
@@ -1030,6 +1036,7 @@ export const {
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
+  useGetListAbandonedCardQuery,
   useGetAllCustomersV3Query,
   useGetNewQuotesOptionsQuery,
   useCreateProspectMutation,

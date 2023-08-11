@@ -10,39 +10,25 @@ import {
   DatePicker,
   Divider,
   Input,
-  Modal,
-  Popover,
-  Radio,
-  Select,
   Space,
   Table,
   Tooltip,
   Typography,
 } from "antd"
-import { DollarOutlined, SearchOutlined } from "@ant-design/icons"
+import { SearchOutlined } from "@ant-design/icons"
 import {
-  capitalize,
   getColumnProps,
-  getConfig,
   renderTextHighlighter,
   showTotal,
-  USD,
 } from "../../../helpers"
 import moment from "moment/moment"
-import { useGetAllMembershipsQuery } from "../../../app/api/backoffice"
 import currency from "currency.js"
-import {
-  LastActionCell,
-  EditMemberhipIcon,
-  Requesticon,
-  Deleteicon,
-  BillingEnrollment,
-  Actions,
-} from "."
-import numbro from "numbro"
+import { LastActionCell } from "."
 import { useSearchParams } from "react-router-dom"
-import { useCss, useEvent } from "react-use"
+import { useEvent } from "react-use"
 import "../../../icons/style.css"
+import { useGetListAbandonedCardQuery } from "../../../app/api/billing"
+import numbro from "numbro"
 
 const reducer = (state, newState) => ({ ...state, ...newState })
 const SEARCH_TEXT_INITIAL_STATE = {
@@ -70,40 +56,11 @@ export const MembershipsTable = ({ filter = "" }) => {
     page: 1,
     size: 10,
   })
-  const userId = getConfig().userId
+  // const userId = getConfig().userId
 
   const [filtreredMembership, setFiltreredMembership] = useState([])
   const [filtredValue, setFiltredValue] = useState("")
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
 
-  const [filterUsers, setFilterUsers] = useState([])
-  const [arrayUsersId, setArrayUsersId] = useState([])
-  const [usersFiltered, setUsersFiltered] = useState([])
-
-  const [currentRegKey, setCurrentRegKey] = useState("")
-  const [billingCicle, setBillingCicle] = useState(1)
-  const [currentId, setCurrentId] = useState("")
-  const [currenMembershipID, setCurrenMembershipID] = useState("")
-  const handleClickModalActions = (
-    regkey,
-    id,
-    cycle_billing_type,
-    memberships_id
-  ) => {
-    setCurrentRegKey(regkey)
-    setBillingCicle(cycle_billing_type)
-    setCurrentId(id)
-    setCurrenMembershipID(memberships_id)
-    handleOpen()
-  }
-  // const [filteredValueColumn, setFilteredValueColumn] = useState({ value: '', dataIndex: '' })
-  // const [sortAscending, setSortAscending] = useState('')
-  // const [sortDescending, setSortDescending] = useState('')
-  const containerSortButtons = useCss({
-    display: "flex",
-  })
   const [sortColumn, setSortColumn] = useState({ sort: "", dataIndex: "" })
   const [pageSize, setPageSize] = useState(parseInt(searchParams.get("size")))
   const [page, setPage] = useState(parseInt(searchParams.get("page")))
@@ -111,17 +68,6 @@ export const MembershipsTable = ({ filter = "" }) => {
     localStorage.setItem("scrollY002", window.scrollY.toString())
   }, [])
 
-  const [filteredRadioGroup, setFilteredRadioGroup] = useState({
-    value: 0,
-    dataIndex: [],
-    key: "",
-  })
-  const [filteredNumber, setFilteredNumber] = useState({
-    less: 0,
-    greater: 0,
-    dataIndex: "",
-    value: "",
-  })
   const getRepeatedValues = (filterUsersName, users) => {
     const repeatedValues = []
 
@@ -137,48 +83,17 @@ export const MembershipsTable = ({ filter = "" }) => {
   useEvent("scroll", onScroll)
 
   const [totalCurrentItems, setTotalCurrentItems] = useState()
-  const { data = {}, isLoading } = useGetAllMembershipsQuery({
-    filter,
-    users: arrayUsersId,
-    userId,
-  })
-  const {
-    data: memberships = [],
-    total = 0,
-    users = [],
-    billingEnrollment = 0,
-    addPayment = 0,
-  } = data
-
-  useEffect(() => {
-    setUsersFiltered(
-      users.map(({ label }) => {
-        return {
-          label,
-          value: label,
-        }
-      })
-    )
-  }, [users?.length])
-
-  useEffect(() => {
-    const usersId = getRepeatedValues(filterUsers, users)
-    setArrayUsersId(usersId)
-    // setFiltredValue((e) => e)
-  }, [filterUsers.length])
-
+  const { data: dataAbandoned = {}, isLoading } = useGetListAbandonedCardQuery()
+  const { data = [], total = 0 } = dataAbandoned
   console.log({ data })
 
   useEffect(() => {
-    // if (memberships?.length > 0) {
-    setFiltreredMembership(memberships)
+    setFiltreredMembership(data)
     setSearchParams({
       page: 1,
       size: 10,
     })
-    setTotalCurrentItems(total)
-    // }
-  }, [memberships?.length])
+  }, [data?.length])
 
   useEffect(() => {
     if (sortColumn.dataIndex === "") {
@@ -186,11 +101,11 @@ export const MembershipsTable = ({ filter = "" }) => {
         page: 1,
         size: 10,
       })
-      setFiltreredMembership(memberships)
-      setTotalCurrentItems(total)
+      setFiltreredMembership(data)
+      setTotalCurrentItems(data.length)
       return
     }
-    const membershipCopy = [...memberships]
+    const membershipCopy = [...data]
 
     if (sortColumn.sort === "asc") {
       membershipCopy.sort((a, b) => {
@@ -249,120 +164,38 @@ export const MembershipsTable = ({ filter = "" }) => {
   }, [sortColumn])
 
   useEffect(() => {
-    if (filteredRadioGroup.dataIndex.length === 0) {
-      setFiltreredMembership(memberships)
-      setSearchParams({
-        page: 1,
-        size: 10,
-      })
-      setTotalCurrentItems(total)
-      return
-    }
-
-    let newMembership = []
-
-    if (filteredRadioGroup.value === 1) {
-      newMembership = memberships.filter((membership) => {
-        return membership[filteredRadioGroup.dataIndex[0]] !== null
-      })
-    } else if (filteredRadioGroup.value === 3) {
-      newMembership = memberships.filter((membership) => {
-        return membership[filteredRadioGroup.dataIndex[0]] === null
-      })
-    } else if (filteredRadioGroup.value === 2) {
-      if (filteredRadioGroup.key === "") return
-      newMembership = memberships.filter((membership) => {
-        return filteredRadioGroup.dataIndex.some((dataIndexItem) =>
-          membership[dataIndexItem]
-            ?.toString()
-            .toLowerCase()
-            .includes(filteredRadioGroup.key.toLowerCase())
-        )
-      })
-    }
-    setSearchParams({
-      page: 1,
-      size: 10,
-    })
-    setFiltreredMembership(newMembership)
-    setTotalCurrentItems(newMembership.length)
-  }, [filteredRadioGroup])
-
-  useEffect(() => {
-    if (filteredNumber.dataIndex === "") {
-      setFiltreredMembership(memberships)
-      setSearchParams({
-        page: 1,
-        size: 10,
-      })
-      setTotalCurrentItems(total)
-      return
-    }
-
-    let newMembership = []
-
-    if (filteredNumber.value === 1) {
-      newMembership = memberships.filter((membership) => {
-        return membership[filteredNumber.dataIndex] !== null
-      })
-    } else if (filteredNumber.value === 5) {
-      newMembership = memberships.filter((membership) => {
-        return membership[filteredNumber.dataIndex] === null
-      })
-    } else if (filteredNumber.value === 2) {
-      newMembership = memberships.filter((membership) => {
-        let number = membership[filteredNumber.dataIndex].match(/\d+/g)
-        let numberPart = parseFloat(number.join(""))
-        return filteredNumber.less < numberPart
-      })
-
-      // if (filteredNumber.key === '') return
-
-      // newMembership = memberships.filter(membership => {
-      //   return membership[filteredRadioGroup.dataIndex]?.toString().toLowerCase().includes(filteredRadioGroup.key.toLowerCase())
-      // })
-    }
-    setSearchParams({
-      page: 1,
-      size: 10,
-    })
-    setFiltreredMembership(newMembership)
-    setTotalCurrentItems(newMembership.length)
-  }, [filteredNumber])
-
-  useEffect(() => {
     if (filtredValue === "") {
-      setFiltreredMembership(memberships)
+      setFiltreredMembership(data)
       setSearchParams({
         page: 1,
         size: 10,
       })
-      setTotalCurrentItems(total)
+      setTotalCurrentItems(data.length)
       return
     }
-    const newMembership = memberships.filter((membership) => {
+    const newMembership = data.filter((membership) => {
       return (
-        membership.registration_key
-          ?.toString()
-          .toLowerCase()
-          .includes(filtredValue.toLowerCase()) ||
-        membership.memberships_id
-          ?.toString()
-          .toLowerCase()
-          .includes(filtredValue.toLowerCase()) ||
         membership.client_name
           ?.toString()
           .toLowerCase()
           .includes(filtredValue.toLowerCase()) ||
-        membership.project_name
+        membership.client_phone
           ?.toString()
           .toLowerCase()
           .includes(filtredValue.toLowerCase()) ||
-        membership.email
+        membership.client_email
           ?.toString()
           .toLowerCase()
           .includes(filtredValue.toLowerCase()) ||
-        membership.wordpress_install_url
+        membership.program_name
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.country
+          ?.toString()
+          .toLowerCase()
+          .includes(filtredValue.toLowerCase()) ||
+        membership.city
           ?.toString()
           .toLowerCase()
           .includes(filtredValue.toLowerCase())
@@ -377,14 +210,14 @@ export const MembershipsTable = ({ filter = "" }) => {
   }, [filtredValue])
 
   useEffect(() => {
-    if (memberships?.length !== 0) {
+    if (data?.length !== 0) {
       window.scrollTo({
         top: parseInt(localStorage.getItem("scrollY002") || 0),
       })
     }
-  }, [memberships?.length])
+  }, [data?.length])
   const [currentItems, setCurrentItems] = useState([])
-  const items = currentItems.length !== 0 ? currentItems : memberships
+  const items = currentItems.length !== 0 ? currentItems : data
   const totalPrice = items
     ?.map((item) => currency(item.price || 0).value ?? 0)
     .reduce((a, b) => a + b, 0)
@@ -426,13 +259,11 @@ export const MembershipsTable = ({ filter = "" }) => {
   }
   const resetFilters = () => {
     setTableKey((tableKey) => tableKey + 1)
-    setTotalCurrentItems(total)
-    setFilteredRadioGroup({ value: 0, dataIndex: "", key: "" })
+    // setTotalCurrentItems(total)
     setSearchParams({
       page: 1,
       size: 10,
     })
-    setFilterUsers([])
     // setSearchText(SEARCH_TEXT_INITIAL_STATE)
     // setSearchedColumn(SEARCHED_COLUMN_INITIAL_STATE)
     // setCurrentItems([])
@@ -587,1030 +418,103 @@ export const MembershipsTable = ({ filter = "" }) => {
     }
   }
 
-  const launch_website_columns = [
+  const columns = [
     {
-      ...getColumnProps({
-        title: "Launch W Requested",
-        dataIndex: "request_publish_date",
-      }),
-      ...getDateColumnSearchProps("request_publish_date"),
+      title: "Date",
+      dataIndex: "create_at",
+      key: "create_at",
+      ...getDateColumnSearchProps("create_at"),
       ...getCustomColumnSortProps({
         sorter: (a, b) => {
           return moment(
-            moment(a.request_publish_date || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(
-            moment(b.request_publish_date || "Jan 01, 1970", "MMM DD, YYYY")
-          )
+            moment(a.create_at || "Jan 01, 1970", "MMM DD, YYYY")
+          ).diff(moment(b.create_at || "Jan 01, 1970", "MMM DD, YYYY"))
         },
       }),
+      render: (date, record) => (
+        <LastActionCell
+          date={record.create_at}
+          status_email={record.status_email}
+          status_fub={record.status_fub}
+          client_name={record.client_name}
+        />
+      ),
       defaultSortOrder: "descend",
-      // ...getDateColumnSearchProps('request_publish_date'),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.request_publish_date_time}>
-          {record.request_publish_date}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Membership ID",
-      dataIndex: "memberships_id",
-      key: "memberships_id",
-      ...getColumnSearchProps(["memberships_id"]),
-      ...getColumnSortProps("memberships_id"),
-      render: (text, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
-          rel="noreferrer"
-        >
-          <Tooltip placement="topLeft" title={record.memberships_id}>
-            {record.memberships_id}
-          </Tooltip>
-        </a>
-      ),
     },
     {
       title: "Client Name",
       dataIndex: "client_name",
       key: "client_name",
       ...getColumnSearchProps(["client_name"]),
-      render: (clientName, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-          rel="noreferrer"
-        >
-          <Tooltip
-            placement="topLeft"
-            title={
-              <>
-                {renderTextHighlighter({
-                  text: clientName,
-                  isHighlighted: searchedColumn["client_name"],
-                  highlightedText: searchText["client_name"],
-                })}
-              </>
-            }
-          >
-            {renderTextHighlighter({
-              text: clientName,
-              isHighlighted: searchedColumn["client_name"],
-              highlightedText: searchText["client_name"],
-            })}
-          </Tooltip>
-        </a>
-      ),
       ...getColumnSortProps("client_name"),
-    },
-    {
-      title: "Product/Service",
-      key: "class_accounting_name",
-      dataIndex: "class_accounting_name",
-      ...getColumnSearchProps(["class_accounting_name"]),
-      ...getColumnSortProps("class_accounting_name"),
       render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.class_accounting_name}>
-          {record.class_accounting_name}
+        <Tooltip placement="topLeft" title={record.client_name}>
+          {record.client_name}
         </Tooltip>
       ),
     },
     {
-      title: "Created",
-      dataIndex: "created_at",
-      key: "created_at",
-      ...getDateColumnSearchProps("created_at"),
-      render: (date, record) => (
-        // moment(moment(date, 'MM-DD-YYYY')).format('ll')
-
-        <Tooltip placement="topLeft" title={record.created_at_date_time}>
-          {moment(record.created_at).format("MMM DD, YYYY")}
+      title: "Phone",
+      dataIndex: "client_phone",
+      key: "client_phone",
+      ...getColumnSearchProps(["client_phone"]),
+      ...getColumnSortProps("client_phone"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.client_phone}>
+          {record.client_phone}
         </Tooltip>
       ),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.created_at || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.created_at || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-    },
-    {
-      title: "Last Action",
-      dataIndex: "last_action",
-      key: "last_action",
-      ...getColumnSearchProps(["last_action"]),
-      render: (text, record) => (
-        <LastActionCell
-          text={text}
-          date={record.last_action_date}
-          isHighlighted={searchedColumn["last_action"]}
-          highlightedText={searchText["last_action"]}
-          registration_key={record.registration_key}
-          membershipId={record.memberships_id}
-        />
-      ),
-      ...getColumnSortProps("last_action"),
     },
     {
       title: "Email",
-      dataIndex: "email",
-      key: "email",
-      ...getColumnSearchProps(["email"]),
-      ...getColumnSortProps("email"),
+      dataIndex: "client_email",
+      key: "client_email",
+      ...getColumnSearchProps(["client_email"]),
+      ...getColumnSortProps("client_email"),
       render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.email}>
-          {record.email}
-        </Tooltip>
-      ),
-      width: 250,
-    },
-    {
-      title: "URL",
-      dataIndex: "wordpress_install_url",
-      key: "wordpress_install_url",
-      ...getColumnSearchProps(["wordpress_install_url"]),
-      render: (url) => (
-        <a href={url} target="_blank" rel="noreferrer">
-          <Tooltip
-            placement="topLeft"
-            title={
-              <>
-                {renderTextHighlighter({
-                  text: url,
-                  isHighlighted: searchedColumn["wordpress_install_url"],
-                  highlightedText: searchText["wordpress_install_url"],
-                })}
-              </>
-            }
-          >
-            {renderTextHighlighter({
-              text: url,
-              isHighlighted: searchedColumn["wordpress_install_url"],
-              highlightedText: searchText["wordpress_install_url"],
-            })}
-          </Tooltip>
-        </a>
-      ),
-      ...getColumnSortProps("wordpress_install_url"),
-      width: 250,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      ...getColumnSearchProps(["status"]),
-      ...getColumnSortProps("status"),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.status}>
-          {record.status}
+        <Tooltip placement="topLeft" title={record.client_email}>
+          {record.client_email}
         </Tooltip>
       ),
     },
     {
-      title: "Actions",
-      dataIndex: "actions",
-      key: "actions",
-      width: 100,
-      render: (
-        text,
-        { registration_key, id, cycle_billing_type, memberships_id }
-      ) => (
-        <Button
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            color: "#858faf",
-            fontSize: "10px",
-            border: "none",
-            backgroundColor: "transparent",
-          }}
-          onClick={() =>
-            handleClickModalActions(
-              registration_key,
-              id,
-              cycle_billing_type,
-              memberships_id
-            )
-          }
-        >
-          <span
-            className="back-office-tools"
-            style={{ fontSize: "30px" }}
-          ></span>
-          TOOLBOX
-        </Button>
+      title: "Product of Interest",
+      dataIndex: "program_name",
+      key: "program_name",
+      ...getColumnSearchProps(["program_name"]),
+      ...getColumnSortProps("program_name"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.program_name}>
+          {record.program_name}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Country",
+      dataIndex: "country",
+      key: "country",
+      ...getColumnSearchProps(["country"]),
+      ...getColumnSortProps("country"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.country}>
+          {record.country}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "City",
+      dataIndex: "city",
+      key: "city",
+      ...getColumnSearchProps(["city"]),
+      ...getColumnSortProps("city"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.city}>
+          {record.city}
+        </Tooltip>
       ),
     },
   ]
 
-  const columns = [
-    {
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["memberships_id"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["memberships_id"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Membership ID
-        </Popover>
-      ),
-      dataIndex: "memberships_id",
-      key: "memberships_id",
-      // ...getColumnSearchProps(["memberships_id"]),
-      // ...getColumnSortProps("memberships_id"),
-      render: (text, record) => (
-        <a
-          href={`${window.location.origin}/customers/v2/customers#/membership-details/${record.registration_key}`}
-          rel="noreferrer"
-        >
-          <Tooltip title={record.memberships_id} placement="topLeft">
-            {record.memberships_id}
-          </Tooltip>
-        </a>
-      ),
-      width: 170,
-      fixed: "left",
-    },
-    {
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Sort</Typography.Title>
-              <div className={containerSortButtons}>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "asc",
-                      dataIndex: "client_name",
-                    })
-                  }
-                >
-                  A → Z
-                </Button>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "desc",
-                      dataIndex: "client_name",
-                    })
-                  }
-                >
-                  Z → A
-                </Button>
-              </div>
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["client_name"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["client_name", "project_name"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Client Name
-        </Popover>
-      ),
-      dataIndex: "client_name",
-      key: "client_name",
-      // ...getColumnSearchProps(["client_name", "project_name"]),
-      // ...getColumnSortProps("client_name"),
-      render: (clientName, record) => (
-        <>
-          <a
-            href={`${window.location.origin}/customers/v2/customers#/customer-view/${record.customer_id}`}
-            rel="noreferrer"
-          >
-            <Tooltip placement="topLeft" title={clientName}>
-              {clientName}
-              <br />
-              {record.project_name}
-            </Tooltip>
-          </a>
-        </>
-      ),
-      width: 160,
-      fixed: "left",
-    },
-    {
-      // title: "Product/Service",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Sort</Typography.Title>
-              <div className={containerSortButtons}>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "asc",
-                      dataIndex: "class_accounting_name",
-                    })
-                  }
-                >
-                  A → Z
-                </Button>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "desc",
-                      dataIndex: "class_accounting_name",
-                    })
-                  }
-                >
-                  Z → A
-                </Button>
-              </div>
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["class_accounting_name"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["class_accounting_name"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Product/Service
-        </Popover>
-      ),
-      key: "class_accounting_name",
-      dataIndex: "class_accounting_name",
-      // ...getColumnSearchProps(["class_accounting_name"]),
-      // ...getColumnSortProps("class_accounting_name"),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.class_accounting_name}>
-          {record.class_accounting_name}
-        </Tooltip>
-      ),
-      width: 180,
-    },
-    {
-      title: "Created",
-      dataIndex: "created_at",
-      key: "created_at",
-      render: (date, record) => (
-        <Tooltip placement="topLeft" title={record.created_at_hour}>
-          {moment(record.created_at).format("MMM DD, YYYY")}
-        </Tooltip>
-      ),
-      ...getDateColumnSearchProps("created_at"),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.created_at || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.created_at || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-      width: 120,
-    },
-    {
-      // title: "Last Action",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Sort</Typography.Title>
-              <div className={containerSortButtons}>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "asc",
-                      dataIndex: "last_action",
-                    })
-                  }
-                >
-                  A → Z
-                </Button>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "desc",
-                      dataIndex: "last_action",
-                    })
-                  }
-                >
-                  Z → A
-                </Button>
-              </div>
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["last_action"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["last_action"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Last Action
-        </Popover>
-      ),
-      dataIndex: "last_action",
-      key: "last_action",
-      // ...getColumnSearchProps(["last_action"]),
-      // ...getColumnSortProps("last_action"),
-      render: (text, record) => (
-        <LastActionCell
-          text={text}
-          date={record.last_action_date}
-          isHighlighted={searchedColumn["last_action"]}
-          highlightedText={searchText["last_action"]}
-          registration_key={record.registration_key}
-          membershipId={record.memberships_id}
-        />
-      ),
-      width: 150,
-    },
-    {
-      // title: "Email",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["email"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["email"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Email
-        </Popover>
-      ),
-      dataIndex: "email",
-      key: "email",
-      // ...getColumnSearchProps(["email"]),
-      // ...getColumnSortProps("email"),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.email}>
-          {record.email}
-        </Tooltip>
-      ),
-      width: 280,
-    },
-    {
-      // title: "URL",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["wordpress_install_url"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["wordpress_install_url"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          URL
-        </Popover>
-      ),
-      dataIndex: "wordpress_install_url",
-      key: "wordpress_install_url",
-      // ...getColumnSearchProps(["wordpress_install_url"]),
-      // ...getColumnSortProps("wordpress_install_url"),
-      render: (url) => (
-        <a href={url} target="_blank" rel="noreferrer">
-          <Tooltip
-            placement="topLeft"
-            title={
-              <>
-                {renderTextHighlighter({
-                  text: url,
-                  isHighlighted: searchedColumn["wordpress_install_url"],
-                  highlightedText: searchText["wordpress_install_url"],
-                })}
-              </>
-            }
-          >
-            {renderTextHighlighter({
-              text: url,
-              isHighlighted: searchedColumn["wordpress_install_url"],
-              highlightedText: searchText["wordpress_install_url"],
-            })}
-          </Tooltip>
-        </a>
-      ),
-      width: 380,
-    },
-    {
-      // title: "Board",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Sort</Typography.Title>
-              <div className={containerSortButtons}>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "asc",
-                      dataIndex: "board_name",
-                    })
-                  }
-                >
-                  A → Z
-                </Button>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "desc",
-                      dataIndex: "board_name",
-                    })
-                  }
-                >
-                  Z → A
-                </Button>
-              </div>
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["board_name"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["board_name"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Board
-        </Popover>
-      ),
-      dataIndex: "board_name",
-      key: "board_name",
-      // ...getColumnSearchProps(["board_name"]),
-      // ...getColumnSortProps("board_name"),
-      width: 120,
-      render: (date, record) => (
-        <Tooltip placement="topLeft" title={record.board_name}>
-          {record.board_name}
-        </Tooltip>
-      ),
-    },
-    {
-      // title: "Status",
-      title: (text, record) => (
-        <Popover
-          className="titleColumnTable"
-          placement="bottomLeft"
-          trigger="click"
-          content={
-            <Space size="large" direction="vertical">
-              <Typography.Title level={5}>Sort</Typography.Title>
-              <div className={containerSortButtons}>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "asc",
-                      dataIndex: "status",
-                    })
-                  }
-                >
-                  A → Z
-                </Button>
-                <Button
-                  onClick={() =>
-                    setSortColumn({
-                      sort: "desc",
-                      dataIndex: "status",
-                    })
-                  }
-                >
-                  Z → A
-                </Button>
-              </div>
-              <Typography.Title level={5}>Filter</Typography.Title>
-              <Radio.Group
-                onChange={(e) => {
-                  setFilteredRadioGroup({
-                    value: e.target.value,
-                    dataIndex: ["status"],
-                    key: "",
-                  })
-                }}
-                value={filteredRadioGroup.value}
-              >
-                <Space direction="vertical">
-                  <Radio value={1}>is not empty</Radio>
-                  <Radio value={2}>
-                    contains
-                    {filteredRadioGroup.value === 2 ? (
-                      <Input
-                        style={{
-                          width: 100,
-                          marginLeft: 10,
-                        }}
-                        value={filteredRadioGroup.key}
-                        onChange={(e) =>
-                          setFilteredRadioGroup({
-                            dataIndex: ["status"],
-                            key: e.target.value,
-                            value: 2,
-                          })
-                        }
-                      />
-                    ) : null}
-                  </Radio>
-                  <Radio value={3}>is empty</Radio>
-                </Space>
-              </Radio.Group>
-            </Space>
-          }
-        >
-          Status
-        </Popover>
-      ),
-      dataIndex: "status",
-      key: "status",
-      // ...getColumnSearchProps(["status"]),
-      // ...getColumnSortProps("status"),
-      render: (text, record) => (
-        <Tooltip title={record.status}>
-          <p
-            style={{
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {record.status}
-          </p>
-        </Tooltip>
-      ),
-      width: 150,
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      key: "actions",
-      width: 100,
-      render: (
-        text,
-        { registration_key, id, cycle_billing_type, memberships_id }
-      ) => (
-        <Button
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            color: "#858faf",
-            fontSize: "10px",
-            border: "none",
-            backgroundColor: "transparent",
-          }}
-          onClick={() =>
-            handleClickModalActions(
-              registration_key,
-              id,
-              cycle_billing_type,
-              memberships_id
-            )
-          }
-        >
-          <span
-            className="back-office-tools"
-            style={{ fontSize: "30px" }}
-          ></span>
-          TOOLBOX
-        </Button>
-      ),
-      fixed: "right",
-    },
-  ]
-  const columnsWithoutBoard = columns.filter(({ title }) => title !== "Board")
-  const idx_requested_columns = [
-    {
-      title: "IDX Requested",
-      key: "idx_requested_date",
-      dataIndex: "idx_requested_date",
-      ...getDateColumnSearchProps("idx_requested_date"),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.idx_requested_date || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.idx_requested_date || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.idx_requested_date_hour}>
-          {record.idx_requested_date}
-        </Tooltip>
-      ),
-      width: 160,
-      // fixed: "left",
-      defaultSortOrder: "descend",
-    },
-    ...columnsWithoutBoard,
-  ]
-  const columnsStatusBoard = columns.filter(
-    ({ title }) => title !== "Board" && title !== "Status"
-  )
-  const payments_due_columns = [
-    {
-      title: "Balance Due",
-      key: "balance_due",
-      dataIndex: "balance_due",
-      ...getDateColumnSearchProps("balance_due"),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.balance_due || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.balance_due || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.balance_due}>
-          {record.balance_due}
-        </Tooltip>
-      ),
-      width: 160,
-      fixed: "left",
-      // defaultSortOrder: "descend",
-    },
-    {
-      title: "Last Payment Date",
-      key: "last_payment_date",
-      dataIndex: "last_payment_date",
-      ...getDateColumnSearchProps("last_payment_date"),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.last_payment_date || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.last_payment_date || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.last_payment_date}>
-          {record.last_payment_date}
-        </Tooltip>
-      ),
-      width: 160,
-      fixed: "left",
-      // defaultSortOrder: "descend",
-    },
-    {
-      title: "Next Payment Date",
-      key: "next_payment_date",
-      dataIndex: "next_payment_date",
-      ...getDateColumnSearchProps("next_payment_date"),
-      ...getCustomColumnSortProps({
-        sorter: (a, b) => {
-          return moment(
-            moment(a.next_payment_date || "Jan 01, 1970", "MMM DD, YYYY")
-          ).diff(moment(b.next_payment_date || "Jan 01, 1970", "MMM DD, YYYY"))
-        },
-      }),
-      render: (text, record) => (
-        <Tooltip placement="topLeft" title={record.next_payment_date}>
-          {record.next_payment_date}
-        </Tooltip>
-      ),
-      width: 160,
-      fixed: "left",
-      // defaultSortOrder: "descend",
-    },
-    ...columnsStatusBoard,
-  ]
-  const getColumns = (filter) => {
-    switch (filter) {
-      case "idx_requested":
-        return idx_requested_columns
-      case "payments_due":
-        return payments_due_columns
-      case "launch_website":
-        return launch_website_columns
-      default:
-        return columns
-    }
-  }
   return (
     <div
       style={{
@@ -1634,31 +538,9 @@ export const MembershipsTable = ({ filter = "" }) => {
           }}
         >
           <Typography.Title level={4} style={{ margin: 0 }}>
-            Memberships{" "}
-            {filter
-              ? filter
-                  .split("_")
-                  .map((word) => capitalize(word))
-                  .join(" ")
-              : "Active"}{" "}
-            ({numbro(total).format({ thousandSeparated: true }) ?? "..."})
+            Abandoned Carts (
+            {numbro(total).format({ thousandSeparated: true }) ?? "..."})
           </Typography.Title>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Monthly:{" "}
-            {typeof totalPrice === "number" ? (
-              USD(totalPrice, { precision: 2 })
-            ) : (
-              <DollarOutlined spin />
-            )}
-          </Typography.Title>
-          {/* <Typography.Title level={5} style={{ margin: 0 }}>
-            $ Lifetime:{' '}
-            {typeof totalMonthly === 'number' ? (
-              USD(totalMonthly, { precision: 2 })
-            ) : (
-              <DollarOutlined spin />
-            )}
-          </Typography.Title> */}
         </div>
         <div
           style={{
@@ -1666,26 +548,11 @@ export const MembershipsTable = ({ filter = "" }) => {
             alignItems: "center",
           }}
         >
-          <Typography.Title level={5}>Users:</Typography.Title>
-          <Select
-            disabled={!memberships}
-            mode="multiple"
-            value={filterUsers}
-            options={usersFiltered}
-            onChange={(e) => setFilterUsers(e)}
-            // onSearch={(value) => setFiltredValue(value)}
-            // size="large"
-            style={{
-              width: "300px",
-              marginLeft: "15px",
-            }}
-            maxTagCount="responsive"
-          />
           <Typography.Title level={5} style={{ marginLeft: "5px" }}>
             Search:
           </Typography.Title>
           <Input.Search
-            disabled={!memberships}
+            disabled={!data}
             onSearch={(value) => setFiltredValue(value)}
             value={filtredValue}
             onChange={(e) => setFiltredValue(e.target.value)}
@@ -1696,26 +563,7 @@ export const MembershipsTable = ({ filter = "" }) => {
             }}
           />
         </div>
-
-        {/* <Link to='/new-quote'>
-          <Button
-            type='primary'
-            shape='round'
-            icon={<UserAddOutlined />}
-            size='middle'
-            style={{
-              alignSelf: 'flex-end',
-            }}
-          >
-            Add New Customer
-          </Button>
-        </Link> */}
       </div>
-      {filter === "launch_website" && (
-        <Typography.Title level={5} style={{ margin: 0 }}>
-          We gonna show the last 30 days launch websites
-        </Typography.Title>
-      )}
       <Divider dashed />
       <Button
         type="default"
@@ -1728,13 +576,13 @@ export const MembershipsTable = ({ filter = "" }) => {
         className="mainTable"
         key={tableKey}
         rowKey="id"
-        columns={getColumns(filter)}
+        columns={columns}
         dataSource={filtreredMembership}
         bordered
         loading={isLoading}
         onChange={handleChange}
         pagination={{
-          total: totalCurrentItems || total,
+          total: totalCurrentItems || data.length,
           pageSize,
           current: page,
           showQuickJumper: true,
@@ -1750,16 +598,6 @@ export const MembershipsTable = ({ filter = "" }) => {
           showTotal,
         }}
         scroll={{ x: "100%" }}
-      />
-      <Actions
-        open={open}
-        handleClose={handleClose}
-        currentId={currentId}
-        currentRegKey={currentRegKey}
-        billingCicle={billingCicle}
-        membershipID={currenMembershipID}
-        billingEnrollment={billingEnrollment}
-        addPayment={addPayment}
       />
     </div>
   )
