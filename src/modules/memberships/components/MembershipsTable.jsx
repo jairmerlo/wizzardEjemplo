@@ -442,6 +442,18 @@ export const MembershipsTable = ({ filter = "" }) => {
       defaultSortOrder: "descend",
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      ...getColumnSearchProps(["status"]),
+      ...getColumnSortProps("status"),
+      render: (text, record) => (
+        <Tooltip placement="topLeft" title={record.status}>
+          {record.status}
+        </Tooltip>
+      ),
+    },
+    {
       title: "Client Name",
       dataIndex: "client_name",
       key: "client_name",
