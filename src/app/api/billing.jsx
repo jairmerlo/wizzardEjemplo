@@ -430,6 +430,44 @@ export const billing = createApi({
         },
       }),
     }),
+    abandonedCardStep1: builder.mutation({
+      query: ({
+        customer_id,
+        type,
+        url_origin,
+        name,
+        email,
+        phone,
+        country,
+        city,
+      }) => ({
+        url: "/wizard/abandoned-card-step1",
+        method: "POST",
+        body: {
+          customer_id,
+          type,
+          url_origin,
+          name,
+          email,
+          phone,
+          country,
+          city,
+        },
+      }),
+    }),
+    processNotificationStep1: builder.mutation({
+      query: ({ type, first_name, last_name, email, phone }) => ({
+        url: "wizard/process-notification-step1",
+        method: "POST",
+        body: {
+          type,
+          first_name,
+          last_name,
+          email,
+          phone,
+        },
+      }),
+    }),
     billingEnrollment: builder.mutation({
       query: ({
         registration_key,
@@ -625,6 +663,24 @@ export const billing = createApi({
     getPdf: builder.query({
       query: (id) => ({
         url: "/get-pdf-access",
+        method: "POST",
+        body: {
+          id,
+        },
+      }),
+    }),
+    getTrialDays: builder.query({
+      query: (id) => ({
+        url: "/list-trial-days",
+        method: "POST",
+        body: {
+          id,
+        },
+      }),
+    }),
+    getListCountry: builder.query({
+      query: (id) => ({
+        url: "/list-country",
         method: "POST",
         body: {
           id,
@@ -1033,6 +1089,8 @@ export default billing
 // auto-generated based on the defined endpoints
 export const {
   useGetPdfQuery,
+  useGetTrialDaysQuery,
+  useGetListCountryQuery,
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
@@ -1045,6 +1103,8 @@ export const {
   useGetAuthorizationFormsQuery,
   useSendAuthorizationFormMutation,
   useResendAuthorizationFormMutation,
+  useAbandonedCardStep1Mutation,
+  useProcessNotificationStep1Mutation,
   useBillingEnrollmentMutation,
   useIdxResendAgreementEmailMutation,
   useReplaceAuthorizationFormMutation,
