@@ -1080,6 +1080,24 @@ export const billing = createApi({
         }
       },
     }),
+    getCustomerId: builder.query({
+      queryFn: async ({ apiKey }) => {
+        try {
+          const url = `${API._STRIPE}/customers?apiKey=${apiKey}`
+          const res = await fetch(url, {
+            method: "POST",
+          }).then((res) => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
   }),
 })
 
@@ -1126,6 +1144,7 @@ export const {
   useListMembershipTypeQuery,
   useGetQuoteBynameQuery,
   useGetProviderAccountQuery,
+  useGetCustomerIdQuery,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,

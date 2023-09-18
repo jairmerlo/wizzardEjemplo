@@ -8,6 +8,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   useAbandonedCardStep1Mutation,
+  useGetCustomerIdQuery,
   useGetTrialDaysQuery,
 } from "../../../app/api/billing"
 
@@ -17,6 +18,11 @@ export const SingupTrial = () => {
   const handleClose = () => setOpenModal(false)
   const navigate = useNavigate()
 
+  const apiKey =
+    "sk_test_51MPGWNBfWCdjsfM6CMb9F0usz8kDDHFbkHNeboVwypSGaghon8zpRghKy9NDiTI6ZyztD4g1kmYl4idWdKxLSD6t00nZnfkeIF"
+
+  const { data = {} } = useGetCustomerIdQuery({ apiKey })
+  console.log({ data })
   const userInformation = async () => {
     const response = await fetch("http://ip-api.com/json")
     const data = await response.json()
