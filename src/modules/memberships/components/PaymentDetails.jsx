@@ -17,6 +17,7 @@ import {
 import moment from "moment"
 import { useDispatch, useSelector } from "react-redux"
 import { setPaymentsDetails } from "../../../app/stripe"
+import { CardElement, PaymentElement } from "@stripe/react-stripe-js"
 
 export const PaymentDetails = () => {
   const dispatch = useDispatch()
@@ -145,6 +146,10 @@ export const PaymentDetails = () => {
                       <strong>during your {days} days free trial</strong>
                     </h4>
                   </div>
+                  <form>
+                    <CardElement />
+                    <Button>Submit</Button>
+                  </form>
 
                   {/* <Formik
                     enableReinitialize
