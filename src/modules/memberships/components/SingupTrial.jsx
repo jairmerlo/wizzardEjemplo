@@ -8,21 +8,23 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   useAbandonedCardStep1Mutation,
-  useGetCustomerIdQuery,
+  useGetCustomerIdMutation,
   useGetTrialDaysQuery,
+  useProcessNotificationStep1Mutation,
 } from "../../../app/api/billing"
+import { useDispatch } from "react-redux"
+import { setCustomerData } from "../../../app/stripe"
 
 export const SingupTrial = () => {
   const [openModal, setOpenModal] = useState(false)
   const handleOpen = () => setOpenModal(true)
   const handleClose = () => setOpenModal(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const apiKey =
     "sk_test_51MPGWNBfWCdjsfM6CMb9F0usz8kDDHFbkHNeboVwypSGaghon8zpRghKy9NDiTI6ZyztD4g1kmYl4idWdKxLSD6t00nZnfkeIF"
-
-  const { data = {} } = useGetCustomerIdQuery({ apiKey })
-  console.log({ data })
+  const [getCustomerId] = useGetCustomerIdMutation()
   const userInformation = async () => {
     const response = await fetch("http://ip-api.com/json")
     const data = await response.json()
@@ -31,7 +33,7 @@ export const SingupTrial = () => {
 
   const { data: days = "" } = useGetTrialDaysQuery()
   const [abandonedCardStep1] = useAbandonedCardStep1Mutation()
-
+  const [processNotificationStep1] = useProcessNotificationStep1Mutation()
   const item = useCss({
     width: "450px",
     height: "60px",
@@ -58,6 +60,33 @@ export const SingupTrial = () => {
     display: "block",
     margin: "0 auto 30px auto",
   })
+
+  const [phoneNumber, setPhoneNumber] = useState("")
+
+  const formatPhoneNumber = (value) => {
+    const phoneNumberDigits = value.replace(/\D/g, "")
+
+    let formattedPhoneNumber = ""
+
+    if (phoneNumberDigits.length >= 1) {
+      formattedPhoneNumber = `(${phoneNumberDigits.slice(0, 3)}`
+    }
+
+    if (phoneNumberDigits.length > 3) {
+      formattedPhoneNumber += `) ${phoneNumberDigits.slice(3, 6)}`
+    }
+
+    if (phoneNumberDigits.length > 6) {
+      formattedPhoneNumber += `-${phoneNumberDigits.slice(6, 10)}`
+    }
+
+    return formattedPhoneNumber.slice(0, 14)
+  }
+
+  const handleInputChange = (e) => {
+    const formattedValue = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formattedValue)
+  }
 
   return (
     <>
@@ -201,9 +230,16 @@ export const SingupTrial = () => {
                     <Formik
                       enableReinitialize
                       onSubmit={async (values) => {
-                        console.log({ values })
+                        // console.log({ values })
+
+                        // const { id = "" } = getCustomerId({
+                        //   apiKey,
+                        //   description: "",
+                        //   email: values.email,
+                        // })
+
                         const res = await userInformation()
-                        abandonedCardStep1({
+                        const { data = {} } = await abandonedCardStep1({
                           customer_id: "cus_OXbOb3gjFaAWOp",
                           type: "trial",
                           url_origin:
@@ -214,7 +250,30 @@ export const SingupTrial = () => {
                           country: res.country,
                           city: res.city,
                         })
-                        // navigate("/payment-details")
+
+                        processNotificationStep1({
+                          type: "trial",
+                          first_name: values.full_name,
+                          last_name: "",
+                          email: values.email,
+                          phone: values.phone,
+                        })
+
+                        dispatch(
+                          setCustomerData({
+                            full_name: values.full_name,
+                            phone: values.phone,
+                            email: values.email,
+                            password: values.password,
+                            country: res.country,
+                            city: res.city,
+                            ip: res.query,
+                            customer_id: "",
+                            checkout_session_id: data.checkout_session_id,
+                          })
+                        )
+
+                        navigate("/payment-details")
                       }}
                       initialValues={{
                         full_name: "",
@@ -226,7 +285,7 @@ export const SingupTrial = () => {
                         full_name: Yup.string().required(
                           "Full Name is required"
                         ),
-                        phone: Yup.number().required("Number is required"),
+                        phone: Yup.string().required("Number is required"),
                         email: Yup.string()
                           .required("Email is required")
                           .email("Invalid email format"),
@@ -262,10 +321,13 @@ export const SingupTrial = () => {
                             help={<ErrorMessage name="phone" />}
                           >
                             <FormikInput
-                              name="phone"
-                              placeholder="Phone"
                               className={item}
-                              type="number"
+                              name="phone"
+                              placeholder="(123) 123-1234"
+                              type="text"
+                              value={phoneNumber}
+                              onChange={handleInputChange}
+                              maxLength="14"
                             />
                           </Form.Item>
                           <Form.Item

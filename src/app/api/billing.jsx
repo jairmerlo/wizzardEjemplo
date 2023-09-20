@@ -468,6 +468,60 @@ export const billing = createApi({
         },
       }),
     }),
+    registerBillingV2: builder.mutation({
+      query: ({
+        type,
+        name,
+        last_name,
+        email,
+        phone,
+        customer_id,
+        checkout_session_id,
+        password,
+        ip,
+        country,
+        city,
+      }) => ({
+        url: "wizard/register-billing-v2	",
+        method: "POST",
+        body: {
+          type,
+          name,
+          last_name,
+          email,
+          phone,
+          customer_id,
+          checkout_session_id,
+          password,
+          ip,
+          country,
+          city,
+        },
+      }),
+    }),
+    saveHtmlWizard: builder.mutation({
+      query: ({
+        payment_html,
+        program_html,
+        registration_key,
+        initial_price,
+        plan_code,
+        monthly_price,
+        email,
+      }) => ({
+        url: "save-html-wizard",
+        method: "POST",
+        body: {
+          payment_html,
+          program_html,
+          registration_key,
+          initial_price,
+          plan_code,
+          monthly_price,
+          email,
+        },
+      }),
+    }),
     billingEnrollment: builder.mutation({
       query: ({
         registration_key,
@@ -669,13 +723,19 @@ export const billing = createApi({
         },
       }),
     }),
-    getTrialDays: builder.query({
-      query: (id) => ({
-        url: "/list-trial-days",
+    getItemToSubscriptionByProgram: builder.query({
+      query: ({ plan_code }) => ({
+        url: "/get-item-to-subscription-byprogram",
         method: "POST",
         body: {
-          id,
+          plan_code,
         },
+      }),
+    }),
+    getTrialDays: builder.query({
+      query: () => ({
+        url: "/list-trial-days",
+        method: "POST",
       }),
     }),
     getListCountry: builder.query({
@@ -1080,12 +1140,39 @@ export const billing = createApi({
         }
       },
     }),
-    getCustomerId: builder.query({
-      queryFn: async ({ apiKey }) => {
+    getCustomerId: builder.mutation({
+      queryFn: async ({ apiKey, description, email }) => {
         try {
           const url = `${API._STRIPE}/customers?apiKey=${apiKey}`
           const res = await fetch(url, {
             method: "POST",
+            body: JSON.stringify({
+              description,
+              email,
+            }),
+          }).then((res) => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    paymentMethod: builder.mutation({
+      queryFn: async ({ apiKey, customer, items, token }) => {
+        try {
+          const url = `${API._STRIPE}/subscriptions/payment-method?apiKey=${apiKey}`
+          const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+              customer,
+              items,
+              token,
+            }),
           }).then((res) => res.json())
 
           return {
@@ -1123,6 +1210,8 @@ export const {
   useResendAuthorizationFormMutation,
   useAbandonedCardStep1Mutation,
   useProcessNotificationStep1Mutation,
+  useRegisterBillingV2Mutation,
+  useSaveHtmlWizardMutation,
   useBillingEnrollmentMutation,
   useIdxResendAgreementEmailMutation,
   useReplaceAuthorizationFormMutation,
@@ -1136,6 +1225,7 @@ export const {
   useGetCompanyByRegistrationKeyQuery,
   useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
+  useGetItemToSubscriptionByProgramQuery,
   useListAgreementByRegkeyQuery,
   useGetHtmlWizardQuery,
   useBillingInformationQuery,
@@ -1144,7 +1234,8 @@ export const {
   useListMembershipTypeQuery,
   useGetQuoteBynameQuery,
   useGetProviderAccountQuery,
-  useGetCustomerIdQuery,
+  useGetCustomerIdMutation,
+  usePaymentMethodMutation,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,

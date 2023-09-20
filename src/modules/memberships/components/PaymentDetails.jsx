@@ -5,23 +5,36 @@ import { Button, Col, DatePicker, Form, InputNumber, Modal, Row } from "antd"
 import { Input, Select, Checkbox } from "formik-antd"
 import { useCss } from "react-use"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 import {
+  useGetItemToSubscriptionByProgramQuery,
   useGetListCountryQuery,
   useGetTrialDaysQuery,
+  usePaymentMethodMutation,
+  useRegisterBillingV2Mutation,
+  useSaveHtmlWizardMutation,
 } from "../../../app/api/billing"
+import moment from "moment"
+import { useDispatch, useSelector } from "react-redux"
+import { setPaymentsDetails } from "../../../app/stripe"
 
 export const PaymentDetails = () => {
+  const dispatch = useDispatch()
   const { data = [] } = useGetListCountryQuery()
   const { data: days = "" } = useGetTrialDaysQuery()
-
+  const { data: items = [] } = useGetItemToSubscriptionByProgramQuery({
+    plan_code: "IDXB-P0003-TRIAL-d22905b5",
+  })
   const optionsCountry = data.map(({ id, name }) => {
     return {
       label: name,
       value: id,
     }
   })
-
+  // usePaymentMethodMutation
+  const { customerData } = useSelector((state) => state.stripe)
+  const [registerBillingV2] = useRegisterBillingV2Mutation()
+  // useSaveHtmlWizardMutation
   const item = useCss({
     width: "450px",
     height: "60px",
@@ -69,9 +82,7 @@ export const PaymentDetails = () => {
 
   const handleCardNumberChange = (e) => {
     let value = e.target.value
-
     value = value.replace(/\s+/g, "").replace(/\D/g, "")
-
     value = value.replace(/(.{4})/g, "$1 ")
 
     if (value.length > 19) {
@@ -80,6 +91,13 @@ export const PaymentDetails = () => {
 
     setCardNumber(value)
     return value
+  }
+
+  const handleDateChange = (date, dateString) => {
+    if (date) {
+      const formattedDate = moment(date).format("MM/YYYY")
+      return formattedDate
+    }
   }
 
   return (
@@ -130,8 +148,39 @@ export const PaymentDetails = () => {
 
                   <Formik
                     enableReinitialize
-                    onSubmit={(values) => {
+                    onSubmit={async (values) => {
                       console.log({ values })
+                      const { data = {} } = await registerBillingV2({
+                        type: "trial",
+                        name: customerData.full_name,
+                        last_name: "",
+                        email: customerData.email,
+                        phone: customerData.phone,
+                        customer_id: "cus_OXbOb3gjFaAWOp",
+                        checkout_session_id: customerData.checkout_session_id,
+                        password: customerData.password,
+                        ip: customerData.ip,
+                        country: customerData.country,
+                        city: customerData.city,
+                      })
+                      console.log({ data })
+                      dispatch(
+                        setPaymentsDetails({
+                          card_holder: values.cardHolder,
+                          card_number: values.cardNumber,
+                          company_name: values.companyName,
+                          country: values.country,
+                          cvc: values.cvc,
+                          month: values.month,
+                          url_cpanel: "",
+                          registration_key: "",
+                          membership_id: "",
+                          initial_price: "",
+                          monthly_price: "",
+                          plan_code: "",
+                        })
+                      )
+                      Navigate("/membership-creation")
                     }}
                     initialValues={{
                       companyName: "",
@@ -204,10 +253,14 @@ export const PaymentDetails = () => {
                             </Col>
                             <Col span={6}>
                               <DatePicker
-                                picker="month"
                                 name="month"
+                                picker="month"
                                 bordered={false}
                                 placeholder="MM/YY"
+                                onChange={(date) => {
+                                  const dateFormat = handleDateChange(date)
+                                  setFieldValue("month", dateFormat)
+                                }}
                               />
                             </Col>
                             <Col span={4}>
