@@ -146,7 +146,7 @@ export const PaymentDetails = () => {
                     </h4>
                   </div>
 
-                  <Formik
+                  {/* <Formik
                     enableReinitialize
                     onSubmit={async (values) => {
                       console.log({ values })
@@ -306,7 +306,7 @@ export const PaymentDetails = () => {
                         </Button>
                       </>
                     )}
-                  </Formik>
+                  </Formik> */}
                 </div>
               </div>
             </div>

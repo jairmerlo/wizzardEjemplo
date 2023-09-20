@@ -13,6 +13,8 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
     "@reduxjs/toolkit": "^1.9.1",
+    "@stripe/react-stripe-js": "^2.3.0",
+    "@stripe/stripe-js": "^2.1.6",
     "antd": "^5.0.6",
     "currency.js": "^2.0.4",
     "formik": "^2.2.9",
