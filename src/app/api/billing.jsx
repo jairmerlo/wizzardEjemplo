@@ -775,6 +775,35 @@ export const billing = createApi({
         }
       },
     }),
+    getThirdStepInformation: builder.query({
+      queryFn: async (
+        { registration_key, program_code },
+        _api,
+        _extraOptions,
+        fetchWithBQ
+      ) => {
+        try {
+          const res = await fetch(
+            API._BILLING_HOST + "/get-third-step-information",
+            {
+              method: "post",
+              body: JSON.stringify({
+                registration_key,
+                program_code
+              }),
+            }
+          ).then((res) => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
     getPlanByregistrationKey: builder.query({
       queryFn: async (
         { registration_key },
@@ -1163,13 +1192,13 @@ export const billing = createApi({
       },
     }),
     paymentMethod: builder.mutation({
-      queryFn: async ({ apiKey, customer, items, token }) => {
+      queryFn: async ({ apiKey, customerId, items, token }) => {
         try {
           const url = `${API._STRIPE}/subscriptions/payment-method?apiKey=${apiKey}`
           const res = await fetch(url, {
             method: "POST",
             body: JSON.stringify({
-              customer,
+              customerId,
               items,
               token,
             }),
@@ -1220,6 +1249,7 @@ export const {
   useEditCustomerMutation,
   useGetProductOptionsQuery,
   useListAccountInvoiceByRegkeyQuery,
+  useGetThirdStepInformationQuery,
   useGetPlanByregistrationKeyQuery,
   useGetPlanByregistrationKeyV2Query,
   useGetCompanyByRegistrationKeyQuery,

@@ -17,7 +17,13 @@ import {
 import moment from "moment"
 import { useDispatch, useSelector } from "react-redux"
 import { setPaymentsDetails } from "../../../app/stripe"
-import { CardElement, PaymentElement } from "@stripe/react-stripe-js"
+import {
+  AddressElement,
+  CardElement,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js"
 
 export const PaymentDetails = () => {
   const dispatch = useDispatch()
@@ -32,8 +38,9 @@ export const PaymentDetails = () => {
       value: id,
     }
   })
-  // usePaymentMethodMutation
+  const [paymentMethod] = usePaymentMethodMutation()
   const { customerData } = useSelector((state) => state.stripe)
+
   const [registerBillingV2] = useRegisterBillingV2Mutation()
   // useSaveHtmlWizardMutation
   const item = useCss({
@@ -101,6 +108,24 @@ export const PaymentDetails = () => {
     }
   }
 
+  const stripe = useStripe()
+  const elements = useElements()
+
+  const createToken = async () => {
+    const cardElement = elements.getElement(CardElement)
+
+    const { token, error } = await stripe.createToken(cardElement, {
+      name: "prueba",
+    })
+
+    if (!error) {
+      console.log(token)
+      return token
+    } else {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="ms-new-lt-format">
       <div className="rs-wrapper">
@@ -146,22 +171,40 @@ export const PaymentDetails = () => {
                       <strong>during your {days} days free trial</strong>
                     </h4>
                   </div>
-                  <form>
-                    <CardElement />
-                    <Button>Submit</Button>
-                  </form>
+                  {/* <form className="formDetailsPaymernt" onSubmit={handleSubmit}>
+                    <div className="formStripe">
+                      <CardElement
+                        className={item}
+                        options={{
+                          hidePostalCode: true,
+                        }}
+                      />
+                    </div>
+                    <button className={item2} type="submit">
+                      <strong>Pay</strong>
+                    </button>
+                    <span style={{ margin: "10px", color: "#919191" }}>
+                      @2023 IDXBoost, LLC All rights Reserved.
+                    </span>
+                  </form> */}
 
-                  {/* <Formik
+                  <Formik
                     enableReinitialize
                     onSubmit={async (values) => {
                       console.log({ values })
+                      const token = await createToken()
+                      paymentMethod({
+                        customerId: customerData.customer_id,
+                        items,
+                        token,
+                      })
                       const { data = {} } = await registerBillingV2({
                         type: "trial",
                         name: customerData.full_name,
                         last_name: "",
                         email: customerData.email,
                         phone: customerData.phone,
-                        customer_id: "cus_OXbOb3gjFaAWOp",
+                        customer_id: customerData.customer_id,
                         checkout_session_id: customerData.checkout_session_id,
                         password: customerData.password,
                         ip: customerData.ip,
@@ -236,54 +279,22 @@ export const PaymentDetails = () => {
                             className={item}
                           />
                         </Form.Item>
-                        <Form.Item
-                          validateStatus={
-                            errors.companyName && touched.companyName && "error"
-                          }
-                          help={<ErrorMessage name="companyName" />}
-                          className={item3}
-                        >
-                          <Row>
-                            <Col span={12}>
-                              <Input
-                                name="cardNumber"
-                                placeholder="Card number"
-                                bordered={false}
-                                value={cardNumber}
-                                onChange={(e) => {
-                                  const value = handleCardNumberChange(e)
-                                  setFieldValue("cardNumber", value)
-                                }}
-                              />
-                            </Col>
-                            <Col span={6}>
-                              <DatePicker
-                                name="month"
-                                picker="month"
-                                bordered={false}
-                                placeholder="MM/YY"
-                                onChange={(date) => {
-                                  const dateFormat = handleDateChange(date)
-                                  setFieldValue("month", dateFormat)
-                                }}
-                              />
-                            </Col>
-                            <Col span={4}>
-                              <Input
-                                name="cvc"
-                                type="number"
-                                placeholder="CVC"
-                                bordered={false}
-                                value={cvc}
-                                onInput={handleCVCChange}
-                              />
-                            </Col>
-                          </Row>
-                        </Form.Item>
+                        <CardElement
+                          className={item}
+                          style={{
+                            margin: "0px 0px 15px 0px",
+                          }}
+                          options={{
+                            hidePostalCode: true,
+                          }}
+                        />
                         <Form.Item
                           validateStatus={
                             errors.ipConfig && touched.ipConfig && "error"
                           }
+                          style={{
+                            marginTop: "20px",
+                          }}
                           help={<ErrorMessage name="ipConfig" />}
                           className={item}
                         >
@@ -311,7 +322,7 @@ export const PaymentDetails = () => {
                         </Button>
                       </>
                     )}
-                  </Formik> */}
+                  </Formik>
                 </div>
               </div>
             </div>

@@ -5915,18 +5915,14 @@ body > .rs-wrapper {
   transform: translateY(0);
 }
 
-/*
-<div class="ms-wrapper-video">
-  <div class="ms-temporal-video">
-    <video loop autoplay muted playsinline preload>
-      <source src="https://www.idxboost.com/wp-content/uploads/2023/06/home_preview_min.mp4" type="video/mp4">
-    </video>
-    <button class="ms-play-video" data-video="https://www.idxboost.com/wp-content/uploads/2023/06/new_home_video_min.mp4" aria-label="Show this video"></button>
-  </div>
-  <div class="ms-full-video">
-    <button class="ms-btn -pause" data-type="play" aria-label="Play Video"></button>
-    <button class="ms-btn -close" data-type="close" aria-label="Close Video"></button>
-    <div class="ms-video-cover"></div>
-  </div>
-</div>
-*/
+.formDetailsPaymernt {
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  width: 400px;
+  height: 500px;
+  /* background-color: red; */
+}
+
+.formStripe {
+}

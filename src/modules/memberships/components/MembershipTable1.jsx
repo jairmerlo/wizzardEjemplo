@@ -5,9 +5,15 @@ import {
   YourProductItem,
 } from "../../customers/components"
 import { useSelector } from "react-redux"
+import { useGetThirdStepInformationQuery } from "../../../app/api/billing"
 
 export const MembershipTable1 = () => {
-  const { customerData } = useSelector((state) => state.stripe)
+  const { customerData, paymentsDetails } = useSelector((state) => state.stripe)
+  const { data = {} } = useGetThirdStepInformationQuery({
+    registration_key: paymentsDetails.registration_key,
+    program_code: paymentsDetails.plan_code,
+  })
+  console.log({ data })
 
   return (
     <IDXCard style={{ width: "500px" }}>
