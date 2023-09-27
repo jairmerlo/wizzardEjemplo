@@ -5,7 +5,7 @@ import { Button, Col, DatePicker, Form, InputNumber, Modal, Row } from "antd"
 import { Input, Select, Checkbox } from "formik-antd"
 import { useCss } from "react-use"
 import { useState } from "react"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import {
   useGetItemToSubscriptionByProgramQuery,
   useGetListCountryQuery,
@@ -40,6 +40,7 @@ export const PaymentDetails = () => {
   })
   const [paymentMethod] = usePaymentMethodMutation()
   const { customerData } = useSelector((state) => state.stripe)
+  const navigate = useNavigate()
 
   const [registerBillingV2] = useRegisterBillingV2Mutation()
   // useSaveHtmlWizardMutation
@@ -193,11 +194,13 @@ export const PaymentDetails = () => {
                     onSubmit={async (values) => {
                       console.log({ values })
                       const token = await createToken()
-                      paymentMethod({
+                      console.log({ token })
+                      const { data: dataPayment } = await paymentMethod({
                         customerId: customerData.customer_id,
                         items,
-                        token,
+                        token: token.id,
                       })
+                      console.log({ dataPayment })
                       const { data = {} } = await registerBillingV2({
                         type: "trial",
                         name: customerData.full_name,
@@ -220,15 +223,15 @@ export const PaymentDetails = () => {
                           country: values.country,
                           cvc: values.cvc,
                           month: values.month,
-                          url_cpanel: "",
-                          registration_key: "",
-                          membership_id: "",
-                          initial_price: "",
-                          monthly_price: "",
-                          plan_code: "",
+                          url_cpanel: data.url_cpanel,
+                          registration_key: data.registration_key,
+                          membership_id: data.membership_id,
+                          initial_price: data.initial_price,
+                          monthly_price: data.monthly_price,
+                          plan_code: data.plan_code,
                         })
                       )
-                      Navigate("/membership-creation")
+                      navigate("/membership-creation")
                     }}
                     initialValues={{
                       companyName: "",

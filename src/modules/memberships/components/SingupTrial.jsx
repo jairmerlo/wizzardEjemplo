@@ -232,15 +232,15 @@ export const SingupTrial = () => {
                       onSubmit={async (values) => {
                         // console.log({ values })
 
-                        // const { id = "" } = getCustomerId({
-                        //   apiKey,
-                        //   description: "",
-                        //   email: values.email,
-                        // })
+                        const { data: dataUser } = await getCustomerId({
+                          apiKey,
+                          description: "",
+                          email: values.email,
+                        })
 
                         const res = await userInformation()
                         const { data = {} } = await abandonedCardStep1({
-                          customer_id: "cus_OXbOb3gjFaAWOp",
+                          customer_id: dataUser.id,
                           type: "trial",
                           url_origin:
                             "https://signup.idxboost.dev/standard/IDXB-P0003/1/notSeller/trial",
@@ -268,7 +268,7 @@ export const SingupTrial = () => {
                             country: res.country,
                             city: res.city,
                             ip: res.query,
-                            customer_id: "",
+                            customer_id: dataUser.id,
                             checkout_session_id: data.checkout_session_id,
                           })
                         )

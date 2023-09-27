@@ -1,6 +1,8 @@
 import { Button, Typography } from "antd"
 import { IDXCard, IDXCardContent } from "../../customers/components"
 import { useCss } from "react-use"
+import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 
 export const Rocket = () => {
   const button = useCss({
@@ -13,7 +15,10 @@ export const Rocket = () => {
     borderRadius: "5px",
     minHeight: "50px",
   })
-
+  const { customerData, paymentsDetails } = useSelector((state) => state.stripe)
+  const redirigirAURL = () => {
+    window.location.href = paymentsDetails.url_cpanel
+  }
   return (
     <IDXCard style={{ width: "500px", height: "400px" }}>
       <IDXCardContent
@@ -62,7 +67,7 @@ export const Rocket = () => {
             <path
               fill="#face00"
               d="M21 37.5c0-10.04-11 0-12 0 1 0 12 10.04 12 0z"
-              class="flame"
+              className="flame"
             />
           </svg>
         </div>
@@ -73,7 +78,7 @@ export const Rocket = () => {
         </Typography.Title>
         <Button
           type="primary"
-          // onClick={handleSubmit}
+          onClick={redirigirAURL}
           className={button}
           style={{
             backgroundImage: "linear-gradient(to right,#ef3d4e,#ae2865)",
