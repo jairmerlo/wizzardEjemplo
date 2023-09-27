@@ -784,12 +784,12 @@ export const billing = createApi({
       ) => {
         try {
           const res = await fetch(
-            API._BILLING_HOST + "/get-third-step-information",
+            API._BILLING_HOST + "/wizard/get-third-step-information",
             {
               method: "post",
               body: JSON.stringify({
                 registration_key,
-                program_code
+                program_code,
               }),
             }
           ).then((res) => res.json())
