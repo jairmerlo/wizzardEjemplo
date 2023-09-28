@@ -3,6 +3,7 @@ import { IDXCard, IDXCardContent } from "../../customers/components"
 import { useCss } from "react-use"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
+import { useSaveHtmlWizardMutation } from "../../../app/api/billing"
 
 export const Rocket = () => {
   const button = useCss({
@@ -15,9 +16,19 @@ export const Rocket = () => {
     borderRadius: "5px",
     minHeight: "50px",
   })
+  const [saveHtmlWizard] = useSaveHtmlWizardMutation()
   const { customerData, paymentsDetails } = useSelector((state) => state.stripe)
-  const redirigirAURL = () => {
-    window.location.href = paymentsDetails.url_cpanel
+  const redirigirAURL = async () => {
+    await saveHtmlWizard({
+      payment_html: "",
+      program_html: "",
+      registration_key: paymentsDetails.registration_key,
+      initial_price: paymentsDetails.initial_price,
+      plan_code: paymentsDetails.plan_code,
+      monthly_price: paymentsDetails.monthly_price,
+      email: customerData.email,
+    })
+    // window.location.href = paymentsDetails.url_cpanel
   }
   return (
     <IDXCard style={{ width: "500px", height: "400px" }}>
