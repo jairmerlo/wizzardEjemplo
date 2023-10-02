@@ -246,7 +246,7 @@ export const PaymentDetails = () => {
                           plan_code: data.plan_code,
                         })
                       )
-                      // navigate("/membership-creation")
+                      navigate("/membership-creation")
                     }}
                     initialValues={{
                       companyName: "",
