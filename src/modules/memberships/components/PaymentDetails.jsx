@@ -13,6 +13,7 @@ import {
   usePaymentMethodMutation,
   useRegisterBillingV2Mutation,
   useSaveHtmlWizardMutation,
+  useUpdateCustomerMutation,
 } from "../../../app/api/billing"
 import moment from "moment"
 import { useDispatch, useSelector } from "react-redux"
@@ -39,6 +40,7 @@ export const PaymentDetails = () => {
     }
   })
   const [paymentMethod] = usePaymentMethodMutation()
+  const [updateCustomer] = useUpdateCustomerMutation()
   const { customerData } = useSelector((state) => state.stripe)
   const navigate = useNavigate()
 
@@ -215,6 +217,19 @@ export const PaymentDetails = () => {
                         city: customerData.city,
                       })
                       console.log({ data })
+                      updateCustomer({
+                        customerId: customerData.customer_id,
+                        metadata: {
+                          company: data.company,
+                          registration_key: data.registration_key,
+                          membership_id: data.membership_id,
+                          customerId: customerData.customer_id,
+                        },
+                      })
+                      // data aca viaja company
+                      // registration_key
+                      // membership_id
+                      // customer_uuid
                       dispatch(
                         setPaymentsDetails({
                           card_holder: values.cardHolder,
@@ -231,7 +246,7 @@ export const PaymentDetails = () => {
                           plan_code: data.plan_code,
                         })
                       )
-                      navigate("/membership-creation")
+                      // navigate("/membership-creation")
                     }}
                     initialValues={{
                       companyName: "",

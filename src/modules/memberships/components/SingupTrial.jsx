@@ -234,8 +234,12 @@ export const SingupTrial = () => {
 
                         const { data: dataUser } = await getCustomerId({
                           apiKey,
-                          description: "",
+                          name: values.full_name,
                           email: values.email,
+                          metadata: {
+                            origin: "Wizard",
+                            username: values.email,
+                          },
                         })
 
                         const res = await userInformation()

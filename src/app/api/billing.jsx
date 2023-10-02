@@ -1170,14 +1170,36 @@ export const billing = createApi({
       },
     }),
     getCustomerId: builder.mutation({
-      queryFn: async ({ apiKey, description, email }) => {
+      queryFn: async ({ apiKey, name, email, metadata }) => {
         try {
           const url = `${API._STRIPE}/customers?apiKey=${apiKey}`
           const res = await fetch(url, {
             method: "POST",
             body: JSON.stringify({
-              description,
+              name,
               email,
+              metadata,
+            }),
+          }).then((res) => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    updateCustomer: builder.mutation({
+      queryFn: async ({ customerId, metadata }) => {
+        try {
+          const url = `${API._STRIPE}/customers/${customerId}`
+          const res = await fetch(url, {
+            method: "PUT",
+            body: JSON.stringify({
+              metadata,
             }),
           }).then((res) => res.json())
 
@@ -1265,6 +1287,7 @@ export const {
   useGetQuoteBynameQuery,
   useGetProviderAccountQuery,
   useGetCustomerIdMutation,
+  useUpdateCustomerMutation,
   usePaymentMethodMutation,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
