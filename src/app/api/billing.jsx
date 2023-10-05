@@ -723,15 +723,6 @@ export const billing = createApi({
         },
       }),
     }),
-    getItemToSubscriptionByProgram: builder.query({
-      query: ({ plan_code }) => ({
-        url: "/get-item-to-subscription-byprogram",
-        method: "POST",
-        body: {
-          plan_code,
-        },
-      }),
-    }),
     getTrialDays: builder.query({
       query: () => ({
         url: "/list-trial-days",
@@ -1214,15 +1205,38 @@ export const billing = createApi({
       },
     }),
     paymentMethod: builder.mutation({
-      queryFn: async ({ apiKey, customerId, items, token }) => {
+      queryFn: async ({ customerId, items, token, days, months }) => {
         try {
-          const url = `${API._STRIPE}/subscriptions/payment-method?apiKey=${apiKey}`
+          const url = `${API._STRIPE}/subscriptions/payment-method`
           const res = await fetch(url, {
             method: "POST",
             body: JSON.stringify({
               customerId,
               items,
               token,
+              days,
+              months,
+            }),
+          }).then((res) => res.json())
+
+          return {
+            data: res,
+          }
+        } catch (error) {
+          return {
+            error,
+          }
+        }
+      },
+    }),
+    getItemsByProduct: builder.mutation({
+      queryFn: async ({ apiKey, plan_code }) => {
+        try {
+          const url = `${API._BILLING_HOST}/get-item-to-subscription-byprogram`
+          const res = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+              plan_code,
             }),
           }).then((res) => res.json())
 
@@ -1277,7 +1291,6 @@ export const {
   useGetCompanyByRegistrationKeyQuery,
   useGetRequestByregKeyQuery,
   useGetPdfInvoiceQuery,
-  useGetItemToSubscriptionByProgramQuery,
   useListAgreementByRegkeyQuery,
   useGetHtmlWizardQuery,
   useBillingInformationQuery,
@@ -1289,6 +1302,7 @@ export const {
   useGetCustomerIdMutation,
   useUpdateCustomerMutation,
   usePaymentMethodMutation,
+  useGetItemsByProductMutation,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,

@@ -1,38 +1,43 @@
 import { ErrorMessage, Formik } from "formik"
-import logo from "../img/logo.svg"
 import * as Yup from "yup"
-import { Button, Col, DatePicker, Form, InputNumber, Modal, Row } from "antd"
-import { Input, Select, Checkbox } from "formik-antd"
+import { Button, Form } from "antd"
+import { Input, Select } from "formik-antd"
 import { useCss } from "react-use"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
-  useGetItemToSubscriptionByProgramQuery,
+  useGetItemsByProductMutation,
   useGetListCountryQuery,
   useGetTrialDaysQuery,
   usePaymentMethodMutation,
   useRegisterBillingV2Mutation,
-  useSaveHtmlWizardMutation,
   useUpdateCustomerMutation,
 } from "../../../app/api/billing"
 import moment from "moment"
 import { useDispatch, useSelector } from "react-redux"
 import { setPaymentsDetails } from "../../../app/stripe"
-import {
-  AddressElement,
-  CardElement,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js"
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
 export const PaymentDetails = () => {
   const dispatch = useDispatch()
   const { data = [] } = useGetListCountryQuery()
-  const { data: days = "" } = useGetTrialDaysQuery()
-  const { data: items = [] } = useGetItemToSubscriptionByProgramQuery({
-    plan_code: "IDXB-P0003-TRIAL-d22905b5",
-  })
+  const { data: trialDays = "" } = useGetTrialDaysQuery()
+  const [getItemBySuscription] = useGetItemsByProductMutation()
+
+  const datosSuscription = async (plan_code) => {
+    const {
+      items = [],
+      days = "",
+      months = "",
+    } = await getItemBySuscription({ plan_code })
+
+    return {
+      items,
+      days,
+      months,
+    }
+  }
+
   const optionsCountry = data.map(({ id, name }) => {
     return {
       label: name,
@@ -66,51 +71,6 @@ export const PaymentDetails = () => {
     borderRadius: "30px",
     background: "linear-gradient(45deg, #ef3d4e 0%, #ae2865)",
   })
-
-  const item3 = useCss({
-    width: "450px",
-    height: "60px",
-    display: "flex",
-    padding: "7px 20px",
-    border: "1px solid #e4e4e4",
-    borderRadius: "30px",
-    backgroundColor: "white",
-    alignItems: "center",
-  })
-
-  const [cvc, setCVC] = useState("")
-
-  const handleCVCChange = (e) => {
-    let value = e.target.value
-
-    value = value.replace(/\D/g, "")
-    value = value.slice(0, 4)
-
-    setCVC(value)
-  }
-
-  const [cardNumber, setCardNumber] = useState("")
-
-  const handleCardNumberChange = (e) => {
-    let value = e.target.value
-    value = value.replace(/\s+/g, "").replace(/\D/g, "")
-    value = value.replace(/(.{4})/g, "$1 ")
-
-    if (value.length > 19) {
-      value = value.slice(0, 19)
-    }
-
-    setCardNumber(value)
-    return value
-  }
-
-  const handleDateChange = (date, dateString) => {
-    if (date) {
-      const formattedDate = moment(date).format("MM/YYYY")
-      return formattedDate
-    }
-  }
-
   const stripe = useStripe()
   const elements = useElements()
 
@@ -171,7 +131,7 @@ export const PaymentDetails = () => {
                     <h4 className="ms-block-subtitle">
                       This is to verify your account,{" "}
                       <strong>you will not be charged</strong> <br />
-                      <strong>during your {days} days free trial</strong>
+                      <strong>during your {trialDays} days free trial</strong>
                     </h4>
                   </div>
                   {/* <form className="formDetailsPaymernt" onSubmit={handleSubmit}>
@@ -197,12 +157,7 @@ export const PaymentDetails = () => {
                       console.log({ values })
                       const token = await createToken()
                       console.log({ token })
-                      const { data: dataPayment } = await paymentMethod({
-                        customerId: customerData.customer_id,
-                        items,
-                        token: token.id,
-                      })
-                      console.log({ dataPayment })
+
                       const { data = {} } = await registerBillingV2({
                         type: "trial",
                         name: customerData.full_name,
@@ -215,6 +170,19 @@ export const PaymentDetails = () => {
                         ip: customerData.ip,
                         country: customerData.country,
                         city: customerData.city,
+                      })
+                      const { items, days, months } = await datosSuscription(
+                        data.plan_code
+                      )
+
+                      console.log({ items, days, months })
+
+                      const { data: dataPayment } = await paymentMethod({
+                        customerId: customerData.customer_id,
+                        items,
+                        token: token.id,
+                        days,
+                        months,
                       })
                       console.log({ data })
                       updateCustomer({
