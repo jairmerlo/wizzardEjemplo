@@ -25,16 +25,16 @@ export const PaymentDetails = () => {
   const [getItemBySuscription] = useGetItemsByProductMutation()
 
   const datosSuscription = async (plan_code) => {
-    const {
-      items = [],
-      days = "",
-      months = "",
-    } = await getItemBySuscription({ plan_code })
+    const { data: dataSuscription = {} } = await getItemBySuscription({
+      plan_code,
+    })
+
+    const { items = [], days = "" } = dataSuscription
+    console.log({ items, days })
 
     return {
       items,
       days,
-      months,
     }
   }
 
@@ -82,10 +82,7 @@ export const PaymentDetails = () => {
     })
 
     if (!error) {
-      console.log(token)
       return token
-    } else {
-      console.log(error)
     }
   }
 
@@ -134,29 +131,11 @@ export const PaymentDetails = () => {
                       <strong>during your {trialDays} days free trial</strong>
                     </h4>
                   </div>
-                  {/* <form className="formDetailsPaymernt" onSubmit={handleSubmit}>
-                    <div className="formStripe">
-                      <CardElement
-                        className={item}
-                        options={{
-                          hidePostalCode: true,
-                        }}
-                      />
-                    </div>
-                    <button className={item2} type="submit">
-                      <strong>Pay</strong>
-                    </button>
-                    <span style={{ margin: "10px", color: "#919191" }}>
-                      @2023 IDXBoost, LLC All rights Reserved.
-                    </span>
-                  </form> */}
-
                   <Formik
                     enableReinitialize
                     onSubmit={async (values) => {
-                      console.log({ values })
+                      // console.log({ values })
                       const token = await createToken()
-                      console.log({ token })
 
                       const { data = {} } = await registerBillingV2({
                         type: "trial",
@@ -177,15 +156,14 @@ export const PaymentDetails = () => {
 
                       console.log({ items, days, months })
 
-                      const { data: dataPayment } = await paymentMethod({
+                      await paymentMethod({
                         customerId: customerData.customer_id,
                         items,
                         token: token.id,
                         days,
                         months,
                       })
-                      console.log({ data })
-                      updateCustomer({
+                      await updateCustomer({
                         customerId: customerData.customer_id,
                         metadata: {
                           company: data.company,
@@ -194,10 +172,6 @@ export const PaymentDetails = () => {
                           customerId: customerData.customer_id,
                         },
                       })
-                      // data aca viaja company
-                      // registration_key
-                      // membership_id
-                      // customer_uuid
                       dispatch(
                         setPaymentsDetails({
                           card_holder: values.cardHolder,
