@@ -37,6 +37,15 @@ export const billing = createApi({
         },
       }),
     }),
+    getItemsByProgram: builder.query({
+      query: ({ plan_code }) => ({
+        url: "/get-item-to-subscription-byprogram",
+        method: "POST",
+        body: {
+          plan_code,
+        },
+      }),
+    }),
     getListAbandonedCard: builder.query({
       query: () => ({
         url: "/list-abandoned-cart",
@@ -470,6 +479,7 @@ export const billing = createApi({
     }),
     registerBillingV2: builder.mutation({
       query: ({
+        project_name,
         type,
         name,
         last_name,
@@ -485,6 +495,7 @@ export const billing = createApi({
         url: "wizard/register-billing-v2	",
         method: "POST",
         body: {
+          project_name,
           type,
           name,
           last_name,
@@ -1229,27 +1240,27 @@ export const billing = createApi({
         }
       },
     }),
-    getItemsByProduct: builder.mutation({
-      queryFn: async ({ apiKey, plan_code }) => {
-        try {
-          const url = `${API._BILLING_HOST}/get-item-to-subscription-byprogram`
-          const res = await fetch(url, {
-            method: "POST",
-            body: JSON.stringify({
-              plan_code,
-            }),
-          }).then((res) => res.json())
+    // getItemsByProduct: builder.mutation({
+    //   queryFn: async ({ apiKey, plan_code }) => {
+    //     try {
+    //       const url = `${API._BILLING_HOST}/get-item-to-subscription-byprogram`
+    //       const res = await fetch(url, {
+    //         method: "POST",
+    //         body: JSON.stringify({
+    //           plan_code,
+    //         }),
+    //       }).then((res) => res.json())
 
-          return {
-            data: res,
-          }
-        } catch (error) {
-          return {
-            error,
-          }
-        }
-      },
-    }),
+    //       return {
+    //         data: res,
+    //       }
+    //     } catch (error) {
+    //       return {
+    //         error,
+    //       }
+    //     }
+    //   },
+    // }),
   }),
 })
 
@@ -1264,6 +1275,7 @@ export const {
   useGetCustomersQuery,
   useGetCustomerQuery,
   useGetAllCustomersQuery,
+  useGetItemsByProgramQuery,
   useGetListAbandonedCardQuery,
   useGetAllCustomersV3Query,
   useGetNewQuotesOptionsQuery,
@@ -1302,7 +1314,6 @@ export const {
   useGetCustomerIdMutation,
   useUpdateCustomerMutation,
   usePaymentMethodMutation,
-  useGetItemsByProductMutation,
   useGetCustomerV1Query,
   useGetCustomerV2BillingQuery,
   useSendQuoteMutation,

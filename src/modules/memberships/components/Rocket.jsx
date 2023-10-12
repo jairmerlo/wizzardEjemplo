@@ -28,7 +28,7 @@ export const Rocket = () => {
       monthly_price: paymentsDetails.monthly_price,
       email: customerData.email,
     })
-    // window.location.href = paymentsDetails.url_cpanel
+    window.location.href = paymentsDetails.url_cpanel
   }
   return (
     <IDXCard style={{ width: "500px", height: "400px" }}>

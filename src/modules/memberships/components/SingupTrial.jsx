@@ -230,8 +230,6 @@ export const SingupTrial = () => {
                     <Formik
                       enableReinitialize
                       onSubmit={async (values) => {
-                        // console.log({ values })
-
                         const { data: dataUser } = await getCustomerId({
                           apiKey,
                           name: values.full_name,
@@ -359,12 +357,12 @@ export const SingupTrial = () => {
                             />
                           </Form.Item>
                           <Button className={item2} onClick={handleSubmit}>
-                            <strong>Confirm &amp; Pay</strong>
+                            <strong>Continue</strong>
                           </Button>
                           <span style={{ margin: "10px", color: "#919191" }}>
                             @2023 IDXBoost, LLC All rights Reserved.
                           </span>
-                          <Button
+                          {/* <Button
                             onClick={handleOpen}
                             style={{
                               backgroundColor: "transparent",
@@ -373,7 +371,7 @@ export const SingupTrial = () => {
                             }}
                           >
                             Why do we need your credit card?
-                          </Button>
+                          </Button> */}
                         </>
                       )}
                     </Formik>

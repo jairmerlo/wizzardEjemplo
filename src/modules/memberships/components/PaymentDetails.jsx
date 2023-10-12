@@ -1,12 +1,11 @@
 import { ErrorMessage, Formik } from "formik"
 import * as Yup from "yup"
-import { Button, Form } from "antd"
+import { Button, Form, Modal } from "antd"
 import { Input, Select } from "formik-antd"
 import { useCss } from "react-use"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
-  useGetItemsByProductMutation,
   useGetListCountryQuery,
   useGetTrialDaysQuery,
   usePaymentMethodMutation,
@@ -17,24 +16,35 @@ import moment from "moment"
 import { useDispatch, useSelector } from "react-redux"
 import { setPaymentsDetails } from "../../../app/stripe"
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
+import { API } from "../../../api"
 
 export const PaymentDetails = () => {
   const dispatch = useDispatch()
   const { data = [] } = useGetListCountryQuery()
   const { data: trialDays = "" } = useGetTrialDaysQuery()
-  const [getItemBySuscription] = useGetItemsByProductMutation()
 
   const datosSuscription = async (plan_code) => {
-    const { data: dataSuscription = {} } = await getItemBySuscription({
-      plan_code,
-    })
-
-    const { items = [], days = "" } = dataSuscription
-    console.log({ items, days })
+    let items = []
+    let days = 1
+    while (items.length === 0) {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const res = await fetch(
+        API._BILLING_HOST + "/get-item-to-subscription-byprogram",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            plan_code,
+          }),
+        }
+      ).then((res) => res.json())
+      items = res.items
+      days = res.days
+    }
 
     return {
       items,
       days,
+      months: 1,
     }
   }
 
@@ -134,10 +144,10 @@ export const PaymentDetails = () => {
                   <Formik
                     enableReinitialize
                     onSubmit={async (values) => {
-                      // console.log({ values })
                       const token = await createToken()
 
                       const { data = {} } = await registerBillingV2({
+                        project_name: values.companyName,
                         type: "trial",
                         name: customerData.full_name,
                         last_name: "",
@@ -154,8 +164,6 @@ export const PaymentDetails = () => {
                         data.plan_code
                       )
 
-                      console.log({ items, days, months })
-
                       await paymentMethod({
                         customerId: customerData.customer_id,
                         items,
@@ -163,13 +171,14 @@ export const PaymentDetails = () => {
                         days,
                         months,
                       })
+                      // aca debemos agregar "fullname - membership_id"
                       await updateCustomer({
                         customerId: customerData.customer_id,
                         metadata: {
                           company: data.company,
                           registration_key: data.registration_key,
                           membership_id: data.membership_id,
-                          customerId: customerData.customer_id,
+                          customer_uuid: customerData.customer_id,
                         },
                       })
                       dispatch(
@@ -266,12 +275,12 @@ export const PaymentDetails = () => {
                           />
                         </Form.Item>
                         <Button className={item2} onClick={handleSubmit}>
-                          <strong>Pay</strong>
+                          <strong>Confirme & Pay</strong>
                         </Button>
                         <span style={{ margin: "10px", color: "#919191" }}>
                           @2023 IDXBoost, LLC All rights Reserved.
                         </span>
-                        <Button
+                        {/* <Button
                           style={{
                             backgroundColor: "transparent",
                             border: "none",
@@ -279,7 +288,7 @@ export const PaymentDetails = () => {
                           }}
                         >
                           Why do we need your credit card?
-                        </Button>
+                        </Button> */}
                       </>
                     )}
                   </Formik>
