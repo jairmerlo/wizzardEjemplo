@@ -4,6 +4,8 @@ import { useCss } from "react-use"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import { useSaveHtmlWizardMutation } from "../../../app/api/billing"
+import { Loader } from "./Loader"
+import { useState } from "react"
 
 export const Rocket = () => {
   const button = useCss({
@@ -16,9 +18,12 @@ export const Rocket = () => {
     borderRadius: "5px",
     minHeight: "50px",
   })
+  const [loader, setLoader] = useState(false)
+
   const [saveHtmlWizard] = useSaveHtmlWizardMutation()
   const { customerData, paymentsDetails } = useSelector((state) => state.stripe)
   const redirigirAURL = async () => {
+    setLoader(true)
     await saveHtmlWizard({
       payment_html: "",
       program_html: "",
@@ -31,7 +36,7 @@ export const Rocket = () => {
     window.location.href = paymentsDetails.url_cpanel
   }
   return (
-    <IDXCard style={{ width: "500px", height: "400px" }}>
+    <IDXCard style={{ width: "500px", height: "280px" }}>
       <IDXCardContent
         style={{
           display: "flex",
@@ -98,6 +103,7 @@ export const Rocket = () => {
           FINISH YOUR SETUP
         </Button>
       </IDXCardContent>
+      {loader && <Loader />}
     </IDXCard>
   )
 }

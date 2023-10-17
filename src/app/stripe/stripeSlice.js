@@ -4,7 +4,9 @@ export const stripeSlice = createSlice({
   name: "stripe",
   initialState: {
     customerData: {
-      full_name: "",
+      first_name: "",
+      last_name: "",
+      // full_name: "",
       phone: "",
       email: "",
       password: "",

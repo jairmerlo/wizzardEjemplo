@@ -162,7 +162,7 @@ body {
 
 .ms-title-xl {
   font-weight: bold;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   font-size: 26px;
   line-height: 1.2;
   margin: 0 auto;
@@ -538,6 +538,37 @@ body {
   position: absolute;
   right: 6px;
   top: 3.5px;
+}
+
+.itemForm {
+  width: 450px;
+  height: 60px;
+  padding: 7px 20px;
+  font-size: 14px;
+  border: 1px solid #e4e4e4;
+  border-radius: 30px;
+  background-color: white;
+}
+
+.itemForm3 {
+  width: 450px;
+  height: 60px;
+  padding: 20px 20px;
+  font-size: 14px;
+  border: 1px solid #e4e4e4;
+  border-radius: 30px;
+  background-color: white;
+}
+
+.itemForm2 {
+  width: 450px;
+  height: 60px;
+  padding: 7px 20px;
+  font-size: 14px;
+  border: 1px solid #e4e4e4;
+  border-radius: 30px;
+  color: white;
+  background: linear-gradient(45deg, #ef3d4e 0%, #ae2865);
 }
 
 .select2-container--default
@@ -1062,10 +1093,10 @@ body {
   font-size: 20px;
   line-height: 1.2;
   margin-bottom: 5px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-wrap-billing-form > p {
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-wrap-billing-form p {
   font-size: 14px;
@@ -1097,7 +1128,7 @@ body {
 }
 .ms-wrap-billing-form .ms-card-info p {
   margin-bottom: 15px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-wrap-billing-form .ms-card-list {
   width: 100%;
@@ -1120,7 +1151,7 @@ body {
   font-weight: normal;
   font-size: 15px;
   background-color: #f6f7f8;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-wrap-billing-form .ms-card-list .ms-card .ms-card-body {
   padding: 15px;
@@ -1220,7 +1251,7 @@ body {
   .ms-info {
   padding: 0 30px;
   text-align: center;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-wrap-billing-form
   .ms-card-list
@@ -1552,7 +1583,7 @@ body {
   font-weight: bold;
   margin-top: 20px;
   margin-bottom: 15px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   text-transform: uppercase;
 }
 .onboarding-form
@@ -1888,6 +1919,18 @@ body {
     border-top: 0;
   }
 }
+@media screen and (max-width: 991px) {
+  .itemForm,
+  .itemForm2,
+  .itemForm3 {
+    width: 100%;
+    height: 50px;
+  }
+  .itemForm2 {
+    margin-bottom: 10px;
+  }
+}
+
 @media screen and (min-width: 991px) {
   .onboarding-form .ms-wrap-billing-form {
     margin: 0 auto;
@@ -2004,7 +2047,7 @@ body {
 }
 .ms-message-rocket .ms-title {
   font-weight: bold;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   font-size: 18px;
   text-align: center;
   margin: 0;
@@ -2136,7 +2179,7 @@ body {
 }
 .onboarding-form.-billing-information .ms-card-information .ms-card .ms-title {
   font-weight: bold;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   margin: 30px 0 10px 0;
   font-size: 18px;
   padding: 0 20px;
@@ -2263,7 +2306,7 @@ body {
   font-size: 18px;
   font-weight: bold;
   margin: 10px 0;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .onboarding-form.-billing-information
   .ms-card-information
@@ -2499,7 +2542,7 @@ body {
   .ms-card-body
   .ms-title {
   font-weight: bold;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   font-size: 18px;
   line-height: 1.2;
   margin: 10px 0;
@@ -3098,7 +3141,7 @@ body {
   font-weight: 600;
   font-size: 14px;
   color: #fff;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .onboarding-form.-billing-information.-new-format
   .ms-card-information
@@ -4248,7 +4291,7 @@ body > .rs-wrapper {
   .ms-body-modal
   .ms-wrapper-credit-card
   .ms-modal-title {
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
@@ -4274,7 +4317,7 @@ body > .rs-wrapper {
   -ms-flex-pack: center;
   justify-content: center;
   padding-bottom: 2px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   border: 1px solid #898989;
   background-color: #fff;
   position: absolute;
@@ -4594,7 +4637,7 @@ body > .rs-wrapper {
   margin: 20px auto;
   font-size: 26px;
   font-weight: bold;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-new-lt-format
   .rs-wrapper
@@ -4803,7 +4846,7 @@ body > .rs-wrapper {
   .ms-mtfotter
   span {
   font-size: 14px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-new-lt-format
   .rs-wrapper
@@ -5125,7 +5168,7 @@ body > .rs-wrapper {
   .ms-block-title {
   text-align: center;
   font-size: 35px;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
   font-weight: bold;
   margin-bottom: 5px;
   background: -webkit-linear-gradient(45deg, #ef3d4e 0%, #ae2865);
@@ -5161,7 +5204,7 @@ body > .rs-wrapper {
   font-size: 15px;
   margin-bottom: 15px;
   line-height: 1.4;
-  font-family: "Montserrat", sans-serif;
+  font-family: montserrat, sans-serif;
 }
 .ms-new-lt-format
   .rs-wrapper
@@ -5922,7 +5965,4 @@ body > .rs-wrapper {
   width: 400px;
   height: 500px;
   /* background-color: red; */
-}
-
-.formStripe {
 }

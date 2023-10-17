@@ -17,11 +17,13 @@ import { useDispatch, useSelector } from "react-redux"
 import { setPaymentsDetails } from "../../../app/stripe"
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { API } from "../../../api"
+import { Loader } from "./Loader"
 
 export const PaymentDetails = () => {
   const dispatch = useDispatch()
   const { data = [] } = useGetListCountryQuery()
   const { data: trialDays = "" } = useGetTrialDaysQuery()
+  const [loader, setLoader] = useState(false)
 
   const datosSuscription = async (plan_code) => {
     let items = []
@@ -61,28 +63,10 @@ export const PaymentDetails = () => {
 
   const [registerBillingV2] = useRegisterBillingV2Mutation()
   // useSaveHtmlWizardMutation
-  const item = useCss({
-    width: "450px",
-    height: "60px",
-    padding: "7px 20px",
-    fontSize: "14px",
-    border: "1px solid #e4e4e4",
-    borderRadius: "30px",
-    backgroundColor: "white",
-  })
 
-  const item2 = useCss({
-    width: "450px",
-    height: "60px",
-    padding: "7px 20px",
-    fontSize: "16px",
-    color: "white",
-    border: "1px solid #e4e4e4",
-    borderRadius: "30px",
-    background: "linear-gradient(45deg, #ef3d4e 0%, #ae2865)",
-  })
   const stripe = useStripe()
   const elements = useElements()
+  const name = `${customerData.first_name} ${customerData.last_name}`
 
   const createToken = async () => {
     const cardElement = elements.getElement(CardElement)
@@ -144,13 +128,14 @@ export const PaymentDetails = () => {
                   <Formik
                     enableReinitialize
                     onSubmit={async (values) => {
+                      setLoader(true)
                       const token = await createToken()
 
                       const { data = {} } = await registerBillingV2({
                         project_name: values.companyName,
                         type: "trial",
-                        name: customerData.full_name,
-                        last_name: "",
+                        name: customerData.first_name,
+                        last_name: customerData.last_name,
                         email: customerData.email,
                         phone: customerData.phone,
                         customer_id: customerData.customer_id,
@@ -169,11 +154,12 @@ export const PaymentDetails = () => {
                         items,
                         token: token.id,
                         days,
-                        months,
+                        // months,
                       })
                       // aca debemos agregar "fullname - membership_id"
                       await updateCustomer({
                         customerId: customerData.customer_id,
+                        name,
                         metadata: {
                           company: data.company,
                           registration_key: data.registration_key,
@@ -233,7 +219,7 @@ export const PaymentDetails = () => {
                           <Input
                             name="companyName"
                             placeholder="Company Name (optional)"
-                            className={item}
+                            className="itemForm"
                           />
                         </Form.Item>
                         <Form.Item
@@ -245,14 +231,11 @@ export const PaymentDetails = () => {
                           <Input
                             name="cardHolder"
                             placeholder="Card Holder Full Name"
-                            className={item}
+                            className="itemForm"
                           />
                         </Form.Item>
                         <CardElement
-                          className={item}
-                          style={{
-                            margin: "0px 0px 15px 0px",
-                          }}
+                          className="itemForm3"
                           options={{
                             hidePostalCode: true,
                           }}
@@ -265,7 +248,7 @@ export const PaymentDetails = () => {
                             marginTop: "20px",
                           }}
                           help={<ErrorMessage name="ipConfig" />}
-                          className={item}
+                          className="itemForm"
                         >
                           <Select
                             name="country"
@@ -274,7 +257,7 @@ export const PaymentDetails = () => {
                             bordered={false}
                           />
                         </Form.Item>
-                        <Button className={item2} onClick={handleSubmit}>
+                        <Button className="itemForm2" onClick={handleSubmit}>
                           <strong>Confirme & Pay</strong>
                         </Button>
                         <span style={{ margin: "10px", color: "#919191" }}>
@@ -298,6 +281,7 @@ export const PaymentDetails = () => {
           </div>
         </section>
       </div>
+      {loader && <Loader />}
     </div>
   )
 }

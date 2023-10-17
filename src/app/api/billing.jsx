@@ -445,6 +445,7 @@ export const billing = createApi({
         type,
         url_origin,
         name,
+        last_name,
         email,
         phone,
         country,
@@ -457,6 +458,7 @@ export const billing = createApi({
           type,
           url_origin,
           name,
+          last_name,
           email,
           phone,
           country,
@@ -492,7 +494,7 @@ export const billing = createApi({
         country,
         city,
       }) => ({
-        url: "wizard/register-billing-v2	",
+        url: "wizard/register-billing-v2",
         method: "POST",
         body: {
           project_name,
@@ -1195,12 +1197,13 @@ export const billing = createApi({
       },
     }),
     updateCustomer: builder.mutation({
-      queryFn: async ({ customerId, metadata }) => {
+      queryFn: async ({ customerId, metadata, name }) => {
         try {
           const url = `${API._STRIPE}/customers/${customerId}`
           const res = await fetch(url, {
             method: "PUT",
             body: JSON.stringify({
+              name,
               metadata,
             }),
           }).then((res) => res.json())

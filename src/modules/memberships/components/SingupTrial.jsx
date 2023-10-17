@@ -14,13 +14,15 @@ import {
 } from "../../../app/api/billing"
 import { useDispatch } from "react-redux"
 import { setCustomerData } from "../../../app/stripe"
+import { Loader } from "./Loader"
+import ReactPlayer from "react-player"
 
 export const SingupTrial = () => {
-  const [openModal, setOpenModal] = useState(false)
-  const handleOpen = () => setOpenModal(true)
-  const handleClose = () => setOpenModal(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [loader, setLoader] = useState(false)
+  const [isVideoActive, setIsVideoActive] = useState(false)
+  const [onPause, setOnPause] = useState(true)
 
   const apiKey =
     "sk_test_51MPGWNBfWCdjsfM6CMb9F0usz8kDDHFbkHNeboVwypSGaghon8zpRghKy9NDiTI6ZyztD4g1kmYl4idWdKxLSD6t00nZnfkeIF"
@@ -34,32 +36,6 @@ export const SingupTrial = () => {
   const { data: days = "" } = useGetTrialDaysQuery()
   const [abandonedCardStep1] = useAbandonedCardStep1Mutation()
   const [processNotificationStep1] = useProcessNotificationStep1Mutation()
-  const item = useCss({
-    width: "450px",
-    height: "60px",
-    padding: "7px 20px",
-    fontSize: "14px",
-    border: "1px solid #e4e4e4",
-    borderRadius: "30px",
-  })
-
-  const item2 = useCss({
-    width: "450px",
-    height: "60px",
-    padding: "7px 20px",
-    fontSize: "16px",
-    color: "white",
-    border: "1px solid #e4e4e4",
-    borderRadius: "30px",
-    background: "linear-gradient(45deg, #ef3d4e 0%, #ae2865)",
-  })
-
-  const logoModal = useCss({
-    width: "250px",
-    height: "auto",
-    display: "block",
-    margin: "0 auto 30px auto",
-  })
 
   const [phoneNumber, setPhoneNumber] = useState("")
 
@@ -100,11 +76,16 @@ export const SingupTrial = () => {
                     <div className="ms-wrapper-lateral-format">
                       <img src={logo} alt="IDXBoost" className="ms-mlogo" />
                       <h3 className="ms-mtitle">
-                        Building better real estate websites that convert
-                        quality leads
+                        Building better real estate websites
+                        <br />
+                        that convert quality leads
                       </h3>
 
-                      <div className="ms-wrapper-video">
+                      <div
+                        className={`ms-wrapper-video ${
+                          isVideoActive ? "active" : ""
+                        }`}
+                      >
                         <div className="ms-temporal-video">
                           <video loop autoPlay muted playsInline preload="auto">
                             <source
@@ -114,22 +95,37 @@ export const SingupTrial = () => {
                           </video>
                           <button
                             className="ms-play-video js-play-video-tm"
-                            data-video="https://www.idxboost.com/wp-content/uploads/2023/06/new_home_video_min.mp4"
-                            aria-label="Show this video"
+                            onClick={() => setIsVideoActive(true)}
                           ></button>
                         </div>
                         <div className="ms-full-video">
                           <button
-                            className="ms-btn -pause js-action-video-tm"
+                            className={`ms-btn ${
+                              onPause ? "-pause" : "-play"
+                            } js-action-video-tm`}
                             data-type="pause"
                             aria-label="Play Video"
+                            onClick={() => setOnPause((c) => !c)}
                           ></button>
                           <button
                             className="ms-btn -close js-action-video-tm"
                             data-type="close"
                             aria-label="Close Video"
+                            onClick={() => setIsVideoActive(false)}
                           ></button>
-                          <div className="ms-video-cover"></div>
+                          <div className="ms-video-cover">
+                            {isVideoActive && (
+                              <ReactPlayer
+                                url="https://www.idxboost.com/wp-content/uploads/2023/06/new_home_video_min.mp4"
+                                width="100%"
+                                height="100%"
+                                // controls
+                                playing={onPause}
+                                // muted
+                                loop
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -137,7 +133,8 @@ export const SingupTrial = () => {
                         <span>
                           By registering you agree to our{" "}
                           <a
-                            href="facebook.com"
+                            href="https://www.idxboost.com/terms-of-use/"
+                            rel="noreferrer"
                             target="_blank"
                             className="ms-link"
                           >
@@ -147,54 +144,30 @@ export const SingupTrial = () => {
                         <ul className="ms-mt-social">
                           <li>
                             <a
-                              href="facebook.com"
-                              className="ms-icon-facebook"
+                              href="https://www.facebook.com/people/IDX-Boost/100067195484020/"
                               rel="noreferrer"
+                              className="ms-icon-facebook"
+                              target="_blank"
                             >
                               Facebook
                             </a>
                           </li>
                           <li>
                             <a
-                              href="facebook.com"
-                              className="ms-icon-twitter"
-                              rel="noreferrer"
-                            >
-                              Twitter
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="facebook.com"
+                              href="https://www.instagram.com/idxboost/"
                               className="ms-icon-instagram"
                               rel="noreferrer"
+                              target="_blank"
                             >
                               Instagram
                             </a>
                           </li>
                           <li>
                             <a
-                              href="facebook.com"
-                              className="ms-icon-pinterest"
-                              rel="noreferrer"
-                            >
-                              Pinterest
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="facebook.com"
-                              className="ms-icon-google"
-                              rel="noreferrer"
-                            >
-                              Google+
-                            </a>
-                          </li>
-                          <li>
-                            <a
-                              href="facebook.com"
+                              href="https://www.youtube.com/channel/UCEDMZ5H3JZC74Bydhkdm9HA"
                               className="ms-icon-youtube"
                               rel="noreferrer"
+                              target="_blank"
                             >
                               Youtube
                             </a>
@@ -216,7 +189,7 @@ export const SingupTrial = () => {
                 </div>
 
                 <div className="ms-card-list">
-                  {/* <img src="img/logo.svg" alt="IDXBoost" className="ms-mlogo" /> */}
+                  <img src={logo} alt="IDXBoost" className="ms-mlogo" />
 
                   <div className="ms-card" id="card-b2">
                     <div className="ms-header-block-a">
@@ -230,6 +203,7 @@ export const SingupTrial = () => {
                     <Formik
                       enableReinitialize
                       onSubmit={async (values) => {
+                        setLoader(true)
                         const { data: dataUser } = await getCustomerId({
                           apiKey,
                           name: values.full_name,
@@ -246,7 +220,8 @@ export const SingupTrial = () => {
                           type: "trial",
                           url_origin:
                             "https://signup.idxboost.dev/standard/IDXB-P0003/1/notSeller/trial",
-                          name: values.full_name,
+                          name: values.first_name,
+                          last_name: values.last_name,
                           email: values.email,
                           phone: values.phone,
                           country: res.country,
@@ -256,14 +231,16 @@ export const SingupTrial = () => {
                         processNotificationStep1({
                           type: "trial",
                           first_name: values.full_name,
-                          last_name: "",
+                          last_name: values.last_name,
                           email: values.email,
                           phone: values.phone,
                         })
 
                         dispatch(
                           setCustomerData({
-                            full_name: values.full_name,
+                            first_name: values.first_name,
+                            last_name: values.last_name,
+                            // full_name: values.full_name,
                             phone: values.phone,
                             email: values.email,
                             password: values.password,
@@ -278,14 +255,19 @@ export const SingupTrial = () => {
                         navigate("/payment-details")
                       }}
                       initialValues={{
-                        full_name: "",
+                        first_name: "",
+                        last_name: "",
+                        // full_name: "",
                         phone: "",
                         email: "",
                         password: "",
                       }}
                       validationSchema={Yup.object({
-                        full_name: Yup.string().required(
-                          "Full Name is required"
+                        first_name: Yup.string().required(
+                          "First Name is required"
+                        ),
+                        last_name: Yup.string().required(
+                          "Last Name is required"
                         ),
                         phone: Yup.string().required("Number is required"),
                         email: Yup.string()
@@ -306,14 +288,26 @@ export const SingupTrial = () => {
                         <>
                           <Form.Item
                             validateStatus={
-                              errors.full_name && touched.full_name && "error"
+                              errors.first_name && touched.first_name && "error"
                             }
-                            help={<ErrorMessage name="full_name" />}
+                            help={<ErrorMessage name="first_name" />}
                           >
                             <FormikInput
-                              name="full_name"
-                              placeholder="Full Name"
-                              className={item}
+                              name="first_name"
+                              placeholder="First Name"
+                              className="itemForm"
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            validateStatus={
+                              errors.last_name && touched.last_name && "error"
+                            }
+                            help={<ErrorMessage name="last_name" />}
+                          >
+                            <FormikInput
+                              name="last_name"
+                              placeholder="Last Name"
+                              className="itemForm"
                             />
                           </Form.Item>
                           <Form.Item
@@ -323,7 +317,7 @@ export const SingupTrial = () => {
                             help={<ErrorMessage name="phone" />}
                           >
                             <FormikInput
-                              className={item}
+                              className="itemForm"
                               name="phone"
                               placeholder="(123) 123-1234"
                               type="text"
@@ -341,7 +335,7 @@ export const SingupTrial = () => {
                             <FormikInput
                               name="email"
                               placeholder="Email"
-                              className={item}
+                              className="itemForm"
                             />
                           </Form.Item>
                           <Form.Item
@@ -353,10 +347,10 @@ export const SingupTrial = () => {
                             <FormikInput.Password
                               name="password"
                               placeholder="Password"
-                              className={item}
+                              className="itemForm"
                             />
                           </Form.Item>
-                          <Button className={item2} onClick={handleSubmit}>
+                          <Button className="itemForm2" onClick={handleSubmit}>
                             <strong>Continue</strong>
                           </Button>
                           <span style={{ margin: "10px", color: "#919191" }}>
@@ -382,57 +376,7 @@ export const SingupTrial = () => {
           </section>
         </div>
       </div>
-      <Modal
-        open={openModal}
-        okButtonProps={{
-          style: {
-            display: "none",
-          },
-        }}
-        cancelButtonProps={{
-          style: {
-            display: "none",
-          },
-        }}
-        onCancel={handleClose}
-        width={540}
-        centered
-        destroyOnClose
-      >
-        <img src={logo} alt="IDXBoost" class={logoModal} />
-        <h5
-          style={{
-            fontSize: "24px",
-            fontWeight: "bold",
-            textAlign: "center",
-            marginBottom: "20px",
-          }}
-        >
-          Why do we need your credit card?
-        </h5>
-        <div style={{ fontSize: "16px" }}>
-          <p>
-            <strong>
-              You might be wondering why we ask for a credit card to if the 15
-              day trial is 100% free.
-            </strong>{" "}
-            At IDXBoostTM we pride on providing our members with unrivaled
-            customer support. For this reason is crucial for us to avoid long
-            support waiting times caused by many users who don't plan to use the
-            product.
-          </p>
-          <p>
-            Once you proceed with this step you will have full access to the
-            website builder and you will receive premium support to help you
-            with the basics to launch your website in a timely manner.
-          </p>
-          <p>You can cancel at anytime within your trial period.</p>
-          <p>
-            If you would like to get a demo before signing in just schedule your
-            free training with our support & design team!
-          </p>
-        </div>
-      </Modal>
+      {loader && <Loader />}
     </>
   )
 }

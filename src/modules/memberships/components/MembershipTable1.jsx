@@ -25,7 +25,7 @@ export const MembershipTable1 = () => {
   } = data
 
   return (
-    <IDXCard style={{ width: "500px" }}>
+    <IDXCard style={{ width: "400px" }}>
       <IDXCardContent
         style={{
           display: "flex",
