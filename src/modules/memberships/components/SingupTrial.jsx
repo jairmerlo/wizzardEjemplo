@@ -230,7 +230,7 @@ export const SingupTrial = () => {
 
                         processNotificationStep1({
                           type: "trial",
-                          first_name: values.full_name,
+                          first_name: values.first_name,
                           last_name: values.last_name,
                           email: values.email,
                           phone: values.phone,
