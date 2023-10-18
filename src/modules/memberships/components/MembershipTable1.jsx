@@ -35,6 +35,7 @@ export const MembershipTable1 = () => {
         <Typography.Title level={3}>
           Membership Creation Success!
         </Typography.Title>
+        poner first name y last name
         {customerData.full_name}
         <br />
         {customerData.email}
@@ -73,7 +74,7 @@ export const MembershipTable1 = () => {
           text={monthly_dues}
         />
         <Typography.Text level={3}>
-          Your card will be billed on Sep 19,2023
+          Your card will be billed on {initial_term}
         </Typography.Text>
       </IDXCardContent>
     </IDXCard>

@@ -206,7 +206,8 @@ export const SingupTrial = () => {
                         setLoader(true)
                         const { data: dataUser } = await getCustomerId({
                           apiKey,
-                          name: values.full_name,
+                          name: `${values.first_name} ${values.last_name}`,
+                          phone: values.phone,
                           email: values.email,
                           metadata: {
                             origin: "Wizard",

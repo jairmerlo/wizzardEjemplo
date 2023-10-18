@@ -145,7 +145,7 @@ export const PaymentDetails = () => {
                         country: customerData.country,
                         city: customerData.city,
                       })
-                      const { items, days, months } = await datosSuscription(
+                      const { items, days } = await datosSuscription(
                         data.plan_code
                       )
 
@@ -154,9 +154,7 @@ export const PaymentDetails = () => {
                         items,
                         token: token.id,
                         days,
-                        // months,
                       })
-                      // aca debemos agregar "fullname - membership_id"
                       await updateCustomer({
                         customerId: customerData.customer_id,
                         name,
@@ -164,7 +162,7 @@ export const PaymentDetails = () => {
                           company: data.company,
                           registration_key: data.registration_key,
                           membership_id: data.membership_id,
-                          customer_uuid: customerData.customer_id,
+                          customer_uuid: data.customer_uuid,
                         },
                       })
                       dispatch(
