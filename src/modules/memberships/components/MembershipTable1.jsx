@@ -35,8 +35,7 @@ export const MembershipTable1 = () => {
         <Typography.Title level={3}>
           Membership Creation Success!
         </Typography.Title>
-        poner first name y last name
-        {customerData.full_name}
+        {customerData.first_name} {customerData.last_name}
         <br />
         {customerData.email}
         <br />
