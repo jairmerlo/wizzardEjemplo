@@ -1198,13 +1198,14 @@ export const billing = createApi({
       },
     }),
     updateCustomer: builder.mutation({
-      queryFn: async ({ customerId, metadata, name }) => {
+      queryFn: async ({ customerId, metadata, country, name }) => {
         try {
           const url = `${API._STRIPE}/customers/${customerId}`
           const res = await fetch(url, {
             method: "PUT",
             body: JSON.stringify({
               name,
+              country,
               metadata,
             }),
           }).then((res) => res.json())

@@ -89,7 +89,7 @@ export const PaymentDetails = () => {
               <div className="ms-card-information">
                 <div className="ms-lateral-format">
                   <div className="ms-wrapper-lateral-format">
-                    <div
+                    {/* <div
                       style={{
                         backgroundColor: "#00d900",
                         borderRadius: "25px",
@@ -98,7 +98,7 @@ export const PaymentDetails = () => {
                       }}
                     >
                       Why we ask your cc
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <video
@@ -158,6 +158,7 @@ export const PaymentDetails = () => {
                       await updateCustomer({
                         customerId: customerData.customer_id,
                         name,
+                        country: customerData.country,
                         metadata: {
                           company: data.company,
                           registration_key: data.registration_key,

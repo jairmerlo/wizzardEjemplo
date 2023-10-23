@@ -320,7 +320,7 @@ export const SingupTrial = () => {
                             <FormikInput
                               className="itemForm"
                               name="phone"
-                              placeholder="(123) 123-1234"
+                              placeholder="Phone"
                               type="text"
                               value={phoneNumber}
                               onChange={handleInputChange}
