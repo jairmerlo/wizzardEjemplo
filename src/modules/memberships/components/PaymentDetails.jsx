@@ -158,7 +158,14 @@ export const PaymentDetails = () => {
                       await updateCustomer({
                         customerId: customerData.customer_id,
                         name,
-                        country: customerData.country,
+                        address: {
+                          city: customerData.city,
+                          country: customerData.country,
+                          line1: null,
+                          line2: null,
+                          postal_code: null,
+                          state: null,
+                        },
                         metadata: {
                           company: data.company,
                           registration_key: data.registration_key,
