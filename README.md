@@ -1,4 +1,4 @@
-# react_backoffice
+# Wizzard
 
 ## Install dependencies
 
@@ -32,7 +32,6 @@ Copy ´.env´ to ´.env.development´ and ´.env.development´ and change values
 
 ## Plugins
 
-- _Prettier_
 - _Eslint_
 
 ## API Billing
@@ -41,20 +40,8 @@ Copy ´.env´ to ´.env.development´ and ´.env.development´ and change values
 
 _https://api-billing.idxboost.dev|com/api_
 
-### Endpoints
+## API Stripe
 
-- [_/list-customers-v2_](https://docs.google.com/document/d/1wurpzMqiLl5DBNZA82RzfPVlBlGmGJvSvn8kMQ3v534/edit)
+### Host
 
-### Compilados
-
-* Memberships v2
-
-```console
-VITE_APP_COMPONENT=memberships
-```
-
-* Customers v2
-
-```console
-VITE_APP_COMPONENT=customers
-```
+_https://api-stripe.idxboost.dev/api_
