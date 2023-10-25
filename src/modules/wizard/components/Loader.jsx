@@ -1,3 +1,5 @@
+import "../../../icons/style.css"
+
 export const Loader = () => {
   return (
     <div className="ms-modal-lg">

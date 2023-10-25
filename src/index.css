@@ -4830,7 +4830,7 @@ body > .rs-wrapper {
   width: 90px;
   height: 17px;
   margin: 15px auto;
-  background-image: url(./modules/memberships/img/sprit.png);
+  background-image: url(./modules/wizard/img/sprit.png);
   background-repeat: no-repeat;
   background-position: 2px 0;
   background-size: 104px;
@@ -4923,7 +4923,7 @@ body > .rs-wrapper {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url(./modules/memberships/img/sprit.png);
+  background-image: url(./modules/wizard/img/sprit.png);
   background-repeat: no-repeat;
   background-size: 119px;
 }
