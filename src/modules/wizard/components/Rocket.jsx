@@ -1,10 +1,8 @@
 import { Button, Typography } from "antd"
-import { IDXCard, IDXCardContent } from "../../customers/components"
 import { useCss } from "react-use"
 import { useSelector } from "react-redux"
-import { Link } from "react-router-dom"
 import { useSaveHtmlWizardMutation } from "../../../app/api/billing"
-import { Loader } from "./Loader"
+import { Loader, IDXCard, IDXCardContent } from "./"
 import { useState } from "react"
 
 export const Rocket = () => {

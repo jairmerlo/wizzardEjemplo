@@ -7,7 +7,7 @@ import {
 import App from "../App"
 import { ErrorHandler } from "../components"
 // import customersRouter from '../modules/customers/router'
-import membershipsRouter from "../modules/memberships/router"
+import membershipsRouter from "../modules/wizard/router"
 
 // const { VITE_APP_COMPONENT } = import.meta.env
 

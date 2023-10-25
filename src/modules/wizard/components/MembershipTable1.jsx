@@ -1,11 +1,7 @@
 import { Divider, Typography } from "antd"
-import {
-  IDXCard,
-  IDXCardContent,
-  YourProductItem,
-} from "../../customers/components"
 import { useSelector } from "react-redux"
 import { useGetThirdStepInformationQuery } from "../../../app/api/billing"
+import { IDXCard, IDXCardContent, YourProductItem } from "./"
 
 export const MembershipTable1 = () => {
   const { customerData, paymentsDetails } = useSelector((state) => state.stripe)
